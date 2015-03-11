@@ -81,3 +81,9 @@ C_Utilities.sdf
 C_Utilities.opensdf
 C_Utilities/C_Utilities.vcxproj.user
 *.ipch
+*.tlog
+C_Utilities/Debug/C_Utilities.vcxprojResolveAssemblyReference.cache
+*.pdb
+*.log
+C_Utilities/Debug/C_Utilities.lastbuildstate
+*.idb

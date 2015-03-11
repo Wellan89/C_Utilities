@@ -1,9 +1,12 @@
-#include <stdlib.h>
+#ifndef DEF_LIST
+#define DEF_LIST
+
+#include "bool.h"
 
 #define ELT_TYPE	int
 
-struct Cell;
-struct List;
+typedef struct Cell Cell;
+typedef struct List List;
 
 List* list_create();
 void list_delete(List* l);
@@ -26,3 +29,5 @@ Cell* list_decrIt(Cell* it);
 bool list_isValidIt(Cell* it);
 bool list_isLast(Cell* it);
 bool list_isFirst(Cell* it);
+
+#endif
