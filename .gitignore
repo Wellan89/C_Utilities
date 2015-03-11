@@ -73,17 +73,15 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-C_Utilities.sln
-C_Utilities.suo
-C_Utilities/C_Utilities.vcxproj.filters
-C_Utilities/C_Utilities.vcxproj
-C_Utilities.sdf
-C_Utilities.opensdf
-C_Utilities/C_Utilities.vcxproj.user
+*.sln
+*.suo
+*.sdf
+*.opensdf
+*.vcxproj*
 *.ipch
 *.tlog
-C_Utilities/Debug/C_Utilities.vcxprojResolveAssemblyReference.cache
+*.cache
 *.pdb
 *.log
-C_Utilities/Debug/C_Utilities.lastbuildstate
 *.idb
+*.lastbuildstate
