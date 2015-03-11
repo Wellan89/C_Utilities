@@ -13,14 +13,16 @@ void list_popBack(List* l);
 void list_popFront(List* l);
 
 bool list_isEmpty(List* l);
-int list_getSize(List* l);
+unsigned int list_getSize(List* l);
 
-ELT_TYPE list_front(List* l);
 ELT_TYPE list_back(List* l);
+ELT_TYPE list_front(List* l);
 
+Cell* list_getBackIterator(List* l);
 Cell* list_getFrontIterator(List* l);
 ELT_TYPE list_getElt(Cell* it);
-void list_incrIt(Cell* it);
-void list_decrIt(Cell* it);
-bool list_isBack(Cell* it);
-bool list_isFront(Cell* it);
+Cell* list_incrIt(Cell* it);
+Cell* list_decrIt(Cell* it);
+bool list_isValidIt(Cell* it);
+bool list_isLast(Cell* it);
+bool list_isFirst(Cell* it);
