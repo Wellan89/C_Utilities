@@ -1,9 +1,7 @@
 #ifndef DEF_BOOL
 #define DEF_BOOL
 
-#ifndef bool
-#define bool	char
-#endif
+typedef char bool;
 
 #ifndef false
 #define false	0
