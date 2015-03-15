@@ -12,7 +12,8 @@ void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startN
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	dj[startNode].totalCost = 0;
-	vector<unsigned int> nodesToSee; nodesToSee.reserve(g.size());
+	vector<unsigned int> nodesToSee;
+	nodesToSee.reserve(g.size());
 	nodesToSee.push_back(startNode);
 
 	while (!nodesToSee.empty())
