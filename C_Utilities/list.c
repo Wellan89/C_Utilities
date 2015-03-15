@@ -3,7 +3,7 @@
 
 struct Cell
 {
-	ELT_TYPE val;
+	LIST_ELT_TYPE val;
 	Cell* prev;
 	Cell* next;
 };
@@ -17,6 +17,7 @@ struct List
 List* list_create()
 {
 	List* l = (List*)malloc(sizeof(List));
+	if (!l)	return NULL;
 	l->first = NULL;
 	l->last = NULL;
 	l->size = 0;
@@ -33,9 +34,10 @@ void list_delete(List* l)
 	}
 	free(l);
 }
-void list_pushBack(List* l, ELT_TYPE v)
+void list_pushBack(List* l, LIST_ELT_TYPE v)
 {
 	Cell* c = (Cell*)malloc(sizeof(Cell));
+	if (!c)	return;
 	c->val = v;
 	c->prev = l->last;
 	c->next = NULL;
@@ -53,9 +55,10 @@ void list_pushBack(List* l, ELT_TYPE v)
 
 	l->size++;
 }
-void list_pushFront(List* l, ELT_TYPE v)
+void list_pushFront(List* l, LIST_ELT_TYPE v)
 {
 	Cell* c = (Cell*)malloc(sizeof(Cell));
+	if (!c)	return;
 	c->val = v;
 	c->prev = NULL;
 	c->next = l->first;
@@ -77,7 +80,10 @@ void list_popBack(List* l)
 {
 	Cell* c = l->last;
 	l->last = l->last->prev;
-	l->last->next = NULL;
+	if (l->last)
+		l->last->next = NULL;
+	else
+		l->first = NULL;
 	l->size--;
 	free(c);
 }
@@ -85,7 +91,10 @@ void list_popFront(List* l)
 {
 	Cell* c = l->first;
 	l->first = l->first->next;
-	l->first->prev = NULL;
+	if (l->first)
+		l->first->prev = NULL;
+	else
+		l->last = NULL;
 	l->size--;
 	free(c);
 }
@@ -99,11 +108,11 @@ unsigned int list_getSize(List* l)
 	return l->size;
 }
 
-ELT_TYPE list_back(List* l)
+LIST_ELT_TYPE list_back(List* l)
 {
 	return l->last->val;
 }
-ELT_TYPE list_front(List* l)
+LIST_ELT_TYPE list_front(List* l)
 {
 	return l->first->val;
 }
@@ -116,7 +125,7 @@ Cell* list_getFrontIterator(List* l)
 {
 	return l->first;
 }
-ELT_TYPE list_getElt(Cell* it)
+LIST_ELT_TYPE list_getElt(Cell* it)
 {
 	return it->val;
 }
