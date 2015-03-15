@@ -86,3 +86,6 @@ $RECYCLE.BIN/
 *.log
 *.idb
 *.lastbuildstate
+*.exp
+*.ilk
+*.coverage

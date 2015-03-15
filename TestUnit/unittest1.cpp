@@ -59,10 +59,10 @@ namespace TestUnit
 
 #define BIG_MAZE_SIZE							141		// Doit être impair
 #else
-#define PATH_FINDERS_COMPUTE_LOOPS				300000
+#define PATH_FINDERS_COMPUTE_LOOPS				500000
 #define PATH_FINDERS_PATH_RECONSTRUCTION_LOOPS	0
 
-#define BIG_MAZE_SIZE							1401	// Doit être impair
+#define BIG_MAZE_SIZE							2401	// Doit être impair
 #endif
 
 #define ID(i, j)	((i) * width + (j))

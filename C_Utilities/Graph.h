@@ -2,7 +2,6 @@
 #define DEF_GRAPH
 
 #include <vector>
-#include <list>
 
 // Un graphe est un tableau de noeuds dont chacun contient la liste des liens vers ses voisins.
 // Un lien contient un noeud (le voisin) et son coût de trajet.
@@ -13,9 +12,8 @@
 
 // Fonctions nécessaires de la classe Noeud :
 //		unsigned int getIndex() const;
-//		const std::list<Lien*>& getLinks() const;
-//			Note :	std::list peut être remplacé par std::vector ou std::deque
-//					ou tout autre conteneur de List* pouvant être itéré.
+//		const std::vector<Lien*>& getLinks() const;
+//			Note :	std::vector peut être remplacé par tout autre conteneur de List* pouvant être itéré.
 
 // Fonctions supplémentaires nécessaires pour l'algorithme A* :
 //		bool isFinal() const;
@@ -53,14 +51,14 @@ class Node
 
 protected:
 	unsigned int index;
-	std::list<Link> links;
+	std::vector<Link> links;
 
 	bool finalNode;
 	unsigned int heuristic;
 
 public:
 	unsigned int getIndex() const			{ return index; }
-	const std::list<Link>& getLinks() const	{ return links; }
+	const std::vector<Link>& getLinks() const	{ return links; }
 
 	bool isFinal() const					{ return finalNode; }
 	unsigned int getHeuristic() const		{ return heuristic; }
