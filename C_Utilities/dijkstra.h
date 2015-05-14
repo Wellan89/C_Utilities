@@ -14,8 +14,10 @@ protected:
 	{
 		unsigned int previousNode;
 		unsigned int totalCost;
+		bool alreadyVisited;
 
-		DjNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)) { }
+		DjNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)), alreadyVisited(false)
+			{ }
 	};
 
 	const Graphe& g;

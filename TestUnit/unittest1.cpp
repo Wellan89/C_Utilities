@@ -1,13 +1,20 @@
 #include "CppUnitTest.h"
 #include <cstdlib>
+#include <ctime>
 #include <vector>
 #include <list>
 #include <deque>
 
+/*
+TODO :
+Réecrire Dijkstra avec le nouvel algo wikipédia + chercher sur internet la solution la plus efficace (possible en O(n.log n) apparemment)
+Optimiser la création de chemin par vector puis miroir ?
+*/
+
 // ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !
-#include "..\C_Utilities\List.c"
-#include "..\C_Utilities\Dijkstra.cpp"
-#include "..\C_Utilities\AStar.cpp"
+#include "List.c"
+#include "Dijkstra.cpp"
+#include "AStar.cpp"
 
 using namespace std;
 
@@ -58,11 +65,21 @@ namespace TestUnit
 #define PATH_FINDERS_PATH_RECONSTRUCTION_LOOPS	0
 
 #define BIG_MAZE_SIZE							141		// Doit être impair
+#define EMPTY_MAP_SIZE							61
+
+#define RANDOM_MAP_SIZE							151
+#define RANDOM_MAP_MAX_NB_LINKS					15
+#define RANDOM_MAP_MAX_COST						1000000
 #else
 #define PATH_FINDERS_COMPUTE_LOOPS				500000
 #define PATH_FINDERS_PATH_RECONSTRUCTION_LOOPS	0
 
-#define BIG_MAZE_SIZE							2401	// Doit être impair
+#define BIG_MAZE_SIZE							2201	// Doit être impair
+#define EMPTY_MAP_SIZE							871
+
+#define RANDOM_MAP_SIZE							20001
+#define RANDOM_MAP_MAX_NB_LINKS					1000
+#define RANDOM_MAP_MAX_COST						1000000
 #endif
 
 #define ID(i, j)	((i) * width + (j))
@@ -168,6 +185,10 @@ namespace TestUnit
 					}
 				}
 			}
+			for (unsigned int i = 0; i < height; i++)
+				for (unsigned int j = 0; j < width; j++)
+					g.setNodeHeuristic(ID(i, j),
+						abs((int)(finalNode / width) - (int)i) + abs((int)(finalNode % width) - (int)j));
 
 			Dijkstra<> dj(g);
 			for (int i = 0; i < PATH_FINDERS_COMPUTE_LOOPS; i++)
@@ -207,12 +228,49 @@ namespace TestUnit
 						g.addLink(id, ID(i, j + 1), 1);
 				}
 			}
+			for (unsigned int i = 0; i < height; i++)
+				for (unsigned int j = 0; j < width; j++)
+					g.setNodeHeuristic(ID(i, j),
+						abs((int)(finalNode / width) - (int)i) + abs((int)(finalNode % width) - (int)j));
 
 			Dijkstra<> dj(g);
 			dj.computeShortestPathsFrom(start);
 			Assert::AreEqual(true, dj.canReachNode(finalNode));
 			Assert::AreEqual(cost, dj.getCostTo(finalNode));
 			Assert::AreEqual(path, dj.getShortestPathTo(finalNode));
+		}
+
+		TEST_METHOD(DijkstraEmptyMap)
+		{
+			unsigned int width = EMPTY_MAP_SIZE;
+			unsigned int height = EMPTY_MAP_SIZE;
+
+			unsigned int start = ID(height / 2, width / 2);
+			unsigned int finalNode = ID(height - 1, width - 1);
+			unsigned int cost = abs((int)(start / width) - (int)(finalNode / width)) + abs((int)(start % width) - (int)(finalNode % width));
+
+			Graph g(width * height);
+			g.setNodeFinal(finalNode);
+			for (unsigned int i = 0; i < height; i++)
+			{
+				for (unsigned int j = 0; j < width; j++)
+				{
+					unsigned int id = ID(i, j);
+					if (i > 0)			g.addLink(id, ID(i - 1, j), 3);	// Haut<->Bas : coûte 3     
+					if (i < height - 1)	g.addLink(id, ID(i + 1, j), 1);	// Bas<->Haut : coûte 1     
+					if (j > 0)			g.addLink(id, ID(i, j - 1), 1);	// Gauche<->Droite : coûte 1
+					if (j < width - 1)	g.addLink(id, ID(i, j + 1), 2);	// Droite<->Gauche : coûte 2
+
+					g.setNodeHeuristic(ID(i, j),
+						abs((int)(finalNode / width) - (int)i) + abs((int)(finalNode % width) - (int)j));
+				}
+			}
+
+			Dijkstra<> dj(g);
+			dj.computeShortestPathsFrom(start);
+			Assert::AreEqual(true, dj.canReachNode(finalNode));
+			Assert::AreEqual(cost, dj.getCostTo(finalNode));
+			//Assert::AreEqual(path, dj.getShortestPathTo(finalNode));
 		}
 	};
 
@@ -259,7 +317,7 @@ namespace TestUnit
 				as.getShortestPath();
 
 			const unsigned int costs[] =
-			{ 0, 85, 217, 503, 173, 165, 403, 320, 415, 499 };
+				{ 0, 85, 217, 503, 173, 165, 403, 320, 415, 499 };
 			const deque<unsigned int> paths[] = {
 				deque < unsigned int > { CTI('a') },
 				deque < unsigned int > { CTI('a'), CTI('b') },
@@ -329,7 +387,7 @@ namespace TestUnit
 			for (unsigned int i = 0; i < height; i++)
 				for (unsigned int j = 0; j < width; j++)
 					g.setNodeHeuristic(ID(i, j),
-						abs((int)(finalNode % width) - (int)i) + abs((int)(finalNode / width) - (int)j));
+						abs((int)(finalNode / width) - (int)i) + abs((int)(finalNode % width) - (int)j));
 
 			AStar<> as(g);
 			for (int i = 0; i < PATH_FINDERS_COMPUTE_LOOPS; i++)
@@ -373,7 +431,7 @@ namespace TestUnit
 			for (unsigned int i = 0; i < height; i++)
 				for (unsigned int j = 0; j < width; j++)
 					g.setNodeHeuristic(ID(i, j),
-						abs((int)(finalNode % width) - (int)i) + abs((int)(finalNode / width) - (int)j));
+						abs((int)(finalNode / width) - (int)i) + abs((int)(finalNode % width) - (int)j));
 
 			AStar<> as(g);
 			as.computeShortestPathFrom(start);
@@ -381,6 +439,78 @@ namespace TestUnit
 			Assert::AreEqual(finalNode, as.getFinalNode());
 			Assert::AreEqual(cost, as.getPathCost());
 			Assert::AreEqual(path, as.getShortestPath());
+		}
+
+		TEST_METHOD(AStarEmptyMap)
+		{
+			unsigned int width = EMPTY_MAP_SIZE;
+			unsigned int height = EMPTY_MAP_SIZE;
+
+			unsigned int start = ID(height / 2, width / 2);
+			unsigned int finalNode = ID(height - 1, width - 1);
+			unsigned int cost = abs((int)(start / width) - (int)(finalNode / width)) + abs((int)(start % width) - (int)(finalNode % width));
+
+			Graph g(width * height);
+			g.setNodeFinal(finalNode);
+			for (unsigned int i = 0; i < height; i++)
+			{
+				for (unsigned int j = 0; j < width; j++)
+				{
+					unsigned int id = ID(i, j);
+					if (i > 0)			g.addLink(id, ID(i - 1, j), 3);	// Haut<->Bas : coûte 3
+					if (i < height - 1)	g.addLink(id, ID(i + 1, j), 1);	// Bas<->Haut : coûte 1
+					if (j > 0)			g.addLink(id, ID(i, j - 1), 1);	// Gauche<->Droite : coûte 1
+					if (j < width - 1)	g.addLink(id, ID(i, j + 1), 2); // Droite<->Gauche : coûte 2
+
+					g.setNodeHeuristic(ID(i, j),
+						abs((int)(finalNode / width) - (int)i) + abs((int)(finalNode % width) - (int)j));
+				}
+			}
+
+			AStar<> as(g);
+			as.computeShortestPathFrom(start);
+			Assert::AreEqual(true, as.hasFoundPath());
+			Assert::AreEqual(finalNode, as.getFinalNode());
+			Assert::AreEqual(cost, as.getPathCost());
+			//Assert::AreEqual(path, as.getShortestPath());
+		}
+	};
+
+	TEST_CLASS(RandomPaths)
+	{
+		TEST_METHOD(RandomGraph)
+		{
+			srand((unsigned int)time(NULL));
+
+			Graph g(RANDOM_MAP_SIZE);
+			for (unsigned int i = 0; i < RANDOM_MAP_SIZE; i++)
+			{
+				unsigned int nbLinks = (unsigned int)rand() % RANDOM_MAP_MAX_NB_LINKS;
+				for (unsigned int j = 0; j < nbLinks; j++)
+				{
+					unsigned int target = (unsigned int)rand() % RANDOM_MAP_SIZE;
+					unsigned int cost = (unsigned int)rand() % RANDOM_MAP_MAX_COST;
+					g.addLink(i, target, cost, true);
+				}
+			}
+
+			unsigned int startNode = rand() % RANDOM_MAP_SIZE;
+			unsigned int finalNode = rand() % RANDOM_MAP_SIZE;
+			g.setNodeFinal(finalNode);
+
+			Dijkstra<> dj(g);
+			dj.computeShortestPathsFrom(startNode);
+
+			AStar<> as(g);
+			as.computeShortestPathFrom(startNode);
+
+			Assert::AreEqual(dj.canReachNode(finalNode), as.hasFoundPath());
+			if (as.hasFoundPath())
+			{
+				Assert::AreEqual(finalNode, as.getFinalNode());
+				Assert::AreEqual(dj.getCostTo(finalNode), as.getPathCost());
+				Assert::AreEqual(dj.getShortestPathTo(finalNode), as.getShortestPath());
+			}
 		}
 	};
 }

@@ -11,11 +11,10 @@ template<class ASNodeInfo>
 class AStarNodeComparator
 {
 protected:
-	const std::vector<ASNodeInfo>& as;
+	const vector<ASNodeInfo>& as;
 
 public:
-	AStarNodeComparator(const std::vector<ASNodeInfo>& asInfos)
-		: as(asInfos) { }
+	AStarNodeComparator(const vector<ASNodeInfo>& asInfos) : as(asInfos) { }
 	bool operator()(unsigned int node1, unsigned int node2)
 	{
 		return (as[node1].totalEstimatedCost > as[node2].totalEstimatedCost);
@@ -33,7 +32,6 @@ void AStar<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int startNode)
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	as[startNode].totalCost = 0;
 	as[startNode].totalEstimatedCost = g[startNode].getHeuristic();
-	as[startNode].alreadyVisited = true;
 	AStarNodeComparator<ASNodeInfo> cmp(as);
 	priority_queue<unsigned int, vector<unsigned int>, AStarNodeComparator<ASNodeInfo> > nodesToSee(cmp);
 	nodesToSee.push(startNode);
@@ -47,6 +45,9 @@ void AStar<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int startNode)
 			return;
 		}
 		nodesToSee.pop();
+		if (as[node].alreadyVisited)
+			continue;
+
 		as[node].alreadyVisited = true;
 		unsigned int nodeTotalCost = as[node].totalCost;
 

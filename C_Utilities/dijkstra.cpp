@@ -3,6 +3,23 @@
 
 using namespace std;
 
+// Classe utilisée par la liste de priorité des noeuds :
+// Détermine si un noeud est (strictement) moins prioritaire qu'un autre
+// en regardant si la longueur de son plus court chemin est supérieur.
+template<class DjNodeInfo>
+class DjNodeComparator
+{
+protected:
+	const vector<DjNodeInfo>& dj;
+
+public:
+	DjNodeComparator(const vector<DjNodeInfo>& djInfos) : dj(djInfos) { }
+	bool operator()(unsigned int node1, unsigned int node2)
+	{
+		return (dj[node1].totalCost > dj[node2].totalCost);
+	}
+};
+
 template<class Graphe, class Noeud, class Lien>
 void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
 {
@@ -12,26 +29,33 @@ void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startN
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	dj[startNode].totalCost = 0;
-	vector<unsigned int> nodesToSee;
-	nodesToSee.reserve(g.size());
-	nodesToSee.push_back(startNode);
+	DjNodeComparator<DjNodeInfo> cmp(dj);
+	priority_queue<unsigned int, vector<unsigned int>, DjNodeComparator<DjNodeInfo> > nodesToSee(dj);
+	nodesToSee.push(startNode);
 
 	while (!nodesToSee.empty())
 	{
-		unsigned int node = nodesToSee.back();
-		nodesToSee.pop_back();
+		unsigned int node = nodesToSee.top();
+		nodesToSee.pop();
+		if (dj[node].alreadyVisited)
+			continue;
+
+		dj[node].alreadyVisited = true;
 		unsigned int nodeTotalCost = dj[node].totalCost;
 
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
 			unsigned int targetNode = it->getTargetIndex();
+			if (dj[targetNode].alreadyVisited)
+				continue;
+
 			unsigned int newCost = nodeTotalCost + it->getCost();
 			if (newCost < dj[targetNode].totalCost)
 			{
 				dj[targetNode].totalCost = newCost;
 				dj[targetNode].previousNode = node;
-				nodesToSee.push_back(targetNode);
+				nodesToSee.push(targetNode);
 			}
 		}
 	}
