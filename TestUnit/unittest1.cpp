@@ -12,12 +12,15 @@ Optimiser la création de chemin par vector puis miroir ?
 Ecrire Bellman, Bellman-Ford et Floyd-Warshall
 Ecrire un type de graphe "infini" : génération dynamique de la liste des noeuds et de la liste des liens entre eux
 Ecrire les algos de parcours en largeur et en profondeur pour les chemins les plus courts
+Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra
+Tester la fonction de suppression de liens du graphe
 */
 
 // ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !
 #include "List.c"
 #include "Dijkstra.cpp"
 #include "AStar.cpp"
+#include "Bellman.cpp"
 
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -258,6 +261,7 @@ namespace TestUnit
 				Assert::AreEqual(paths[i], dj.getShortestPathTo(i));
 				Assert::AreEqual(reverse_vect(paths[i]), dj.getReverseShortestPathTo(i));
 			}
+#undef CTI
 		}
 
 		TEST_METHOD(DijkstraLittleMaze)
@@ -458,6 +462,7 @@ namespace TestUnit
 			Assert::AreEqual(costs[finalNode], as.getPathCost());
 			Assert::AreEqual(paths[finalNode], as.getShortestPath());
 			Assert::AreEqual(reverse_vect(paths[finalNode]), as.getReverseShortestPath());
+#undef CTI
 		}
 
 		TEST_METHOD(AStarLittleMaze)
@@ -598,6 +603,102 @@ namespace TestUnit
 			Assert::AreEqual(finalNode, as.getFinalNode());
 			Assert::AreEqual(cost, as.getPathCost());
 			//Assert::AreEqual(path, as.getShortestPath());
+		}
+	};
+
+	TEST_CLASS(BellmanTests)
+	{
+		TEST_METHOD(BellmanSimpleTest_Algo2)
+		{
+			// Exemple tiré du cours d'Algorithmique 2 (Ensimag 1A) :
+			Graph g(8);
+			g.addLink(7, 6, 1, true);
+			g.addLink(7, 5, 1, true);
+			g.addLink(6, 3, 2, true);
+			g.addLink(5, 3, 1, true);
+			g.addLink(4, 2, 1, true);
+			g.addLink(3, 1, 1, true);
+			g.addLink(2, 1, 1, true);
+			g.addLink(1, 0, 1, true);
+
+			Bellman<> bm(g);
+			bm.computeShortestPathsFrom(7);
+
+			const unsigned int costs[8] =
+				{ 4, 3, (unsigned int)(-1), 2, (unsigned int)(-1), 1, 1, 0 };
+			const deque<unsigned int> paths[8] = {
+				deque < unsigned int > { 7, 5, 3, 1, 0 },
+				deque < unsigned int > { 7, 5, 3, 1 },
+				deque < unsigned int > { 2 },
+				deque < unsigned int > { 7, 5, 3 },
+				deque < unsigned int > { 4 },
+				deque < unsigned int > { 7, 5 },
+				deque < unsigned int > { 7, 6 },
+				deque < unsigned int > { 7 } };
+			for (unsigned int i = 0; i < g.size(); i++)
+			{
+				Assert::AreEqual((costs[i] != -1), bm.canReachNode(i));
+				Assert::AreEqual(costs[i], bm.getCostTo(i));
+				Assert::AreEqual(paths[i], bm.getShortestPathTo(i));
+				Assert::AreEqual(reverse_vect(paths[i]), bm.getReverseShortestPathTo(i));
+			}
+		}
+		TEST_METHOD(BellmanSimpleTest_RO)
+		{
+			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
+			Graph g(8);
+			g.addLink(0, 2, 1, true);
+			g.addLink(0, 3, 1, true);
+			g.addLink(1, 3, 1, true);
+			g.addLink(2, 5, 1, true);
+			g.addLink(2, 6, 1, true);
+			g.addLink(3, 4, 1, true);
+			g.addLink(3, 5, 2, true);
+			g.addLink(3, 7, 1, true);
+			g.addLink(5, 6, 1, true);
+			g.addLink(5, 7, 1, true);
+
+			Bellman<> bm(g);
+			bm.computeShortestPathsFrom(0);
+
+			const unsigned int costs[8] =
+				{ 0, (unsigned int)(-1), 1, 1, 2, 2, 2, 2 };
+			const deque<unsigned int> paths[8] = {
+				deque < unsigned int > { 0 },
+				deque < unsigned int > { 1 },
+				deque < unsigned int > { 0, 2 },
+				deque < unsigned int > { 0, 3 },
+				deque < unsigned int > { 0, 3, 4 },
+				deque < unsigned int > { 0, 2, 5 },
+				deque < unsigned int > { 0, 2, 6 },
+				deque < unsigned int > { 0, 3, 7 } };
+			for (unsigned int i = 0; i < g.size(); i++)
+			{
+				Assert::AreEqual((costs[i] != -1), bm.canReachNode(i));
+				Assert::AreEqual(costs[i], bm.getCostTo(i));
+				Assert::AreEqual(paths[i], bm.getShortestPathTo(i));
+				Assert::AreEqual(reverse_vect(paths[i]), bm.getReverseShortestPathTo(i));
+			}
+		}
+		TEST_METHOD(BellmanImpossibleTopologicalOrder)
+		{
+			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
+			Graph g(6);
+			g.addLink(0, 1, 2, true);
+			g.addLink(0, 2, 8, true);
+			g.addLink(1, 2, 5, true);
+			g.addLink(1, 3, 1, true);
+			g.addLink(2, 4, 1, true);
+			g.addLink(3, 2, 2, true);
+			g.addLink(3, 4, 4, true);
+			g.addLink(3, 5, 1, true);
+			g.addLink(4, 1, 3, true);
+			g.addLink(4, 5, 1, true);
+
+			Bellman<> bm(g);
+			bm.computeShortestPathsFrom(0);
+			for (unsigned int i = 0; i < g.size(); i++)
+				Assert::IsFalse(bm.canReachNode(i));
 		}
 	};
 

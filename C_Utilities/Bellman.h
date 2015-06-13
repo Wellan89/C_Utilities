@@ -1,37 +1,37 @@
-#ifndef DEF_DIJKSTRA
-#define DEF_DIJKSTRA
+#ifndef DEF_BELLMAN
+#define DEF_BELLMAN
 
 #include <deque>
 #include <vector>
 #include "Graph.h"
 
-// Algorithme de Dijkstra : parcours tout le graphe depuis un point de départ et détermine tous les chemins les plus courts depuis ce point
+// Algorithme de Bellman : pour un graphe sans circuits (i.e. avec un ordre topologique),
+// calcule tous les chemins les plus courts depuis un sommmet donné.
 template<class Graphe = Graph, class Noeud = Node, class Lien = Link>
-class Dijkstra
+class Bellman
 {
 protected:
-	struct DjNodeInfo
+	struct BmNodeInfo
 	{
 		unsigned int previousNode;
 		unsigned int totalCost;
-		bool alreadyVisited;
 
-		DjNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)), alreadyVisited(false)
+		BmNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1))
 			{ }
 	};
 
-	std::vector<DjNodeInfo> dj;
+	std::vector<BmNodeInfo> bm;
 	const Graphe& g;
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
-		dj.clear();
-		dj.resize(g.size());
+		bm.clear();
+		bm.resize(g.size());
 	}
 
 public:
-	Dijkstra(const Graphe& gr) : g(gr) { reset(); }
+	Bellman(const Graphe& gr) : g(gr) { reset(); }
 
 	void computeShortestPathsFrom(unsigned int startNode);
 

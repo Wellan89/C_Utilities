@@ -7,8 +7,7 @@ template<class Graphe, class Noeud, class Lien>
 void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
 {
 	// Réinitialise les informations sur les noeuds
-	dj.clear();
-	dj.resize(g.size());
+	reset();
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	cost_priority_queue<unsigned int, unsigned int> nodesToSee;

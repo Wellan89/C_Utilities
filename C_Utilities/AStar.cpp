@@ -7,9 +7,7 @@ template<class Graphe, class Noeud, class Lien>
 void AStar<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int startNode)
 {
 	// Réinitialise les informations sur les noeuds
-	as.clear();
-	as.resize(g.size());
-	endNode = (unsigned int)(-1);
+	reset();
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	as[startNode].totalCost = 0;

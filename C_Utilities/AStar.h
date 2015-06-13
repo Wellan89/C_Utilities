@@ -28,8 +28,16 @@ protected:
 	// Le noeud final trouvé par cet algorithme
 	unsigned int endNode;
 
+	// Réinitialise les informations sur les noeuds
+	void reset()
+	{
+		as.clear();
+		as.resize(g.size());
+		endNode = (unsigned int)(-1);
+	}
+
 public:
-	AStar(const Graphe& gr) : g(gr), endNode((unsigned int)(-1)) { }
+	AStar(const Graphe& gr) : g(gr) { reset(); }
 
 	void computeShortestPathFrom(unsigned int startNode);
 
