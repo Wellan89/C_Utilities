@@ -104,6 +104,75 @@ namespace TestUnit
 		}
 	};
 
+	bool checkReverseTopologicalOrder(const Graph& g, const vector<unsigned int>& rto)
+	{
+		if (rto.size() != g.size())
+			return false;
+
+		// Vérifie que pour chaque noeud, le noeud cible de chacun de ses liens est plus proche que lui du début du vecteur
+		for (auto it = rto.begin() + 1; it != rto.end(); ++it)
+		{
+			const auto& links = g[*it].getLinks();
+			for each (Link l in links)
+			{
+				auto targetIt = find(rto.begin(), it, l.getTargetIndex());
+				if (targetIt == it)
+					return false;
+			}
+		}
+		return true;
+	}
+
+	TEST_CLASS(GraphTests)
+	{
+		TEST_METHOD(GraphSimpleTopologicalOrder_Algo2)
+		{
+			// Exemple tiré du cours d'Algorithmique 2 (Ensimag 1A) :
+			Graph g(8);
+			g.addLink(7, 6, 1, true);
+			g.addLink(7, 5, 1, true);
+			g.addLink(6, 3, 1, true);
+			g.addLink(5, 3, 1, true);
+			g.addLink(4, 2, 1, true);
+			g.addLink(3, 1, 1, true);
+			g.addLink(2, 1, 1, true);
+			g.addLink(1, 0, 1, true);
+			Assert::IsTrue(checkReverseTopologicalOrder(g, g.getReverseTopologicalyOrderedNodes()));
+		}
+		TEST_METHOD(GraphSimpleTopologicalOrder_RO)
+		{
+			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
+			Graph g(8);
+			g.addLink(0, 2, 1, true);
+			g.addLink(0, 3, 1, true);
+			g.addLink(1, 3, 1, true);
+			g.addLink(2, 5, 1, true);
+			g.addLink(2, 6, 1, true);
+			g.addLink(3, 4, 1, true);
+			g.addLink(3, 5, 1, true);
+			g.addLink(3, 7, 1, true);
+			g.addLink(5, 6, 1, true);
+			g.addLink(5, 7, 1, true);
+			Assert::IsTrue(checkReverseTopologicalOrder(g, g.getReverseTopologicalyOrderedNodes()));
+		}
+		TEST_METHOD(GraphImpossibleTopologicalOrder)
+		{
+			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
+			Graph g(6);
+			g.addLink(0, 1, 2, true);
+			g.addLink(0, 2, 8, true);
+			g.addLink(1, 2, 5, true);
+			g.addLink(1, 3, 1, true);
+			g.addLink(2, 4, 1, true);
+			g.addLink(3, 2, 2, true);
+			g.addLink(3, 4, 4, true);
+			g.addLink(3, 5, 1, true);
+			g.addLink(4, 1, 3, true);
+			g.addLink(4, 5, 1, true);
+			Assert::IsTrue(g.getReverseTopologicalyOrderedNodes().empty());
+		}
+	};
+
 #ifdef _DEBUG
 #define PATH_FINDERS_COMPUTE_LOOPS				800
 #define PATH_FINDERS_PATH_RECONSTRUCTION_LOOPS	0
@@ -132,7 +201,7 @@ namespace TestUnit
 	{
 		vector<unsigned int> v;
 		v.reserve(d.size());
-		for (auto it = d.rbegin(); it != d.rend(); it++)
+		for (auto it = d.rbegin(); it != d.rend(); ++it)
 			v.push_back(*it);
 		return v;
 	}
@@ -187,7 +256,7 @@ namespace TestUnit
 				Assert::AreEqual(true, dj.canReachNode(i));
 				Assert::AreEqual(costs[i], dj.getCostTo(i));
 				Assert::AreEqual(paths[i], dj.getShortestPathTo(i));
-				Assert::AreEqual(reverse_vect(paths[i]), dj.getReversedShortestPathTo(i));
+				Assert::AreEqual(reverse_vect(paths[i]), dj.getReverseShortestPathTo(i));
 			}
 		}
 
@@ -388,7 +457,7 @@ namespace TestUnit
 			Assert::AreEqual(finalNode, as.getFinalNode());
 			Assert::AreEqual(costs[finalNode], as.getPathCost());
 			Assert::AreEqual(paths[finalNode], as.getShortestPath());
-			Assert::AreEqual(reverse_vect(paths[finalNode]), as.getReversedShortestPath());
+			Assert::AreEqual(reverse_vect(paths[finalNode]), as.getReverseShortestPath());
 		}
 
 		TEST_METHOD(AStarLittleMaze)

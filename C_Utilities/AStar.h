@@ -37,7 +37,7 @@ public:
 	unsigned int getFinalNode() const;
 	unsigned int getPathCost() const;
 	std::deque<unsigned int> getShortestPath() const;
-	std::vector<unsigned int> getReversedShortestPath() const;
+	std::vector<unsigned int> getReverseShortestPath() const;
 };
 
 #endif

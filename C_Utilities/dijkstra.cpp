@@ -64,7 +64,7 @@ deque<unsigned int> Dijkstra<Graphe, Noeud, Lien>::getShortestPathTo(unsigned in
 	return l;
 }
 template<class Graphe, class Noeud, class Lien>
-vector<unsigned int> Dijkstra<Graphe, Noeud, Lien>::getReversedShortestPathTo(unsigned int endNode) const
+vector<unsigned int> Dijkstra<Graphe, Noeud, Lien>::getReverseShortestPathTo(unsigned int endNode) const
 {
 	vector<unsigned int> l;
 	while (endNode != (unsigned int)(-1))

@@ -31,7 +31,7 @@ public:
 	bool canReachNode(unsigned int node) const;
 	unsigned int getCostTo(unsigned int node) const;
 	std::deque<unsigned int> getShortestPathTo(unsigned int endNode) const;
-	std::vector<unsigned int> getReversedShortestPathTo(unsigned int endNode) const;
+	std::vector<unsigned int> getReverseShortestPathTo(unsigned int endNode) const;
 };
 
 #endif

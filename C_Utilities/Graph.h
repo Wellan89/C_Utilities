@@ -1,6 +1,7 @@
 #ifndef DEF_GRAPH
 #define DEF_GRAPH
 
+#include <deque>
 #include <vector>
 
 // Un graphe est un tableau de noeuds dont chacun contient la liste des liens vers ses voisins.
@@ -9,6 +10,9 @@
 // Fonctions nécessaires de la classe Graphe :
 //		unsigned int size() const;
 //		const Noeud& operator[](unsigned int index) const;
+// Fonctions supplémentaires pour l'algorithme de Bellman :
+//		std::vector<unsigned int> getReverseTopologicalyOrderedNodes() const;
+//			Note :	std::vector peut être remplacé par tout autre conteneur de unsigned int pouvant être itéré.
 
 // Fonctions nécessaires de la classe Noeud :
 //		unsigned int getIndex() const;
@@ -56,6 +60,7 @@ protected:
 
 	bool finalNode;
 	unsigned int heuristic;
+	unsigned int topologicIndex;
 
 public:
 	unsigned int getIndex() const				{ return index; }
@@ -63,9 +68,10 @@ public:
 
 	bool isFinal() const						{ return finalNode; }
 	unsigned int getHeuristic() const			{ return heuristic; }
+	unsigned int getTopologicIndex() const		{ return topologicIndex; }
 
 	Node(unsigned int _index)
-		: index(_index), finalNode(false), heuristic((unsigned int)(-1))	{ }
+		: index(_index), finalNode(false), heuristic((unsigned int)(-1)), topologicIndex((unsigned int)(-1)) { }
 };
 class Graph
 {
@@ -80,10 +86,10 @@ public:
 			nodes.push_back(Node(i));
 	}
 
-	void addLink(unsigned int start, unsigned int end, unsigned int cost, bool oneDirection = false)
+	void addLink(unsigned int start, unsigned int end, unsigned int cost, bool unidirectionnal = false)
 	{
 		nodes[start].links.push_back(Link(start, end, cost));
-		if (!oneDirection)
+		if (!unidirectionnal)
 			nodes[end].links.push_back(Link(end, start, cost));
 	}
 	void removeLink(unsigned int start, unsigned int end, bool oneDirection = false, bool costCheck = false, unsigned int cost = 0)
@@ -113,6 +119,60 @@ public:
 	void setNodeHeuristic(unsigned int node, unsigned int heuristic)
 	{
 		nodes[node].heuristic = heuristic;
+	}
+
+protected:
+	// Enum définissant l'état d'un noeud lors de la construction d'un ordre topologique
+	enum E_TOPOLOGICAL_ORDER_NODE_STATE
+	{
+		ETONS_UNSEEN,
+		ETONS_SEEN,
+		ETONS_ADDED
+	};
+
+	// Ajoute un noeud et ses fils à un ordre topologique.
+	// Renvoit false si on détecte une erreur lors de la construction de l'ordre topologique.
+	bool addToTopologicalOrder(unsigned int index, std::vector<unsigned int>& v,
+		std::vector<E_TOPOLOGICAL_ORDER_NODE_STATE>& nodesState) const
+	{
+		nodesState[index] = ETONS_SEEN;
+		for (auto it = nodes[index].links.begin(); it != nodes[index].links.end(); ++it)
+		{
+			unsigned int node = it->getTargetIndex();
+			if (nodesState[node] == ETONS_UNSEEN)
+			{
+				if (!addToTopologicalOrder(node, v, nodesState))
+					return false;
+			}
+			else if (nodesState[node] == ETONS_SEEN)
+				return false;
+		}
+		nodesState[index] = ETONS_ADDED;
+		v.push_back(index);
+		return true;
+	}
+public:
+	// Détermine un ordre topologique inverse sur ce graphe :
+	// les noeuds puits seront au début de ce vecteur, et les noeuds source seront à la fin.
+	// Renvoit le vecteur vide s'il n'existe pas de tel ordre topologique.
+	std::vector<unsigned int> getReverseTopologicalyOrderedNodes() const
+	{
+		std::vector<unsigned int> v;
+		v.reserve(nodes.size());
+
+		std::vector<E_TOPOLOGICAL_ORDER_NODE_STATE> nodesState(nodes.size(), ETONS_UNSEEN);
+		for (unsigned int i = 0; i < nodes.size(); i++)
+		{
+			if (nodesState[i] == ETONS_UNSEEN)
+			{
+				if (!addToTopologicalOrder(i, v, nodesState))
+				{
+					v.clear();
+					break;
+				}
+			}
+		}
+		return v;
 	}
 
 	void addNodes(unsigned int nbOfNodesToAdd = 1)
