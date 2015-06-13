@@ -20,8 +20,8 @@ protected:
 			{ }
 	};
 
-	const Graphe& g;
 	std::vector<DjNodeInfo> dj;
+	const Graphe& g;
 
 public:
 	Dijkstra(const Graphe& gr) : g(gr) { }

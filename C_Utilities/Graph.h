@@ -55,12 +55,11 @@ class Node
 	friend Graph;
 
 protected:
-	unsigned int index;
 	std::vector<Link> links;
+	unsigned int index;
 
-	bool finalNode;
 	unsigned int heuristic;
-	unsigned int topologicIndex;
+	bool finalNode;
 
 public:
 	unsigned int getIndex() const				{ return index; }
@@ -68,7 +67,6 @@ public:
 
 	bool isFinal() const						{ return finalNode; }
 	unsigned int getHeuristic() const			{ return heuristic; }
-	unsigned int getTopologicIndex() const		{ return topologicIndex; }
 
 	Node(unsigned int _index)
 		: index(_index), finalNode(false), heuristic((unsigned int)(-1)), topologicIndex((unsigned int)(-1)) { }

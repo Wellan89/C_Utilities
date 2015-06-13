@@ -22,8 +22,8 @@ protected:
 			totalEstimatedCost((unsigned int)(-1)), alreadyVisited(false) { }
 	};
 
-	const Graphe& g;
 	std::vector<ASNodeInfo> as;
+	const Graphe& g;
 
 	// Le noeud final trouvé par cet algorithme
 	unsigned int endNode;
