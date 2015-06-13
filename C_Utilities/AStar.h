@@ -1,8 +1,8 @@
 #ifndef DEF_A_STAR
 #define DEF_A_STAR
 
-#include <deque>
 #include <vector>
+#include <deque>
 #include "Graph.h"
 
 // Algorithme A* : parcours le graphe depuis un point de départ en suivant une heuristique,
@@ -37,6 +37,7 @@ public:
 	unsigned int getFinalNode() const;
 	unsigned int getPathCost() const;
 	std::deque<unsigned int> getShortestPath() const;
+	std::vector<unsigned int> getReversedShortestPath() const;
 };
 
 #endif

@@ -79,3 +79,15 @@ deque<unsigned int> AStar<Graphe, Noeud, Lien>::getShortestPath() const
 	}
 	return l;
 }
+template<class Graphe, class Noeud, class Lien>
+vector<unsigned int> AStar<Graphe, Noeud, Lien>::getReversedShortestPath() const
+{
+	vector<unsigned int> l;
+	unsigned int node = endNode;
+	while (node != (unsigned int)(-1))
+	{
+		l.push_back(node);
+		node = as[node].previousNode;
+	}
+	return l;
+}

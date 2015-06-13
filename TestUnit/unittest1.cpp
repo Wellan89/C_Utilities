@@ -10,6 +10,8 @@ TODO :
 Réecrire Dijkstra avec le nouvel algo wikipédia + chercher sur internet la solution la plus efficace (possible en O(n.log n) apparemment)
 Optimiser la création de chemin par vector puis miroir ?
 Ecrire Bellman, Bellman-Ford et Floyd-Warshall
+Ecrire un type de graphe "infini" : génération dynamique de la liste des noeuds et de la liste des liens entre eux
+Ecrire les algos de parcours en largeur et en profondeur pour les chemins les plus courts
 */
 
 // ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !
@@ -84,6 +86,16 @@ namespace TestUnit
 #endif
 
 #define ID(i, j)	((i) * width + (j))
+
+	vector<unsigned int> reverse_vect(const deque<unsigned int>& d)
+	{
+		vector<unsigned int> v;
+		v.reserve(d.size());
+		for (auto it = d.rbegin(); it != d.rend(); it++)
+			v.push_back(*it);
+		return v;
+	}
+
 	TEST_CLASS(DijkstraTests)
 	{
 	public:
@@ -134,6 +146,7 @@ namespace TestUnit
 				Assert::AreEqual(true, dj.canReachNode(i));
 				Assert::AreEqual(costs[i], dj.getCostTo(i));
 				Assert::AreEqual(paths[i], dj.getShortestPathTo(i));
+				Assert::AreEqual(reverse_vect(paths[i]), dj.getReversedShortestPathTo(i));
 			}
 		}
 
@@ -334,6 +347,7 @@ namespace TestUnit
 			Assert::AreEqual(finalNode, as.getFinalNode());
 			Assert::AreEqual(costs[finalNode], as.getPathCost());
 			Assert::AreEqual(paths[finalNode], as.getShortestPath());
+			Assert::AreEqual(reverse_vect(paths[finalNode]), as.getReversedShortestPath());
 		}
 
 		TEST_METHOD(AStarLittleMaze)
@@ -555,6 +569,20 @@ namespace Microsoft
 				return outStr;
 			}
 			static wstring ToString(const deque<unsigned int>& l)
+			{
+				wstringstream str;
+				for (auto it = l.cbegin(); it != l.cend(); ++it)
+				{
+					if (it != l.cbegin())
+						str << L" -> ";
+					str << (*it);
+				}
+
+				wstring outStr;
+				str >> outStr;
+				return outStr;
+			}
+			static wstring ToString(const vector<unsigned int>& l)
 			{
 				wstringstream str;
 				for (auto it = l.cbegin(); it != l.cend(); ++it)
