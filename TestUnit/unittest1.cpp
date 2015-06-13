@@ -9,6 +9,7 @@
 TODO :
 Réecrire Dijkstra avec le nouvel algo wikipédia + chercher sur internet la solution la plus efficace (possible en O(n.log n) apparemment)
 Optimiser la création de chemin par vector puis miroir ?
+Ecrire Bellman, Bellman-Ford et Floyd-Warshall
 */
 
 // ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !

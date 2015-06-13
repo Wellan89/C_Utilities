@@ -1,24 +1,7 @@
 #include "dijkstra.h"
-#include <queue>
+#include "cost_priority_queue.h"
 
 using namespace std;
-
-// Classe utilisée par la liste de priorité des noeuds :
-// Détermine si un noeud est (strictement) moins prioritaire qu'un autre
-// en regardant si la longueur de son plus court chemin est supérieur.
-template<class DjNodeInfo>
-class DjNodeComparator
-{
-protected:
-	const vector<DjNodeInfo>& dj;
-
-public:
-	DjNodeComparator(const vector<DjNodeInfo>& djInfos) : dj(djInfos) { }
-	bool operator()(unsigned int node1, unsigned int node2)
-	{
-		return (dj[node1].totalCost > dj[node2].totalCost);
-	}
-};
 
 template<class Graphe, class Noeud, class Lien>
 void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
@@ -28,10 +11,9 @@ void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startN
 	dj.resize(g.size());
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
+	cost_priority_queue<unsigned int, unsigned int> nodesToSee;
 	dj[startNode].totalCost = 0;
-	DjNodeComparator<DjNodeInfo> cmp(dj);
-	priority_queue<unsigned int, vector<unsigned int>, DjNodeComparator<DjNodeInfo> > nodesToSee(dj);
-	nodesToSee.push(startNode);
+	nodesToSee.push(startNode, dj[startNode].totalCost);
 
 	while (!nodesToSee.empty())
 	{
@@ -53,9 +35,9 @@ void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startN
 			unsigned int newCost = nodeTotalCost + it->getCost();
 			if (newCost < dj[targetNode].totalCost)
 			{
-				dj[targetNode].totalCost = newCost;
 				dj[targetNode].previousNode = node;
-				nodesToSee.push(targetNode);
+				dj[targetNode].totalCost = newCost;
+				nodesToSee.push(targetNode, dj[targetNode].totalCost);
 			}
 		}
 	}

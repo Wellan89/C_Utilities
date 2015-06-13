@@ -1,25 +1,7 @@
 #include "AStar.h"
-#include <functional>
-#include <queue>
+#include "cost_priority_queue.h"
 
 using namespace std;
-
-// Classe utilisée par la liste de priorité des noeuds :
-// Détermine si un noeud est (strictement) moins prioritaire qu'un autre
-// en regardant si son coût total estimé est supérieur.
-template<class ASNodeInfo>
-class AStarNodeComparator
-{
-protected:
-	const vector<ASNodeInfo>& as;
-
-public:
-	AStarNodeComparator(const vector<ASNodeInfo>& asInfos) : as(asInfos) { }
-	bool operator()(unsigned int node1, unsigned int node2)
-	{
-		return (as[node1].totalEstimatedCost > as[node2].totalEstimatedCost);
-	}
-};
 
 template<class Graphe, class Noeud, class Lien>
 void AStar<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int startNode)
@@ -32,9 +14,8 @@ void AStar<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int startNode)
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	as[startNode].totalCost = 0;
 	as[startNode].totalEstimatedCost = g[startNode].getHeuristic();
-	AStarNodeComparator<ASNodeInfo> cmp(as);
-	priority_queue<unsigned int, vector<unsigned int>, AStarNodeComparator<ASNodeInfo> > nodesToSee(cmp);
-	nodesToSee.push(startNode);
+	cost_priority_queue<unsigned int, unsigned int> nodesToSee;
+	nodesToSee.push(startNode, as[startNode].totalEstimatedCost);
 
 	while (!nodesToSee.empty())
 	{
@@ -61,10 +42,10 @@ void AStar<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int startNode)
 			unsigned int newCost = nodeTotalCost + it->getCost();
 			if (newCost < as[targetNode].totalCost)
 			{
+				as[targetNode].previousNode = node;
 				as[targetNode].totalCost = newCost;
 				as[targetNode].totalEstimatedCost = newCost + g[targetNode].getHeuristic();
-				as[targetNode].previousNode = node;
-				nodesToSee.push(targetNode);
+				nodesToSee.push(targetNode, as[targetNode].totalEstimatedCost);
 			}
 		}
 	}
