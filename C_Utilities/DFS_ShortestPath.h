@@ -13,19 +13,19 @@ template<class Graphe = Graph, class Noeud = Node, class Lien = Link>
 class DFS_ShortestPath
 {
 protected:
-	const Graphe& g;
-
 	// L'ensemble des noeuds actuellement visités par récursivité
 	std::set<unsigned int> visitedNodes;
+
+	// Le chemin actuellement trouvé (dans l'ordre inverse)
+	std::vector<unsigned int> reverseShortestPath;
+
+	const Graphe& g;
 
 	// Le noeud final trouvé par cet algorithme
 	unsigned int endNode;
 
 	// Le coût pour accéder à ce noeud depuis le noeud de départ
 	unsigned int pathCost;
-
-	// Le chemin actuellement trouvé (dans l'ordre inverse)
-	std::vector<unsigned int> reverseShortestPath;
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
