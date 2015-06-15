@@ -1,5 +1,4 @@
 #include "BellmanFord.h"
-#include "cost_priority_queue.h"
 
 using namespace std;
 
@@ -9,17 +8,19 @@ void BellmanFord<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int sta
 	// Réinitialise les informations sur les noeuds
 	reset();
 
-	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
+	// Indique le coût du premier noeud
 	bf[startNode].totalCost = 0;
 
 	// On sait que la longueur maximale d'un chemin le plus court est de n-1 noeuds
 	unsigned int nodesCount = g.size();
-	//for (unsigned int i = 0; i < nodesCount; i++)
-	for (unsigned int i = 0; true; i++)
+	unsigned int lastTurnIndex = (nodesCount - 1);
+	bool madeChange = true;
+	for (unsigned int i = 0; madeChange; i++)
 	{
+		madeChange = false;
+		bool lastTurn = (i == lastTurnIndex);
+
 		// Parcours toutes les arêtes du graphe
-		bool lastTurn = (i == nodesCount - 1);
-		bool madeChange = false;
 		for (unsigned int node = 0; node < nodesCount; node++)
 		{
 			unsigned int nodeTotalCost = bf[node].totalCost;
@@ -49,8 +50,6 @@ void BellmanFord<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int sta
 				}
 			}
 		}
-		if (!madeChange)
-			break;
 	}
 }
 template<class Graphe, class Noeud, class Lien>

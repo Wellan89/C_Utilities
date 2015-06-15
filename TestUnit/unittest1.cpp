@@ -13,6 +13,8 @@ Ecrire Bellman-Ford-Yen et Floyd-Warshall
 Ecrire un type de graphe "infini" : génération dynamique de la liste des noeuds et de la liste des liens entre eux
 Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra
 Tester la fonction de suppression de liens du graphe
+Tester le détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
+Tester les algorithmes sur des graphes non simples : avec des boucles (une arête d'un noeud sur lui-même)
 */
 
 // ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !
@@ -23,6 +25,7 @@ Tester la fonction de suppression de liens du graphe
 #include "DFS_ShortestPath.cpp"
 #include "BFS_ShortestPath.cpp"
 #include "BellmanFord.cpp"
+#include "BellmanFordYen.cpp"
 
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -37,7 +40,7 @@ namespace TestUnit
 			List* l = list_create();
 			Assert::AreNotEqual((List*)NULL, l);
 			Assert::AreEqual(0u, list_getSize(l));
-			Assert::AreEqual(true, list_isEmpty(l));
+			Assert::IsTrue(list_isEmpty(l));
 			list_delete(l);
 		}
 
@@ -49,7 +52,7 @@ namespace TestUnit
 			list_pushFront(l, 14);
 			list_pushFront(l, 7);
 			Assert::AreEqual(4u, list_getSize(l));
-			Assert::AreEqual(false, list_isEmpty(l));
+			Assert::IsFalse(list_isEmpty(l));
 			Assert::AreEqual(7, list_front(l));
 			Assert::AreEqual(23, list_back(l));
 			
@@ -61,7 +64,7 @@ namespace TestUnit
 			list_popFront(l);
 			list_popBack(l);
 			Assert::AreEqual(0u, list_getSize(l));
-			Assert::AreEqual(true, list_isEmpty(l));
+			Assert::IsTrue(list_isEmpty(l));
 			list_delete(l);
 		}
 
@@ -257,7 +260,7 @@ namespace TestUnit
 				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
 			for (unsigned int i = 0; i <= CTI('j'); i++)
 			{
-				Assert::AreEqual(true, dj.canReachNode(i));
+				Assert::IsTrue(dj.canReachNode(i));
 				Assert::AreEqual(costs[i], dj.getCostTo(i));
 				Assert::AreEqual(paths[i], dj.getShortestPathTo(i));
 				Assert::AreEqual(reverse_vect(paths[i]), dj.getReverseShortestPathTo(i));
@@ -364,7 +367,7 @@ namespace TestUnit
 
 			Dijkstra<> dj(g);
 			dj.computeShortestPathsFrom(start);
-			Assert::AreEqual(true, dj.canReachNode(finalNode));
+			Assert::IsTrue(dj.canReachNode(finalNode));
 			Assert::AreEqual(cost, dj.getCostTo(finalNode));
 			Assert::AreEqual(path, dj.getShortestPathTo(finalNode));
 		}
@@ -397,7 +400,7 @@ namespace TestUnit
 
 			Dijkstra<> dj(g);
 			dj.computeShortestPathsFrom(start);
-			Assert::AreEqual(true, dj.canReachNode(finalNode));
+			Assert::IsTrue(dj.canReachNode(finalNode));
 			Assert::AreEqual(cost, dj.getCostTo(finalNode));
 			//Assert::AreEqual(path, dj.getShortestPathTo(finalNode));
 		}
@@ -457,7 +460,7 @@ namespace TestUnit
 				deque < unsigned int > { CTI('a'), CTI('c'), CTI('h') },
 				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i') },
 				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
-			Assert::AreEqual(true, as.hasFoundPath());
+			Assert::IsTrue(as.hasFoundPath());
 			Assert::AreEqual(finalNode, as.getFinalNode());
 			Assert::AreEqual(costs[finalNode], as.getPathCost());
 			Assert::AreEqual(paths[finalNode], as.getShortestPath());
@@ -565,7 +568,7 @@ namespace TestUnit
 
 			AStar<> as(g);
 			as.computeShortestPathFrom(start);
-			Assert::AreEqual(true, as.hasFoundPath());
+			Assert::IsTrue(as.hasFoundPath());
 			Assert::AreEqual(finalNode, as.getFinalNode());
 			Assert::AreEqual(cost, as.getPathCost());
 			Assert::AreEqual(path, as.getShortestPath());
@@ -599,7 +602,7 @@ namespace TestUnit
 
 			AStar<> as(g);
 			as.computeShortestPathFrom(start);
-			Assert::AreEqual(true, as.hasFoundPath());
+			Assert::IsTrue(as.hasFoundPath());
 			Assert::AreEqual(finalNode, as.getFinalNode());
 			Assert::AreEqual(cost, as.getPathCost());
 			//Assert::AreEqual(path, as.getShortestPath());
@@ -755,7 +758,7 @@ namespace TestUnit
 				deque < unsigned int > { CTI('a'), CTI('c'), CTI('h') },
 				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i') },
 				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
-			Assert::AreEqual(true, dfs.hasFoundPath());
+			Assert::IsTrue(dfs.hasFoundPath());
 			Assert::AreEqual(finalNode, dfs.getFinalNode());
 			Assert::AreEqual(costs[finalNode], dfs.getPathCost());
 			Assert::AreEqual(paths[finalNode], dfs.getShortestPath());
@@ -809,7 +812,7 @@ namespace TestUnit
 				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
 			for (unsigned int i = 0; i <= CTI('j'); i++)
 			{
-				Assert::AreEqual(true, bfs.canReachNode(i));
+				Assert::IsTrue(bfs.canReachNode(i));
 				Assert::AreEqual(costs[i], bfs.getCostTo(i));
 				Assert::AreEqual(paths[i], bfs.getShortestPathTo(i));
 				Assert::AreEqual(reverse_vect(paths[i]), bfs.getReverseShortestPathTo(i));
@@ -861,12 +864,68 @@ namespace TestUnit
 				deque < unsigned int > { CTI('a'), CTI('c'), CTI('h') },
 				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i') },
 				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
+			Assert::IsFalse(bf.absorbCycleDetected());
 			for (unsigned int i = 0; i <= CTI('j'); i++)
 			{
-				Assert::AreEqual(true, bf.canReachNode(i));
+				Assert::IsTrue(bf.canReachNode(i));
 				Assert::AreEqual(costs[i], bf.getCostTo(i));
 				Assert::AreEqual(paths[i], bf.getShortestPathTo(i));
 				Assert::AreEqual(reverse_vect(paths[i]), bf.getReverseShortestPathTo(i));
+			}
+#undef CTI
+		}
+	};
+
+	TEST_CLASS(BellmanFordYen_Tests)
+	{
+		TEST_METHOD(BellmanFordYen_SimpleTest)
+		{
+#define CTI(c)	(c - 'a')
+
+			// Wikipedia example test : http://fr.wikipedia.org/wiki/Algorithme_de_Dijkstra
+			Graph g(CTI('j') + 1);
+			g.addLink(CTI('a'), CTI('b'), 85);
+			g.addLink(CTI('a'), CTI('c'), 217);
+			g.addLink(CTI('a'), CTI('e'), 173);
+
+			g.addLink(CTI('b'), CTI('f'), 80);
+
+			g.addLink(CTI('c'), CTI('g'), 186);
+			g.addLink(CTI('c'), CTI('h'), 103);
+
+			g.addLink(CTI('d'), CTI('h'), 183);
+
+			g.addLink(CTI('e'), CTI('j'), 502);
+
+			g.addLink(CTI('f'), CTI('i'), 250);
+
+			g.addLink(CTI('i'), CTI('j'), 84);
+
+			BellmanFordYen<> bfy(g);
+			for (int i = 0; i < PATH_FINDERS_COMPUTE_LOOPS; i++)
+				bfy.computeShortestPathsFrom(0);
+			for (int j = 0; j < PATH_FINDERS_PATH_RECONSTRUCTION_LOOPS; j++)
+				bfy.getShortestPathTo(CTI('j'));
+
+			const unsigned int costs[] = { 0, 85, 217, 503, 173, 165, 403, 320, 415, 499 };
+			const deque<unsigned int> paths[] = {
+				deque < unsigned int > { CTI('a') },
+				deque < unsigned int > { CTI('a'), CTI('b') },
+				deque < unsigned int > { CTI('a'), CTI('c') },
+				deque < unsigned int > { CTI('a'), CTI('c'), CTI('h'), CTI('d') },
+				deque < unsigned int > { CTI('a'), CTI('e') },
+				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f') },
+				deque < unsigned int > { CTI('a'), CTI('c'), CTI('g') },
+				deque < unsigned int > { CTI('a'), CTI('c'), CTI('h') },
+				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i') },
+				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
+			Assert::IsFalse(bfy.absorbCycleDetected());
+			for (unsigned int i = 0; i <= CTI('j'); i++)
+			{
+				Assert::IsTrue(bfy.canReachNode(i));
+				Assert::AreEqual(costs[i], bfy.getCostTo(i));
+				Assert::AreEqual(paths[i], bfy.getShortestPathTo(i));
+				Assert::AreEqual(reverse_vect(paths[i]), bfy.getReverseShortestPathTo(i));
 			}
 #undef CTI
 		}

@@ -18,7 +18,7 @@
 //		unsigned int getIndex() const;
 //		const std::vector<Lien*>& getLinks() const;
 //			Note :	std::vector peut être remplacé par tout autre conteneur de List* pouvant être itéré.
-// Fonctions supplémentaires nécessaires pour l'algorithme A* :
+// Fonctions supplémentaires nécessaires pour les algorithmes A* et DFS :
 //		bool isFinal() const;
 //		unsigned int getHeuristic() const;
 //			Note :	Cette fonction doit renvoyer la distance minimale estimée du noeud jusqu'à un noeud final.
