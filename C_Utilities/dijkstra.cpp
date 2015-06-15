@@ -1,4 +1,4 @@
-#include "dijkstra.h"
+#include "Dijkstra.h"
 #include "cost_priority_queue.h"
 
 using namespace std;

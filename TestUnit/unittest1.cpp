@@ -9,7 +9,7 @@
 TODO :
 Réecrire Dijkstra avec le nouvel algo wikipédia + chercher sur internet la solution la plus efficace (possible en O(n.log n) apparemment)
 Optimiser la création de chemin par vector puis miroir ?
-Ecrire Bellman-Ford et Floyd-Warshall
+Ecrire Bellman-Ford-Yen et Floyd-Warshall
 Ecrire un type de graphe "infini" : génération dynamique de la liste des noeuds et de la liste des liens entre eux
 Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra
 Tester la fonction de suppression de liens du graphe
@@ -22,6 +22,7 @@ Tester la fonction de suppression de liens du graphe
 #include "Bellman.cpp"
 #include "DFS_ShortestPath.cpp"
 #include "BFS_ShortestPath.cpp"
+#include "BellmanFord.cpp"
 
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -788,19 +789,9 @@ namespace TestUnit
 
 			g.addLink(CTI('i'), CTI('j'), 84);
 
-			const unsigned int finalNode = CTI('j');
-			if (finalNode == CTI('j'))
-			{
-				const unsigned int heuristics[] =
-				{ 450, 400, 250, 300, 500, 300, 400, 150, 50, 0 };
-				for (unsigned int i = 0; i <= CTI('j'); i++)
-					g.setNodeHeuristic(i, heuristics[i]);
-			}
-			g.setNodeFinal(finalNode);
-
 			BFS_ShortestPath<> bfs(g);
 			for (int i = 0; i < PATH_FINDERS_COMPUTE_LOOPS; i++)
-				bfs.computeShortestPathFrom(0);
+				bfs.computeShortestPathsFrom(0);
 			for (int j = 0; j < PATH_FINDERS_PATH_RECONSTRUCTION_LOOPS; j++)
 				bfs.getShortestPathTo(CTI('j'));
 
@@ -822,6 +813,60 @@ namespace TestUnit
 				Assert::AreEqual(costs[i], bfs.getCostTo(i));
 				Assert::AreEqual(paths[i], bfs.getShortestPathTo(i));
 				Assert::AreEqual(reverse_vect(paths[i]), bfs.getReverseShortestPathTo(i));
+			}
+#undef CTI
+		}
+	};
+
+	TEST_CLASS(BellmanFord_Tests)
+	{
+		TEST_METHOD(BellmanFord_SimpleTest)
+		{
+#define CTI(c)	(c - 'a')
+
+			// Wikipedia example test : http://fr.wikipedia.org/wiki/Algorithme_de_Dijkstra
+			Graph g(CTI('j') + 1);
+			g.addLink(CTI('a'), CTI('b'), 85);
+			g.addLink(CTI('a'), CTI('c'), 217);
+			g.addLink(CTI('a'), CTI('e'), 173);
+
+			g.addLink(CTI('b'), CTI('f'), 80);
+
+			g.addLink(CTI('c'), CTI('g'), 186);
+			g.addLink(CTI('c'), CTI('h'), 103);
+
+			g.addLink(CTI('d'), CTI('h'), 183);
+
+			g.addLink(CTI('e'), CTI('j'), 502);
+
+			g.addLink(CTI('f'), CTI('i'), 250);
+
+			g.addLink(CTI('i'), CTI('j'), 84);
+
+			BellmanFord<> bf(g);
+			for (int i = 0; i < PATH_FINDERS_COMPUTE_LOOPS; i++)
+				bf.computeShortestPathsFrom(0);
+			for (int j = 0; j < PATH_FINDERS_PATH_RECONSTRUCTION_LOOPS; j++)
+				bf.getShortestPathTo(CTI('j'));
+
+			const unsigned int costs[] = { 0, 85, 217, 503, 173, 165, 403, 320, 415, 499 };
+			const deque<unsigned int> paths[] = {
+				deque < unsigned int > { CTI('a') },
+				deque < unsigned int > { CTI('a'), CTI('b') },
+				deque < unsigned int > { CTI('a'), CTI('c') },
+				deque < unsigned int > { CTI('a'), CTI('c'), CTI('h'), CTI('d') },
+				deque < unsigned int > { CTI('a'), CTI('e') },
+				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f') },
+				deque < unsigned int > { CTI('a'), CTI('c'), CTI('g') },
+				deque < unsigned int > { CTI('a'), CTI('c'), CTI('h') },
+				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i') },
+				deque < unsigned int > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
+			for (unsigned int i = 0; i <= CTI('j'); i++)
+			{
+				Assert::AreEqual(true, bf.canReachNode(i));
+				Assert::AreEqual(costs[i], bf.getCostTo(i));
+				Assert::AreEqual(paths[i], bf.getShortestPathTo(i));
+				Assert::AreEqual(reverse_vect(paths[i]), bf.getReverseShortestPathTo(i));
 			}
 #undef CTI
 		}

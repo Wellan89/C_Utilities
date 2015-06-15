@@ -35,7 +35,7 @@ protected:
 public:
 	BFS_ShortestPath(const Graphe& gr) : g(gr) { reset(); }
 
-	void computeShortestPathFrom(unsigned int startNode);
+	void computeShortestPathsFrom(unsigned int startNode);
 
 	bool canReachNode(unsigned int node) const;
 	unsigned int getCostTo(unsigned int node) const;

@@ -4,7 +4,7 @@
 using namespace std;
 
 template<class Graphe, class Noeud, class Lien>
-void BFS_ShortestPath<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int startNode)
+void BFS_ShortestPath<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
