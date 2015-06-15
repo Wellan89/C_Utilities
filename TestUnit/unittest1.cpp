@@ -9,12 +9,16 @@
 TODO :
 Réecrire Dijkstra avec le nouvel algo wikipédia + chercher sur internet la solution la plus efficace (possible en O(n.log n) apparemment)
 Optimiser la création de chemin par vector puis miroir ?
-Ecrire Bellman-Ford-Yen et Floyd-Warshall
 Ecrire un type de graphe "infini" : génération dynamique de la liste des noeuds et de la liste des liens entre eux
 Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra
 Tester la fonction de suppression de liens du graphe
 Tester le détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
 Tester les algorithmes sur des graphes non simples : avec des boucles (une arête d'un noeud sur lui-même)
+Utiliser les fonctions TEST_MODULE_INITIALIZE et TEST_MODULE_CLEANUP pour créer les graphes de test en dehors des fonctions de test
+Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
+Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
+	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
+Améliorer Floyd-Warshall afin de pouvoir obtenir le chemin le plus court entre toutes les paires de points (et non pas seulement son coût)
 */
 
 // ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !
@@ -26,6 +30,7 @@ Tester les algorithmes sur des graphes non simples : avec des boucles (une arête
 #include "BFS_ShortestPath.cpp"
 #include "BellmanFord.cpp"
 #include "BellmanFordYen.cpp"
+#include "FloydWarshall.cpp"
 
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -926,6 +931,45 @@ namespace TestUnit
 				Assert::AreEqual(costs[i], bfy.getCostTo(i));
 				Assert::AreEqual(paths[i], bfy.getShortestPathTo(i));
 				Assert::AreEqual(reverse_vect(paths[i]), bfy.getReverseShortestPathTo(i));
+			}
+#undef CTI
+		}
+	};
+
+	TEST_CLASS(FloydWarshall_Tests)
+	{
+		TEST_METHOD(FloydWarshall_SimpleTest)
+		{
+#define CTI(c)	(c - 'a')
+
+			// Wikipedia example test : http://fr.wikipedia.org/wiki/Algorithme_de_Dijkstra
+			Graph g(CTI('j') + 1);
+			g.addLink(CTI('a'), CTI('b'), 85);
+			g.addLink(CTI('a'), CTI('c'), 217);
+			g.addLink(CTI('a'), CTI('e'), 173);
+
+			g.addLink(CTI('b'), CTI('f'), 80);
+
+			g.addLink(CTI('c'), CTI('g'), 186);
+			g.addLink(CTI('c'), CTI('h'), 103);
+
+			g.addLink(CTI('d'), CTI('h'), 183);
+
+			g.addLink(CTI('e'), CTI('j'), 502);
+
+			g.addLink(CTI('f'), CTI('i'), 250);
+
+			g.addLink(CTI('i'), CTI('j'), 84);
+
+			FloydWarshall<> fw(g);
+			for (int i = 0; i < PATH_FINDERS_COMPUTE_LOOPS; i++)
+				fw.computeShortestPaths();
+
+			const unsigned int costs[] = { 0, 85, 217, 503, 173, 165, 403, 320, 415, 499 };
+			for (unsigned int i = 0; i <= CTI('j'); i++)
+			{
+				Assert::IsTrue(fw.pathExists(0, i));
+				Assert::AreEqual(costs[i], fw.getPathCost(0, i));
 			}
 #undef CTI
 		}

@@ -33,7 +33,7 @@
 // Fonctions nécessaires de la classe Lien :
 //		unsigned int getCost() const;
 //		unsigned int getTargetIndex() const;
-// Fonction supplémentaire pour l'algorithme de Bellman :
+// Fonction supplémentaire pour les algorithmes de Bellman et Bellman-Ford-Yen :
 //		unsigned int getFromIndex() const;
 
 

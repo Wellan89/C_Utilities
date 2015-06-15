@@ -16,11 +16,11 @@ void BellmanFordYen<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int 
 	// edgesB = { arêtes e = (u, v) dans g tq : u > v }
 	// edgesF et edgesB doivent être ordonnés dans l'ordre des u croissants.
 	// Les boucles (les arêtes pour lesquelles u = v) sont ignorées si leur coût est positif ou nul,
-	// mais sont détectées en tant que circuit absorbant si leur coût est strictement négatif.
-	// TODO : Bug : ces arêtes ne sont pas toujours des circuits absorbants
-	//				si elles ne sont pas atteignables depuis le noeud de départ.
+	// mais sont détectées en tant que circuit absorbant si leur coût est strictement négatif
+	// et que ces points sont atteignables depuis le noeud de départ.
 	std::vector<const Lien*> edgesF;
 	std::vector<const Lien*> edgesB;
+	std::vector<unsigned int> absorbNodes;
 	unsigned int nodesCount = g.size();
 	for (unsigned int node = 0; node < nodesCount; node++)
 	{
@@ -33,11 +33,7 @@ void BellmanFordYen<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int 
 			else if (node > targetNode)
 				edgesB.push_back(&(*it));
 			else if (it->getCost() <= 0)
-			{
-				reset();
-				absorbCycleFound = true;
-				return;
-			}
+				absorbNodes.push_back(node);
 		}
 	}
 
@@ -105,6 +101,18 @@ void BellmanFordYen<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int 
 					return;
 				}
 			}
+		}
+	}
+
+	// Vérifie qu'aucun des noeuds avec une boucle absorbante ne peut être atteint depuis le noeud de départ
+	for (auto it = absorbNodes.begin(); it != absorbNodes.end(); ++it)
+	{
+		if (bfy[*it].totalCost != (unsigned int)(-1))
+		{
+			// On a trouvé un circuit absorbant
+			reset();
+			absorbCycleFound = true;
+			return;
 		}
 	}
 }
