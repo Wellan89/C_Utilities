@@ -11,9 +11,8 @@ void AStar<Graphe>::computeShortestPathFrom(unsigned int startNode)
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	as[startNode].totalCost = 0;
-	as[startNode].totalEstimatedCost = g[startNode].getHeuristic();
 	cost_priority_queue<unsigned int, unsigned int> nodesToSee;
-	nodesToSee.push(startNode, as[startNode].totalEstimatedCost);
+	nodesToSee.push(startNode, g[startNode].getHeuristic());
 
 	while (!nodesToSee.empty())
 	{
@@ -42,8 +41,7 @@ void AStar<Graphe>::computeShortestPathFrom(unsigned int startNode)
 			{
 				as[targetNode].previousNode = node;
 				as[targetNode].totalCost = newCost;
-				as[targetNode].totalEstimatedCost = newCost + g[targetNode].getHeuristic();
-				nodesToSee.push(targetNode, as[targetNode].totalEstimatedCost);
+				nodesToSee.push(targetNode, newCost + g[targetNode].getHeuristic());
 			}
 		}
 	}

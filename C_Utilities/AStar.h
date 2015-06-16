@@ -15,11 +15,10 @@ protected:
 	{
 		unsigned int previousNode;
 		unsigned int totalCost;
-		unsigned int totalEstimatedCost;
 		bool alreadyVisited;
 
-		ASNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)),
-			totalEstimatedCost((unsigned int)(-1)), alreadyVisited(false) { }
+		ASNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)), alreadyVisited(false)
+			{ }
 	};
 
 	std::vector<ASNodeInfo> as;

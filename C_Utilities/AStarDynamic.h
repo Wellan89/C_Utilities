@@ -4,12 +4,12 @@
 #include <vector>
 #include <deque>
 #include <map>
-#include "Graph.h"
+#include "DynamicGraph.h"
 
 // Algorithme A* : parcours le graphe depuis un point de départ en suivant une heuristique,
 // et s'arrête dès qu'un point final est trouvé.
 // Gère aussi les graphes dynamiques.
-template<class Graphe = Graph>
+template<class Graphe = DynamicGraph<> >
 class AStarDynamic
 {
 protected:
@@ -17,11 +17,10 @@ protected:
 	{
 		unsigned int previousNode;
 		unsigned int totalCost;
-		unsigned int totalEstimatedCost;
 		bool alreadyVisited;
 
-		ASDNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)),
-			totalEstimatedCost((unsigned int)(-1)), alreadyVisited(false) { }
+		ASDNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)), alreadyVisited(false)
+			{ }
 	};
 
 	std::map<unsigned int, ASDNodeInfo> asd;
