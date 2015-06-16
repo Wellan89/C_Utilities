@@ -2,8 +2,8 @@
 
 using namespace std;
 
-template<class Graphe, class Noeud, class Lien>
-void BellmanFordYen<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
+template<class Graphe>
+void BellmanFordYen<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -18,8 +18,8 @@ void BellmanFordYen<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int 
 	// Les boucles (les arêtes pour lesquelles u = v) sont ignorées si leur coût est positif ou nul,
 	// mais sont détectées en tant que circuit absorbant si leur coût est strictement négatif
 	// et que ces points sont atteignables depuis le noeud de départ.
-	std::vector<const Lien*> edgesF;
-	std::vector<const Lien*> edgesB;
+	std::vector<const Graphe::Lien*> edgesF;
+	std::vector<const Graphe::Lien*> edgesB;
 	std::vector<unsigned int> absorbNodes;
 	unsigned int nodesCount = g.size();
 	for (unsigned int node = 0; node < nodesCount; node++)
@@ -48,7 +48,7 @@ void BellmanFordYen<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int 
 		// Parcours toutes les arêtes de edgesF dans l'ordre des u croissants
 		for (auto it = edgesF.begin(); it != edgesF.end(); ++it)
 		{
-			const Lien* l = (*it);
+			const Graphe::Lien* l = (*it);
 			unsigned int node = l->getFromIndex();
 			unsigned int nodeTotalCost = bfy[node].totalCost;
 			if (nodeTotalCost == (unsigned int)(-1))
@@ -77,7 +77,7 @@ void BellmanFordYen<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int 
 		// Parcours toutes les arêtes de edgesB dans l'ordre des u décroissants
 		for (auto it = edgesB.rbegin(); it != edgesB.rend(); ++it)
 		{
-			const Lien* l = (*it);
+			const Graphe::Lien* l = (*it);
 			unsigned int node = l->getFromIndex();
 			unsigned int nodeTotalCost = bfy[node].totalCost;
 			if (nodeTotalCost == (unsigned int)(-1))
@@ -116,23 +116,23 @@ void BellmanFordYen<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int 
 		}
 	}
 }
-template<class Graphe, class Noeud, class Lien>
-bool BellmanFordYen<Graphe, Noeud, Lien>::absorbCycleDetected() const
+template<class Graphe>
+bool BellmanFordYen<Graphe>::absorbCycleDetected() const
 {
 	return absorbCycleFound;
 }
-template<class Graphe, class Noeud, class Lien>
-bool BellmanFordYen<Graphe, Noeud, Lien>::canReachNode(unsigned int node) const
+template<class Graphe>
+bool BellmanFordYen<Graphe>::canReachNode(unsigned int node) const
 {
 	return (bfy[node].totalCost != (unsigned int)(-1));
 }
-template<class Graphe, class Noeud, class Lien>
-unsigned int BellmanFordYen<Graphe, Noeud, Lien>::getCostTo(unsigned int node) const
+template<class Graphe>
+unsigned int BellmanFordYen<Graphe>::getCostTo(unsigned int node) const
 {
 	return bfy[node].totalCost;
 }
-template<class Graphe, class Noeud, class Lien>
-deque<unsigned int> BellmanFordYen<Graphe, Noeud, Lien>::getShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+deque<unsigned int> BellmanFordYen<Graphe>::getShortestPathTo(unsigned int endNode) const
 {
 	deque<unsigned int> l;
 	while (endNode != (unsigned int)(-1))
@@ -142,8 +142,8 @@ deque<unsigned int> BellmanFordYen<Graphe, Noeud, Lien>::getShortestPathTo(unsig
 	}
 	return l;
 }
-template<class Graphe, class Noeud, class Lien>
-vector<unsigned int> BellmanFordYen<Graphe, Noeud, Lien>::getReverseShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+vector<unsigned int> BellmanFordYen<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
 {
 	vector<unsigned int> l;
 	while (endNode != (unsigned int)(-1))

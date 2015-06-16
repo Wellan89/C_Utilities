@@ -2,8 +2,8 @@
 
 using namespace std;
 
-template<class Graphe, class Noeud, class Lien>
-void BellmanFord<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
+template<class Graphe>
+void BellmanFord<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -52,23 +52,23 @@ void BellmanFord<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int sta
 		}
 	}
 }
-template<class Graphe, class Noeud, class Lien>
-bool BellmanFord<Graphe, Noeud, Lien>::absorbCycleDetected() const
+template<class Graphe>
+bool BellmanFord<Graphe>::absorbCycleDetected() const
 {
 	return absorbCycleFound;
 }
-template<class Graphe, class Noeud, class Lien>
-bool BellmanFord<Graphe, Noeud, Lien>::canReachNode(unsigned int node) const
+template<class Graphe>
+bool BellmanFord<Graphe>::canReachNode(unsigned int node) const
 {
 	return (bf[node].totalCost != (unsigned int)(-1));
 }
-template<class Graphe, class Noeud, class Lien>
-unsigned int BellmanFord<Graphe, Noeud, Lien>::getCostTo(unsigned int node) const
+template<class Graphe>
+unsigned int BellmanFord<Graphe>::getCostTo(unsigned int node) const
 {
 	return bf[node].totalCost;
 }
-template<class Graphe, class Noeud, class Lien>
-deque<unsigned int> BellmanFord<Graphe, Noeud, Lien>::getShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+deque<unsigned int> BellmanFord<Graphe>::getShortestPathTo(unsigned int endNode) const
 {
 	deque<unsigned int> l;
 	while (endNode != (unsigned int)(-1))
@@ -78,8 +78,8 @@ deque<unsigned int> BellmanFord<Graphe, Noeud, Lien>::getShortestPathTo(unsigned
 	}
 	return l;
 }
-template<class Graphe, class Noeud, class Lien>
-vector<unsigned int> BellmanFord<Graphe, Noeud, Lien>::getReverseShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+vector<unsigned int> BellmanFord<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
 {
 	vector<unsigned int> l;
 	while (endNode != (unsigned int)(-1))

@@ -3,8 +3,8 @@
 
 using namespace std;
 
-template<class Graphe, class Noeud, class Lien>
-void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
+template<class Graphe>
+void Dijkstra<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -41,18 +41,18 @@ void Dijkstra<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startN
 		}
 	}
 }
-template<class Graphe, class Noeud, class Lien>
-bool Dijkstra<Graphe, Noeud, Lien>::canReachNode(unsigned int node) const
+template<class Graphe>
+bool Dijkstra<Graphe>::canReachNode(unsigned int node) const
 {
 	return (dj[node].totalCost != (unsigned int)(-1));
 }
-template<class Graphe, class Noeud, class Lien>
-unsigned int Dijkstra<Graphe, Noeud, Lien>::getCostTo(unsigned int node) const
+template<class Graphe>
+unsigned int Dijkstra<Graphe>::getCostTo(unsigned int node) const
 {
 	return dj[node].totalCost;
 }
-template<class Graphe, class Noeud, class Lien>
-deque<unsigned int> Dijkstra<Graphe, Noeud, Lien>::getShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+deque<unsigned int> Dijkstra<Graphe>::getShortestPathTo(unsigned int endNode) const
 {
 	deque<unsigned int> l;
 	while (endNode != (unsigned int)(-1))
@@ -62,8 +62,8 @@ deque<unsigned int> Dijkstra<Graphe, Noeud, Lien>::getShortestPathTo(unsigned in
 	}
 	return l;
 }
-template<class Graphe, class Noeud, class Lien>
-vector<unsigned int> Dijkstra<Graphe, Noeud, Lien>::getReverseShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+vector<unsigned int> Dijkstra<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
 {
 	vector<unsigned int> l;
 	while (endNode != (unsigned int)(-1))

@@ -3,8 +3,8 @@
 
 using namespace std;
 
-template<class Graphe, class Noeud, class Lien>
-void BFS_ShortestPath<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
+template<class Graphe>
+void BFS_ShortestPath<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -35,18 +35,18 @@ void BFS_ShortestPath<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned in
 		}
 	}
 }
-template<class Graphe, class Noeud, class Lien>
-bool BFS_ShortestPath<Graphe, Noeud, Lien>::canReachNode(unsigned int node) const
+template<class Graphe>
+bool BFS_ShortestPath<Graphe>::canReachNode(unsigned int node) const
 {
 	return (bfs[node].totalCost != (unsigned int)(-1));
 }
-template<class Graphe, class Noeud, class Lien>
-unsigned int BFS_ShortestPath<Graphe, Noeud, Lien>::getCostTo(unsigned int node) const
+template<class Graphe>
+unsigned int BFS_ShortestPath<Graphe>::getCostTo(unsigned int node) const
 {
 	return bfs[node].totalCost;
 }
-template<class Graphe, class Noeud, class Lien>
-deque<unsigned int> BFS_ShortestPath<Graphe, Noeud, Lien>::getShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+deque<unsigned int> BFS_ShortestPath<Graphe>::getShortestPathTo(unsigned int endNode) const
 {
 	deque<unsigned int> l;
 	while (endNode != (unsigned int)(-1))
@@ -56,8 +56,8 @@ deque<unsigned int> BFS_ShortestPath<Graphe, Noeud, Lien>::getShortestPathTo(uns
 	}
 	return l;
 }
-template<class Graphe, class Noeud, class Lien>
-vector<unsigned int> BFS_ShortestPath<Graphe, Noeud, Lien>::getReverseShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+vector<unsigned int> BFS_ShortestPath<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
 {
 	vector<unsigned int> l;
 	while (endNode != (unsigned int)(-1))

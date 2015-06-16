@@ -10,30 +10,32 @@
 // Fonctions nécessaires de la classe Graphe :
 //		unsigned int size() const;
 //		const Noeud& operator[](unsigned int index) const;
-// Fonctions supplémentaires pour l'algorithme de Bellman :
+// Fonctions supplémentaires nécessaire pour l'algorithme de Bellman :
 //		std::vector<unsigned int> getReverseTopologicalyOrderedNodes() const;
 //			Note :	std::vector peut être remplacé par tout autre conteneur de unsigned int pouvant être itéré.
+// Type nécessaire de la classe Graphe pour l'algorithme de Bellman-Ford-Yen :
+//		typedef <> Lien;
 
-// Fonctions nécessaires de la classe Noeud :
-//		unsigned int getIndex() const;
+// Fonction nécessaire de la classe Noeud :
 //		const std::vector<Lien*>& getLinks() const;
 //			Note :	std::vector peut être remplacé par tout autre conteneur de List* pouvant être itéré.
-// Fonctions supplémentaires nécessaires pour les algorithmes A* et DFS :
+// Fonction supplémentaire nécessaire pour les algorithmes A* et DFS :
 //		bool isFinal() const;
+// Fonction supplémentaire nécessaire pour l'algorithme A* :
 //		unsigned int getHeuristic() const;
 //			Note :	Cette fonction doit renvoyer la distance minimale estimée du noeud jusqu'à un noeud final.
 //					Afin que l'algorithme fourni ici fonctionne, cette fonction doit vérifier :
 //						Pour tous noeuds x et y : h(x) <= h(y) + d(x, y).
 //					La classe fournie par défaut ici implémente une heuristique nulle :
 //					son utilisation revient à effectuer l'algorithme de Dijkstra sur le graphe fourni.
-// Fonction supplémentaire pour l'algorithme de Bellman :
+// Fonction supplémentaire nécessaire pour l'algorithme de Bellman :
 //		const std::vector<Lien*>& getIncomingLinks() const;
 //			Note :	std::vector peut être remplacé par tout autre conteneur de List* pouvant être itéré.
 
 // Fonctions nécessaires de la classe Lien :
 //		unsigned int getCost() const;
 //		unsigned int getTargetIndex() const;
-// Fonction supplémentaire pour les algorithmes de Bellman et Bellman-Ford-Yen :
+// Fonction supplémentaire nécessaire pour les algorithmes de Bellman et Bellman-Ford-Yen :
 //		unsigned int getFromIndex() const;
 
 
@@ -114,6 +116,9 @@ protected:
 	}
 
 public:
+	typedef Node Noeud;
+	typedef Link Lien;
+
 	Graph(unsigned int nodesNb)
 	{
 		nodes.reserve(nodesNb);

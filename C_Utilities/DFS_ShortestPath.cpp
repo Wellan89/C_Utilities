@@ -2,8 +2,8 @@
 
 using namespace std;
 
-template<class Graphe, class Noeud, class Lien>
-bool DFS_ShortestPath<Graphe, Noeud, Lien>::computeShortestPath_Rec(unsigned int node, unsigned int currentCost)
+template<class Graphe>
+bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(unsigned int node, unsigned int currentCost)
 {
 	// Vérifie que le chemin actuellement parcouru n'est pas plus long que le chemin le plus court déjà trouvé.
 	// On quitte lorsqu'il y a égalité entre la longueur du chemin actuel et celle du chemin le plus court si un noeud final a déjà été trouvé.
@@ -48,8 +48,8 @@ bool DFS_ShortestPath<Graphe, Noeud, Lien>::computeShortestPath_Rec(unsigned int
 
 	return pathFound;
 }
-template<class Graphe, class Noeud, class Lien>
-void DFS_ShortestPath<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int startNode, unsigned int maxCost)
+template<class Graphe>
+void DFS_ShortestPath<Graphe>::computeShortestPathFrom(unsigned int startNode, unsigned int maxCost)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -70,31 +70,31 @@ void DFS_ShortestPath<Graphe, Noeud, Lien>::computeShortestPathFrom(unsigned int
 	// Efface la liste des noeuds en cours d'exploration
 	visitedNodes.clear();
 }
-template<class Graphe, class Noeud, class Lien>
-bool DFS_ShortestPath<Graphe, Noeud, Lien>::hasFoundPath() const
+template<class Graphe>
+bool DFS_ShortestPath<Graphe>::hasFoundPath() const
 {
 	return (endNode != (unsigned int)(-1));
 }
-template<class Graphe, class Noeud, class Lien>
-unsigned int DFS_ShortestPath<Graphe, Noeud, Lien>::getFinalNode() const
+template<class Graphe>
+unsigned int DFS_ShortestPath<Graphe>::getFinalNode() const
 {
 	return endNode;
 }
-template<class Graphe, class Noeud, class Lien>
-unsigned int DFS_ShortestPath<Graphe, Noeud, Lien>::getPathCost() const
+template<class Graphe>
+unsigned int DFS_ShortestPath<Graphe>::getPathCost() const
 {
 	return pathCost;
 }
-template<class Graphe, class Noeud, class Lien>
-deque<unsigned int> DFS_ShortestPath<Graphe, Noeud, Lien>::getShortestPath() const
+template<class Graphe>
+deque<unsigned int> DFS_ShortestPath<Graphe>::getShortestPath() const
 {
 	deque<unsigned int> l;
 	for (auto it = reverseShortestPath.begin(); it != reverseShortestPath.end(); ++it)
 		l.push_front(*it);
 	return l;
 }
-template<class Graphe, class Noeud, class Lien>
-const vector<unsigned int>& DFS_ShortestPath<Graphe, Noeud, Lien>::getReverseShortestPath() const
+template<class Graphe>
+const vector<unsigned int>& DFS_ShortestPath<Graphe>::getReverseShortestPath() const
 {
 	return reverseShortestPath;
 }

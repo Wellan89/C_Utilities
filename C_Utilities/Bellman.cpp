@@ -4,8 +4,8 @@ using namespace std;
 
 using namespace std;
 
-template<class Graphe, class Noeud, class Lien>
-void Bellman<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNode)
+template<class Graphe>
+void Bellman<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -39,18 +39,18 @@ void Bellman<Graphe, Noeud, Lien>::computeShortestPathsFrom(unsigned int startNo
 		}
 	}
 }
-template<class Graphe, class Noeud, class Lien>
-bool Bellman<Graphe, Noeud, Lien>::canReachNode(unsigned int node) const
+template<class Graphe>
+bool Bellman<Graphe>::canReachNode(unsigned int node) const
 {
 	return (bm[node].totalCost != (unsigned int)(-1));
 }
-template<class Graphe, class Noeud, class Lien>
-unsigned int Bellman<Graphe, Noeud, Lien>::getCostTo(unsigned int node) const
+template<class Graphe>
+unsigned int Bellman<Graphe>::getCostTo(unsigned int node) const
 {
 	return bm[node].totalCost;
 }
-template<class Graphe, class Noeud, class Lien>
-deque<unsigned int> Bellman<Graphe, Noeud, Lien>::getShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+deque<unsigned int> Bellman<Graphe>::getShortestPathTo(unsigned int endNode) const
 {
 	deque<unsigned int> l;
 	while (endNode != (unsigned int)(-1))
@@ -60,8 +60,8 @@ deque<unsigned int> Bellman<Graphe, Noeud, Lien>::getShortestPathTo(unsigned int
 	}
 	return l;
 }
-template<class Graphe, class Noeud, class Lien>
-vector<unsigned int> Bellman<Graphe, Noeud, Lien>::getReverseShortestPathTo(unsigned int endNode) const
+template<class Graphe>
+vector<unsigned int> Bellman<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
 {
 	vector<unsigned int> l;
 	while (endNode != (unsigned int)(-1))

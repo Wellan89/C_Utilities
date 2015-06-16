@@ -6,7 +6,7 @@
 #include "Graph.h"
 
 // Algorithme de Floyd-Warshall : détermine toutes les plus courtes distances entre toutes les paires de points.
-template<class Graphe = Graph, class Noeud = Node, class Lien = Link>
+template<class Graphe = Graph>
 class FloydWarshall
 {
 protected:

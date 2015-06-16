@@ -2,8 +2,8 @@
 
 using namespace std;
 
-template<class Graphe, class Noeud, class Lien>
-void FloydWarshall<Graphe, Noeud, Lien>::computeShortestPaths()
+template<class Graphe>
+void FloydWarshall<Graphe>::computeShortestPaths()
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -45,13 +45,13 @@ void FloydWarshall<Graphe, Noeud, Lien>::computeShortestPaths()
 		}
 	}
 }
-template<class Graphe, class Noeud, class Lien>
-bool FloydWarshall<Graphe, Noeud, Lien>::pathExists(unsigned int startNode, unsigned int endNode) const
+template<class Graphe>
+bool FloydWarshall<Graphe>::pathExists(unsigned int startNode, unsigned int endNode) const
 {
 	return (fw[startNode][endNode].totalCost != (unsigned int)(-1));
 }
-template<class Graphe, class Noeud, class Lien>
-unsigned int FloydWarshall<Graphe, Noeud, Lien>::getPathCost(unsigned int startNode, unsigned int endNode) const
+template<class Graphe>
+unsigned int FloydWarshall<Graphe>::getPathCost(unsigned int startNode, unsigned int endNode) const
 {
 	return fw[startNode][endNode].totalCost;
 }

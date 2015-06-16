@@ -8,9 +8,8 @@
 /*
 TODO :
 Réecrire Dijkstra avec le nouvel algo wikipédia + chercher sur internet la solution la plus efficace (possible en O(n.log n) apparemment)
-Optimiser la création de chemin par vector puis miroir ?
 Ecrire un type de graphe "infini" : génération dynamique de la liste des noeuds et de la liste des liens entre eux
-Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra
+Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra (entre autres)
 Tester la fonction de suppression de liens du graphe
 Tester le détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
 Tester les algorithmes sur des graphes non simples : avec des boucles (une arête d'un noeud sur lui-même)
@@ -23,6 +22,8 @@ Améliorer Floyd-Warshall afin de pouvoir obtenir le chemin le plus court entre t
 
 // ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !
 #include "List.c"
+#include "cost_priority_queue.h"
+#include "Graph.h"
 #include "Dijkstra.cpp"
 #include "AStar.cpp"
 #include "Bellman.cpp"
@@ -1082,4 +1083,4 @@ namespace Microsoft
 			}
 		}
 	}
-};
+}

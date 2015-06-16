@@ -9,7 +9,8 @@
 // Algorithme du plus court chemin suivant un parcours en profondeur :
 // parcours le graphe en profondeur (jusqu'à une profondeur maximale donnée le cas échéant),
 // et s'arrête dès qu'un point final est trouvé.
-template<class Graphe = Graph, class Noeud = Node, class Lien = Link>
+// Gère aussi les graphes dynamiques.
+template<class Graphe = Graph>
 class DFS_ShortestPath
 {
 protected:

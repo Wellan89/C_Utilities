@@ -8,7 +8,7 @@
 // Algorithme de Bellman-Ford (avec l'amélioration de Yen) :
 // parcours tout le graphe depuis un point de départ et détermine tous les chemins les plus courts depuis ce point.
 // Détecte aussi la présence de circuits absorbants dans le graphe.
-template<class Graphe = Graph, class Noeud = Node, class Lien = Link>
+template<class Graphe = Graph>
 class BellmanFordYen
 {
 protected:

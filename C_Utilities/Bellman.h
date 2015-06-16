@@ -7,7 +7,7 @@
 
 // Algorithme de Bellman : pour un graphe sans circuits (i.e. avec un ordre topologique),
 // calcule tous les chemins les plus courts depuis un sommmet donné.
-template<class Graphe = Graph, class Noeud = Node, class Lien = Link>
+template<class Graphe = Graph>
 class Bellman
 {
 protected:
