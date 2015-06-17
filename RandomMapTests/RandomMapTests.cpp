@@ -38,12 +38,24 @@ namespace TestUnit
 			AStar<> as(randomMap->g);
 			as.computeShortestPathFrom(randomMap->startNode);
 
-			Assert::AreEqual(dj.canReachNode(randomMap->closestFinalNode), as.hasFoundPath());
-			if (as.hasFoundPath())
+			// Bellman-Ford-Yen est peu efficace en mémoire sur des graphes denses !
+			//BellmanFordYen<> bfy(randomMap->g);
+			//bfy.computeShortestPathsFrom(randomMap->startNode);
+
+			bool reachableNode = dj.canReachNode(randomMap->closestFinalNode);
+
+			Assert::AreEqual(reachableNode, as.hasFoundPath());
+			//Assert::AreEqual(reachableNode, bfy.canReachNode(randomMap->closestFinalNode));
+			if (reachableNode)
 			{
+				unsigned int cost = dj.getCostTo(randomMap->closestFinalNode);
+				deque<unsigned int> path = dj.getShortestPathTo(randomMap->closestFinalNode);
+
 				Assert::AreEqual(randomMap->closestFinalNode, as.getFinalNode());
-				Assert::AreEqual(dj.getCostTo(randomMap->closestFinalNode), as.getPathCost());
-				Assert::AreEqual(dj.getShortestPathTo(randomMap->closestFinalNode), as.getShortestPath());
+				Assert::AreEqual(cost, as.getPathCost());
+				//Assert::AreEqual(cost, bfy.getCostTo(randomMap->closestFinalNode));
+				Assert::AreEqual(path, as.getShortestPath());
+				//Assert::AreEqual(path, bfy.getShortestPathTo(randomMap->closestFinalNode));
 			}
 		}
 	};

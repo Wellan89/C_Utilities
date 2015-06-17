@@ -9,7 +9,6 @@ Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs
 Tester la fonction de suppression de liens du graphe
 Tester le détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
 Tester les algorithmes sur des graphes non simples : avec des boucles (une arête d'un noeud sur lui-même)
-Utiliser les fonctions TEST_MODULE_INITIALIZE et TEST_MODULE_CLEANUP pour créer les graphes de test en dehors des fonctions de test
 Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
@@ -38,7 +37,7 @@ Ecrire le test "CounterCulture" du google code jam round 1B 2015
 #define EMPTY_MAP_SIZE							1501
 
 #define RANDOM_MAP_SIZE							20000
-#define RANDOM_MAP_MAX_NB_LINKS					5000
+#define RANDOM_MAP_MAX_NB_LINKS					5000	// Graphe dense
 #define RANDOM_MAP_MAX_COST						1000000
 #endif
 
