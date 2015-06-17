@@ -42,18 +42,23 @@ namespace TestUnit
 			//BellmanFordYen<> bfy(randomMap->g);
 			//bfy.computeShortestPathsFrom(randomMap->startNode);
 
-			bool reachableNode = dj.canReachNode(randomMap->closestFinalNode);
+			FloydWarshall<> fw(randomMap->g);
+			fw.computeShortestPaths();
 
+			bool reachableNode = dj.canReachNode(randomMap->closestFinalNode);
 			Assert::AreEqual(reachableNode, as.hasFoundPath());
 			//Assert::AreEqual(reachableNode, bfy.canReachNode(randomMap->closestFinalNode));
+			Assert::AreEqual(reachableNode, fw.pathExists(randomMap->startNode, randomMap->closestFinalNode));
 			if (reachableNode)
 			{
-				unsigned int cost = dj.getCostTo(randomMap->closestFinalNode);
-				deque<unsigned int> path = dj.getShortestPathTo(randomMap->closestFinalNode);
-
 				Assert::AreEqual(randomMap->closestFinalNode, as.getFinalNode());
+
+				unsigned int cost = dj.getCostTo(randomMap->closestFinalNode);
 				Assert::AreEqual(cost, as.getPathCost());
 				//Assert::AreEqual(cost, bfy.getCostTo(randomMap->closestFinalNode));
+				Assert::AreEqual(cost, fw.getPathCost(randomMap->startNode, randomMap->closestFinalNode));
+
+				deque<unsigned int> path = dj.getShortestPathTo(randomMap->closestFinalNode);
 				Assert::AreEqual(path, as.getShortestPath());
 				//Assert::AreEqual(path, bfy.getShortestPathTo(randomMap->closestFinalNode));
 			}

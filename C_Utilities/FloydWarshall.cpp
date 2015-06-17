@@ -33,10 +33,12 @@ void FloydWarshall<Graphe>::computeShortestPaths()
 		{
 			for (unsigned int j = 0; j < nodesCount; j++)
 			{
-				if ((fw[i][k].totalCost == (unsigned int)(-1)) || (fw[k][j].totalCost == (unsigned int)(-1)))
+				unsigned int i_k_cost = fw[i][k].totalCost;
+				unsigned int k_j_cost = fw[k][j].totalCost;
+				if ((i_k_cost == (unsigned int)(-1)) || (k_j_cost == (unsigned int)(-1)))
 					continue;
 
-				unsigned int newCost = fw[i][k].totalCost + fw[k][j].totalCost;
+				unsigned int newCost = i_k_cost + k_j_cost;
 				if (newCost < fw[i][j].totalCost)
 				{
 					fw[i][j].totalCost = newCost;
