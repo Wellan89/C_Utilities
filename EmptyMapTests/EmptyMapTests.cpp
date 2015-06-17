@@ -20,10 +20,18 @@ namespace TestUnit
 			for (unsigned int j = 0; j < width; j++)
 			{
 				unsigned int id = ID(i, j);
+#if 0
+				// Ajoute 2 fois plus de liens que nécessaire
 				if (i > 0)			emptyMap->g.addLink(id, ID(i - 1, j), 3);	// Haut<->Bas : coûte 3     
 				if (i < height - 1)	emptyMap->g.addLink(id, ID(i + 1, j), 1);	// Bas<->Haut : coûte 1     
 				if (j > 0)			emptyMap->g.addLink(id, ID(i, j - 1), 1);	// Gauche<->Droite : coûte 1
 				if (j < width - 1)	emptyMap->g.addLink(id, ID(i, j + 1), 2);	// Droite<->Gauche : coûte 2
+#else
+				if (i < height - 1)
+					emptyMap->g.addLink(id, ID(i + 1, j), 1);
+				if (j < width - 1)
+					emptyMap->g.addLink(id, ID(i, j + 1), 1);
+#endif
 
 				emptyMap->g.setNodeHeuristic(ID(i, j),
 					abs((int)(finalNode / width) - (int)i) + abs((int)(finalNode % width) - (int)j));

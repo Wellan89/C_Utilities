@@ -8,7 +8,8 @@
 // Réponses obtenues grâce au programme CounterCulture créé pour ce concours.
 // En moyenne, l'algorithme basé sur le graphe dynamique est deux fois plus lent
 // mais utilise deux fois moins de mémoire que l'algorithme basique.
-#if defined(_DEBUG) || defined(RUN_ALL_TESTS)
+
+#ifdef _DEBUG
 #define COUNTER_CULTURE_FINAL_NODE	1234
 #define COUNTER_CULTURE_PATH_COST	193
 #else
@@ -106,13 +107,12 @@ namespace TestUnit
 
 			g.setNodeFinal(COUNTER_CULTURE_FINAL_NODE);
 			CounterCultureNodeHeuristicGenerator heuristicGen;
-			for (int i = 0; i < COUNTER_CULTURE_FINAL_NODE + 1; i++)
+			for (unsigned int i = 0; i < COUNTER_CULTURE_FINAL_NODE + 1; i++)
 			{
-				// i -> i+1
 				if (i < COUNTER_CULTURE_FINAL_NODE)
 					g.addLink(i, i + 1, 1, true);
 
-				int sw = swap(i);
+				unsigned int sw = swap(i);
 				if (sw <= COUNTER_CULTURE_FINAL_NODE)
 					g.addLink(i, sw, 1, true);
 
@@ -131,13 +131,12 @@ namespace TestUnit
 		TEST_METHOD(DijkstraCounterCulture)
 		{
 			Graph g(COUNTER_CULTURE_FINAL_NODE + 1);
-			for (int i = 0; i < COUNTER_CULTURE_FINAL_NODE + 1; i++)
+			for (unsigned int i = 0; i < COUNTER_CULTURE_FINAL_NODE + 1; i++)
 			{
-				// i -> i+1
 				if (i < COUNTER_CULTURE_FINAL_NODE)
 					g.addLink(i, i + 1, 1, true);
 
-				int sw = swap(i);
+				unsigned int sw = swap(i);
 				if (sw <= COUNTER_CULTURE_FINAL_NODE)
 					g.addLink(i, sw, 1, true);
 			}
