@@ -107,4 +107,15 @@ namespace TestUnit
 			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, bfy);
 		}
 	};
+
+	TEST_CLASS(FloydWarshallTests)
+	{
+		/* Floyd-Warshall est extrêmement lent pour les gros tests !
+		TEST_METHOD(FloydWarshallEmptyMap)
+		{
+			FloydWarshall<> fw(emptyMap->g);
+			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(emptyMap, fw);
+		}
+		*/
+	};
 }

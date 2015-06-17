@@ -15,12 +15,13 @@ et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes 
 Permettre l'utilisation de plus de mémoire au processus de test de Visual Studio (on semble ici limité aux alentours des 1.6 gigabyte)
 	+ Trouver un moyen de limiter l'utilisation mémoire des tests
 	+ Essayer d'exécuter plusieurs tests en parallèle
-Ecrire le test "CounterCulture" du google code jam round 1B 2015
 */
 
 
 
-#ifdef _DEBUG
+//#define RUN_ALL_TESTS
+
+#if defined(_DEBUG) || defined(RUN_ALL_TESTS)
 #define PATH_FINDERS_COMPUTE_LOOPS				800
 
 #define BIG_MAZE_SIZE							201		// Doit être impair
@@ -51,6 +52,7 @@ Ecrire le test "CounterCulture" du google code jam round 1B 2015
 #include "DynamicGraph.h"
 #include "Dijkstra.cpp"
 #include "AStar.cpp"
+#include "AStarDynamic.cpp"
 #include "Bellman.cpp"
 #include "DFS_ShortestPath.cpp"
 #include "BFS_ShortestPath.cpp"
@@ -78,6 +80,17 @@ namespace TestUnit
 		for (auto it = d.begin(); it != d.end(); ++it)
 			v.push_back(*it);
 		return v;
+	}
+	unsigned int swap(unsigned int i)
+	{
+		unsigned int k = 0;
+		while (i > 0)
+		{
+			unsigned int d = i % 10;
+			i /= 10;
+			k = k * 10 + d;
+		}
+		return k;
 	}
 
 	struct ShortestPathTest

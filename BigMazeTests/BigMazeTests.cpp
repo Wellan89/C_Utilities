@@ -112,4 +112,15 @@ namespace TestUnit
 			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, bfy);
 		}
 	};
+
+	TEST_CLASS(FloydWarshallTests)
+	{
+		/* Floyd-Warshall est extrêmement lent pour les gros tests !
+		TEST_METHOD(FloydWarshallBigMaze)
+		{
+			FloydWarshall<> fw(bigMaze->g);
+			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(bigMaze, fw);
+		}
+		*/
+	};
 }

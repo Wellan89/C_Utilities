@@ -18,7 +18,7 @@
 
 // Fonction nécessaire de la classe Noeud :
 //		const std::vector<Lien*>& getLinks() const;
-//			Note :	std::vector peut être remplacé par tout autre conteneur de List* pouvant être itéré.
+//			Note :	std::vector peut être remplacé par tout autre conteneur de Lien* pouvant être itéré.
 // Fonction supplémentaire nécessaire pour les algorithmes A* et DFS :
 //		bool isFinal() const;
 // Fonction supplémentaire nécessaire pour l'algorithme A* :
@@ -30,7 +30,7 @@
 //					son utilisation revient à effectuer l'algorithme de Dijkstra sur le graphe fourni.
 // Fonction supplémentaire nécessaire pour l'algorithme de Bellman :
 //		const std::vector<Lien*>& getIncomingLinks() const;
-//			Note :	std::vector peut être remplacé par tout autre conteneur de List* pouvant être itéré.
+//			Note :	std::vector peut être remplacé par tout autre conteneur de Lien* pouvant être itéré.
 
 // Fonctions nécessaires de la classe Lien :
 //		unsigned int getCost() const;

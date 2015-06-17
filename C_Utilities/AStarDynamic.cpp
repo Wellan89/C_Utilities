@@ -12,12 +12,12 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(unsigned int startNode)
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	asd[startNode].totalCost = 0;
 	cost_priority_queue<unsigned int, unsigned int> nodesToSee;
-	nodesToSee.push(startNode, g[startNode].getHeuristic());
+	nodesToSee.push(startNode, g.getNodeHeuristic(startNode));
 
 	while (!nodesToSee.empty())
 	{
 		unsigned int node = nodesToSee.top();
-		if (g[node].isFinal())
+		if (g.isNodeFinal(node))
 		{
 			endNode = node;
 			return;
@@ -29,7 +29,7 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(unsigned int startNode)
 		asd[node].alreadyVisited = true;
 		unsigned int nodeTotalCost = asd[node].totalCost;
 
-		const auto& links = g[node].getLinks();
+		auto links = g.getNodeLinks(node);
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
 			unsigned int targetNode = it->getTargetIndex();
@@ -41,7 +41,7 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(unsigned int startNode)
 			{
 				asd[targetNode].previousNode = node;
 				asd[targetNode].totalCost = newCost;
-				nodesToSee.push(targetNode, newCost + g[targetNode].getHeuristic());
+				nodesToSee.push(targetNode, newCost + g.getNodeHeuristic(targetNode));
 			}
 		}
 	}

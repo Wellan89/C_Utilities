@@ -300,10 +300,18 @@ namespace TestUnit
 
 	TEST_CLASS(FloydWarshallTests)
 	{
-		TEST_METHOD(FloydWarshall_SimpleTest)
+		TEST_METHOD(FloydWarshallSimpleTest)
 		{
 			FloydWarshall<> fw(simpleTest->g);
 			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(simpleTest, fw);
 		}
+
+		/* Floyd-Warshall est extrêmement lent pour ce test !
+		TEST_METHOD(FloydWarshallLittleMaze)
+		{
+			FloydWarshall<> fw(littleMaze->g);
+			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(littleMaze, fw);
+		}
+		*/
 	};
 }

@@ -61,6 +61,7 @@ namespace TestUnit
 				deque<unsigned int> path = dj.getShortestPathTo(randomMap->closestFinalNode);
 				Assert::AreEqual(path, as.getShortestPath());
 				//Assert::AreEqual(path, bfy.getShortestPathTo(randomMap->closestFinalNode));
+				Assert::AreEqual(deque_to_vect(path), fw.getShortestPath(randomMap->startNode, randomMap->closestFinalNode));
 			}
 		}
 	};

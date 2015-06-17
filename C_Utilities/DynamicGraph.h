@@ -4,20 +4,16 @@
 #include <deque>
 #include <vector>
 
-// Un graphe dynamique est capable de générer un noeud pour chaque indentificateur,
-// et chaque noeud peut dynamiquement générer la liste des liens vers ses voisins.
+// Un graphe dynamique est capable de déterminer la liste des liens d'un noeud pour tout identificateur de noeud donné.
 // Un lien contient un noeud (le voisin) et son coût de trajet.
 
 // Fonctions nécessaires de la classe Graphe :
-//		Noeud operator[](unsigned int index) const;
-
-// Fonctions nécessaires de la classe Noeud :
-//		const std::vector<Lien>& getLinks() const;
-//			Note :	std::vector peut être remplacé par tout autre conteneur de List* pouvant être itéré.
-// Fonction supplémentaire nécessaire pour les algorithmes A* et DFS :
-//		bool isFinal() const;
-// Fonction supplémentaire nécessaire pour l'algorithme A* :
-//		unsigned int getHeuristic() const;
+//		std::vector<Lien> getNodeLinks(unsigned int index) const;
+//			Note :	std::vector peut être remplacé par tout autre conteneur de Lien* pouvant être itéré.
+// Fonction supplémentaire nécessaire pour les algorithmes dynamiques A* et DFS :
+//		bool isNodeFinal(unsigned int node) const;
+// Fonction supplémentaire nécessaire pour l'algorithme dynamique A* :
+//		unsigned int getNodeHeuristic(unsigned int node) const;
 //			Note :	Cette fonction doit renvoyer la distance minimale estimée du noeud jusqu'à un noeud final.
 //					Afin que l'algorithme fourni ici fonctionne, cette fonction doit vérifier :
 //						Pour tous noeuds x et y : h(x) <= h(y) + d(x, y).
@@ -34,16 +30,19 @@
 class DynamicLink;
 class EmptyDynamicLinkVectorGenerator
 {
+public:
 	std::vector<DynamicLink> operator()(unsigned int index) const
 	{	return std::vector<DynamicLink>();	}
 };
 class FalseGenerator
 {
+public:
 	bool operator()(unsigned int index) const
 	{	return false;						}
 };
 class NullGenerator
 {
+public:
 	unsigned int operator()(unsigned int index) const
 	{	return 0;							}
 };
@@ -59,23 +58,6 @@ public:
 
 	DynamicLink(unsigned int _targetIndex, unsigned int _cost)
 		: targetIndex(_targetIndex), cost(_cost) { }
-};
-class DynamicNode
-{
-protected:
-	std::vector<DynamicLink> links;
-	unsigned int heuristic;
-	bool finalNode;
-
-public:
-	const std::vector<DynamicLink>& getLinks() const	{ return links; }
-	bool isFinal() const								{ return finalNode; }
-	unsigned int getHeuristic() const					{ return heuristic; }
-
-	DynamicNode(std::vector<DynamicLink> _links,
-		bool _finalNode = false, unsigned int _heuristic = (unsigned int)(-1))
-		: links(_links), finalNode(_finalNode), heuristic(_heuristic)
-	{ }
 };
 template<class NodeLinksGenerator = EmptyDynamicLinkVectorGenerator,
 	class NodeFinalGenerator = FalseGenerator,
@@ -93,9 +75,17 @@ public:
 		: linksGen(linksGenerator), finalGen(finalGenerator), heuristicGen(heuristicGenerator)
 	{ }
 
-	DynamicNode operator[](unsigned int index) const
+	std::vector<DynamicLink> getNodeLinks(unsigned int index) const
 	{
-		return DynamicNode(linksGen(index), finalGen(index), heuristicGen(index));
+		return linksGen(index);
+	}
+	bool isNodeFinal(unsigned int node) const
+	{
+		return finalGen(node);
+	}
+	unsigned int getNodeHeuristic(unsigned int node) const
+	{
+		return heuristicGen(node);
 	}
 };
 
