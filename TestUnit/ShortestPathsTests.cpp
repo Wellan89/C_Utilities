@@ -1,134 +1,7 @@
-#include "CppUnitTest.h"
-#include "ToStringSpecializations.cpp"
-#include <cstdlib>
-#include <ctime>
-
-/*
-TODO :
-Réecrire Dijkstra avec le nouvel algo wikipédia + chercher sur internet la solution la plus efficace (possible en O(n.log n) apparemment)
-Ecrire un type de graphe "infini" : génération dynamique de la liste des noeuds et de la liste des liens entre eux
-Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra (entre autres)
-Tester la fonction de suppression de liens du graphe
-Tester le détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
-Tester les algorithmes sur des graphes non simples : avec des boucles (une arête d'un noeud sur lui-même)
-Utiliser les fonctions TEST_MODULE_INITIALIZE et TEST_MODULE_CLEANUP pour créer les graphes de test en dehors des fonctions de test
-Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
-Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
-	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
-Améliorer Floyd-Warshall afin de pouvoir obtenir le chemin le plus court entre toutes les paires de points (et non pas seulement son coût)
-Permettre l'utilisation de plus de mémoire au processus de test de Visual Studio (on semble ici limité aux alentours des 1.6 gigabyte)
-	+ Trouver un moyen de limiter l'utilisation mémoire des tests : éviter leur initialisation commune ?
-	+ Essayer d'exécuter plusieurs tests en parallèle
-		=> Ecrire chaque "gros test" (big maze, empty map et random map) dans des projets différents ?
-Ecrire le test "CounterCulture" du google code jam round 1B 2015
-*/
-
-// ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !
-#include "Graph.h"
-#include "DynamicGraph.h"
-#include "Dijkstra.cpp"
-#include "AStar.cpp"
-#include "Bellman.cpp"
-#include "DFS_ShortestPath.cpp"
-#include "BFS_ShortestPath.cpp"
-#include "BellmanFord.cpp"
-#include "BellmanFordYen.cpp"
-#include "FloydWarshall.cpp"
-
-using namespace std;
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-#ifdef _DEBUG
-#define PATH_FINDERS_COMPUTE_LOOPS				800
-
-#define BIG_MAZE_SIZE							201		// Doit être impair
-#define EMPTY_MAP_SIZE							81
-
-#define RANDOM_MAP_SIZE							151
-#define RANDOM_MAP_MAX_NB_LINKS					15
-#define RANDOM_MAP_MAX_COST						1000000
-#else
-#define PATH_FINDERS_COMPUTE_LOOPS				500000
-
-// Attention ici à ne pas utiliser trop de mémoire !
-#define BIG_MAZE_SIZE							2501	// Doit être impair
-#define EMPTY_MAP_SIZE							1001
-
-#define RANDOM_MAP_SIZE							15001
-#define RANDOM_MAP_MAX_NB_LINKS					1000
-#define RANDOM_MAP_MAX_COST						1000000
-#endif
+#include "ShortestPathTestsUtils.h"
 
 namespace TestUnit
 {
-	vector<unsigned int> reverse_vect(const deque<unsigned int>& d)
-	{
-		vector<unsigned int> v;
-		v.reserve(d.size());
-		for (auto it = d.rbegin(); it != d.rend(); ++it)
-			v.push_back(*it);
-		return v;
-	}
-
-	struct ShortestPathTest
-	{
-		unsigned int nbComputeLoops;
-
-		Graph g;
-		unsigned int startNode;
-		unsigned int closestFinalNode;
-
-		vector<unsigned int> costs;
-		vector<deque<unsigned int> > paths;
-
-		vector<vector<unsigned int> > reversePaths;
-
-		ShortestPathTest(unsigned int nodesNb, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
-			: g(nodesNb), nbComputeLoops(nbLoops)
-		{
-			costs.resize(nodesNb, (unsigned int)(-1));
-			paths.resize(nodesNb);
-			reversePaths.resize(nodesNb);
-		}
-		void finishTest()
-		{
-			g.setNodeFinal(closestFinalNode);
-
-			for (unsigned int i = 0; i < paths.size(); i++)
-				reversePaths[i] = reverse_vect(paths[i]);
-		}
-	};
-	ShortestPathTest *simpleTest, *littleMaze, *bigMaze, *emptyMap;
-
-#define RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(test, spf)										\
-	do {																						\
-		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
-			spf.computeShortestPathsFrom(test->startNode);										\
-		for (unsigned int i = 0; i < test->g.size(); i++) {										\
-			if (test->costs[i] != (unsigned int)(-1)) {											\
-				Assert::IsTrue(spf.canReachNode(i));											\
-				Assert::AreEqual(test->costs[i], spf.getCostTo(i));								\
-				if (test->paths[i].size() > 1) {												\
-					Assert::AreEqual(test->paths[i], spf.getShortestPathTo(i));					\
-					Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPathTo(i));	\
-				}																				\
-			}																					\
-		}																						\
-	} while (false)
-#define RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(test, spf)								\
-	do {																						\
-		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
-			spf.computeShortestPathFrom(test->startNode);										\
-		unsigned int i = test->closestFinalNode;												\
-		if (test->costs[i] != (unsigned int)(-1)) {												\
-			Assert::AreEqual(test->costs[i], spf.getPathCost());								\
-			if (test->paths[i].size() > 1) {													\
-				Assert::AreEqual(test->paths[i], spf.getShortestPath());						\
-				Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPath());			\
-			}																					\
-		}																						\
-	} while (false)
-
 	void SimpleTestInit()
 	{
 #define CTI(c)	(c - 'a')
@@ -221,84 +94,16 @@ namespace TestUnit
 		littleMaze->finishTest();
 #undef ID
 	}
-	void BigMazeInit()
-	{
-#define ID(i, j)	((i) * width + (j))
-		unsigned int width = BIG_MAZE_SIZE;
-		unsigned int height = BIG_MAZE_SIZE;
-
-		unsigned int cost = (BIG_MAZE_SIZE / 2) + BIG_MAZE_SIZE - 4;
-		deque<unsigned int> path;
-		for (unsigned int i = (BIG_MAZE_SIZE / 2); i < BIG_MAZE_SIZE - 2; i++)
-			path.push_back(ID(i, 1));
-		for (unsigned int j = 1; j < BIG_MAZE_SIZE - 1; j++)
-			path.push_back(ID(BIG_MAZE_SIZE - 2, j));
-
-		bigMaze = new ShortestPathTest(width * height, 1);
-		bigMaze->startNode = path[0];
-		bigMaze->closestFinalNode = path[path.size() - 1];
-
-		for (unsigned int i = 1; i < height - 1; i++)
-		{
-			for (unsigned int j = 1; j < width - 1; j++)
-			{
-				unsigned int id = ID(i, j);
-				if (j == 1 && i != height - 1)
-					bigMaze->g.addLink(id, ID(i + 1, j), 1);
-				if (i % 2 == 1 && j != width - 1)
-					bigMaze->g.addLink(id, ID(i, j + 1), 1);
-			}
-		}
-		for (unsigned int i = 0; i < height; i++)
-			for (unsigned int j = 0; j < width; j++)
-				bigMaze->g.setNodeHeuristic(ID(i, j),
-					abs((int)(bigMaze->closestFinalNode / width) - (int)i)
-					+ abs((int)(bigMaze->closestFinalNode % width) - (int)j));
-
-		bigMaze->costs[bigMaze->closestFinalNode] = cost;
-		bigMaze->paths[bigMaze->closestFinalNode] = path;
-		bigMaze->finishTest();
-#undef ID
-	}
-	void EmptyMapInit()
-	{
-#define ID(i, j)	((i) * width + (j))
-		unsigned int width = EMPTY_MAP_SIZE;
-		unsigned int height = EMPTY_MAP_SIZE;
-
-		unsigned int start = ID(height / 2, width / 2);
-		unsigned int finalNode = ID(height - 1, width - 1);
-		unsigned int cost = abs((int)(start / width) - (int)(finalNode / width)) + abs((int)(start % width) - (int)(finalNode % width));
-
-		emptyMap = new ShortestPathTest(width * height, 1);
-		emptyMap->startNode = start;
-		emptyMap->closestFinalNode = finalNode;
-		for (unsigned int i = 0; i < height; i++)
-		{
-			for (unsigned int j = 0; j < width; j++)
-			{
-				unsigned int id = ID(i, j);
-				if (i > 0)			emptyMap->g.addLink(id, ID(i - 1, j), 3);	// Haut<->Bas : coûte 3     
-				if (i < height - 1)	emptyMap->g.addLink(id, ID(i + 1, j), 1);	// Bas<->Haut : coûte 1     
-				if (j > 0)			emptyMap->g.addLink(id, ID(i, j - 1), 1);	// Gauche<->Droite : coûte 1
-				if (j < width - 1)	emptyMap->g.addLink(id, ID(i, j + 1), 2);	// Droite<->Gauche : coûte 2
-
-				emptyMap->g.setNodeHeuristic(ID(i, j),
-					abs((int)(finalNode / width) - (int)i) + abs((int)(finalNode % width) - (int)j));
-			}
-		}
-
-		emptyMap->costs[emptyMap->closestFinalNode] = cost;
-		emptyMap->finishTest();
-#undef ID
-	}
 
 	TEST_MODULE_INITIALIZE(ShortestPathsTestsInit)
 	{
 		SimpleTestInit();
 		LittleMazeInit();
-		BigMazeInit();
-		EmptyMapInit();
+	}
+	TEST_MODULE_CLEANUP(ShortestPathsTestsCleanup)
+	{
+		delete simpleTest;
+		delete littleMaze;
 	}
 
 	TEST_CLASS(DijkstraTests)
@@ -315,18 +120,6 @@ namespace TestUnit
 			Dijkstra<> dj(littleMaze->g);
 			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(littleMaze, dj);
 		}
-
-		TEST_METHOD(DijkstraBigMaze)
-		{
-			Dijkstra<> dj(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, dj);
-		}
-
-		TEST_METHOD(DijkstraEmptyMap)
-		{
-			Dijkstra<> dj(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, dj);
-		}
 	};
 
 	TEST_CLASS(AStarTests)
@@ -342,18 +135,6 @@ namespace TestUnit
 		{
 			AStar<> as(littleMaze->g);
 			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(littleMaze, as);
-		}
-
-		TEST_METHOD(AStarBigMaze)
-		{
-			AStar<> as(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(bigMaze, as);
-		}
-
-		TEST_METHOD(AStarEmptyMap)
-		{
-			AStar<> as(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(emptyMap, as);
 		}
 	};
 
@@ -467,20 +248,6 @@ namespace TestUnit
 			DFS_ShortestPath<> dfs(littleMaze->g);
 			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(littleMaze, dfs);
 		}
-
-		TEST_METHOD(DFS_BigMaze)
-		{
-			DFS_ShortestPath<> dfs(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(bigMaze, dfs);
-		}
-
-		/* Ce test échoue toujours !
-		TEST_METHOD(DFS_EmptyMap)
-		{
-			DFS_ShortestPath<> dfs(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(emptyMap, dfs);
-		}
-		*/
 	};
 
 	TEST_CLASS(BFS_Tests)
@@ -496,18 +263,6 @@ namespace TestUnit
 		{
 			BFS_ShortestPath<> bfs(littleMaze->g);
 			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(littleMaze, bfs);
-		}
-
-		TEST_METHOD(BFS_BigMaze)
-		{
-			BFS_ShortestPath<> bfs(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, bfs);
-		}
-
-		TEST_METHOD(BFS_EmptyMap)
-		{
-			BFS_ShortestPath<> bfs(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, bfs);
 		}
 	};
 
@@ -525,18 +280,6 @@ namespace TestUnit
 			BellmanFord<> bf(littleMaze->g);
 			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(littleMaze, bf);
 		}
-
-		TEST_METHOD(BellmanFordBigMaze)
-		{
-			BellmanFord<> bf(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, bf);
-		}
-
-		TEST_METHOD(BellmanFordEmptyMap)
-		{
-			BellmanFord<> bf(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, bf);
-		}
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
@@ -552,18 +295,6 @@ namespace TestUnit
 		{
 			BellmanFordYen<> bfy(littleMaze->g);
 			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(littleMaze, bfy);
-		}
-
-		TEST_METHOD(BellmanFordYenBigMaze)
-		{
-			BellmanFordYen<> bfy(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, bfy);
-		}
-
-		TEST_METHOD(BellmanFordYenEmptyMap)
-		{
-			BellmanFordYen<> bfy(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, bfy);
 		}
 	};
 
@@ -603,44 +334,6 @@ namespace TestUnit
 				Assert::AreEqual(costs[i], fw.getPathCost(0, i));
 			}
 #undef CTI
-		}
-	};
-
-	TEST_CLASS(RandomPaths)
-	{
-		TEST_METHOD(RandomGraph)
-		{
-			srand((unsigned int)time(NULL));
-
-			Graph g(RANDOM_MAP_SIZE);
-			for (unsigned int i = 0; i < RANDOM_MAP_SIZE; i++)
-			{
-				unsigned int nbLinks = (unsigned int)rand() % RANDOM_MAP_MAX_NB_LINKS;
-				for (unsigned int j = 0; j < nbLinks; j++)
-				{
-					unsigned int target = (unsigned int)rand() % RANDOM_MAP_SIZE;
-					unsigned int cost = (unsigned int)rand() % RANDOM_MAP_MAX_COST;
-					g.addLink(i, target, cost, true);
-				}
-			}
-
-			unsigned int startNode = rand() % RANDOM_MAP_SIZE;
-			unsigned int finalNode = rand() % RANDOM_MAP_SIZE;
-			g.setNodeFinal(finalNode);
-
-			Dijkstra<> dj(g);
-			dj.computeShortestPathsFrom(startNode);
-
-			AStar<> as(g);
-			as.computeShortestPathFrom(startNode);
-
-			Assert::AreEqual(dj.canReachNode(finalNode), as.hasFoundPath());
-			if (as.hasFoundPath())
-			{
-				Assert::AreEqual(finalNode, as.getFinalNode());
-				Assert::AreEqual(dj.getCostTo(finalNode), as.getPathCost());
-				Assert::AreEqual(dj.getShortestPathTo(finalNode), as.getShortestPath());
-			}
 		}
 	};
 }
