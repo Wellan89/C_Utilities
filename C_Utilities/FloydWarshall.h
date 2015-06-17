@@ -1,7 +1,6 @@
-#ifndef DEF_FLOYD_WARSHALL
+ #ifndef DEF_FLOYD_WARSHALL
 #define DEF_FLOYD_WARSHALL
 
-//#include <deque>
 #include <vector>
 #include "Graph.h"
 
@@ -14,7 +13,11 @@ protected:
 	{
 		unsigned int totalCost;
 
-		FwPathInfo() : totalCost((unsigned int)(-1))
+		// Un noeud k par lequel passe le chemin (i, j).
+		// Lorsque k = j, ce chemin est un simple lien.
+		unsigned int middleNode;
+
+		FwPathInfo() : totalCost((unsigned int)(-1)), middleNode((unsigned int)(-1))
 			{ }
 	};
 
@@ -31,6 +34,8 @@ protected:
 			fw[i].resize(nodesCount);
 	}
 
+	void appendShortestPath(std::vector<unsigned int>& v, unsigned int startNode, unsigned int endNode) const;
+
 public:
 	FloydWarshall(const Graphe& gr) : g(gr) { reset(); }
 
@@ -38,8 +43,13 @@ public:
 
 	bool pathExists(unsigned int startNode, unsigned int endNode) const;
 	unsigned int getPathCost(unsigned int startNode, unsigned int endNode) const;
-	//std::deque<unsigned int> getShortestPath(unsigned int startNode, unsigned int endNode) const;
-	//std::vector<unsigned int> getReverseShortestPath(unsigned int startNode, unsigned int endNode) const;
+	std::vector<unsigned int> getShortestPath(unsigned int startNode, unsigned int endNode) const
+	{
+		std::vector<unsigned int> v;
+		v.push_back(startNode);
+		appendShortestPath(v, startNode, endNode);
+		return v;
+	}
 };
 
 #endif

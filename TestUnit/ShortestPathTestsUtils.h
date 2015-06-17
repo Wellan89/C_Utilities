@@ -12,7 +12,6 @@ Tester les algorithmes sur des graphes non simples : avec des boucles (une arête
 Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
-Améliorer Floyd-Warshall afin de pouvoir obtenir le chemin le plus court entre toutes les paires de points (et non pas seulement son coût)
 Permettre l'utilisation de plus de mémoire au processus de test de Visual Studio (on semble ici limité aux alentours des 1.6 gigabyte)
 	+ Trouver un moyen de limiter l'utilisation mémoire des tests
 	+ Essayer d'exécuter plusieurs tests en parallèle
@@ -72,6 +71,14 @@ namespace TestUnit
 			v.push_back(*it);
 		return v;
 	}
+	vector<unsigned int> deque_to_vect(const deque<unsigned int>& d)
+	{
+		vector<unsigned int> v;
+		v.reserve(d.size());
+		for (auto it = d.begin(); it != d.end(); ++it)
+			v.push_back(*it);
+		return v;
+	}
 
 	struct ShortestPathTest
 	{
@@ -114,10 +121,11 @@ namespace TestUnit
 				if (test->paths[i].size() > 1) {												\
 					Assert::AreEqual(test->paths[i], spf.getShortestPathTo(i));					\
 					Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPathTo(i));	\
-								}																				\
-						}																					\
-				}																						\
-		} while (false)
+				}																				\
+			}																					\
+		}																						\
+	} while (false)
+
 #define RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(test, spf)								\
 	do {																						\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
@@ -128,9 +136,25 @@ namespace TestUnit
 			if (test->paths[i].size() > 1) {													\
 				Assert::AreEqual(test->paths[i], spf.getShortestPath());						\
 				Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPath());			\
-						}																					\
-				}																						\
-		} while (false)
+			}																					\
+		}																						\
+	} while (false)
+
+#define RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(test, spf)								\
+	do {																						\
+		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
+			spf.computeShortestPaths();															\
+		unsigned int j = test->startNode;														\
+		for (unsigned int i = 0; i < test->g.size(); i++) {										\
+			if (test->costs[i] != (unsigned int)(-1)) {											\
+				Assert::IsTrue(spf.pathExists(j, i));											\
+				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i));						\
+				if (test->paths[i].size() > 1)													\
+					Assert::AreEqual(deque_to_vect(test->paths[i]), spf.getShortestPath(j, i));	\
+			}																					\
+		}																						\
+	} while (false)
+
 }
 
 #endif

@@ -302,38 +302,8 @@ namespace TestUnit
 	{
 		TEST_METHOD(FloydWarshall_SimpleTest)
 		{
-#define CTI(c)	(c - 'a')
-
-			// Wikipedia example test : http://fr.wikipedia.org/wiki/Algorithme_de_Dijkstra
-			Graph g(CTI('j') + 1);
-			g.addLink(CTI('a'), CTI('b'), 85);
-			g.addLink(CTI('a'), CTI('c'), 217);
-			g.addLink(CTI('a'), CTI('e'), 173);
-
-			g.addLink(CTI('b'), CTI('f'), 80);
-
-			g.addLink(CTI('c'), CTI('g'), 186);
-			g.addLink(CTI('c'), CTI('h'), 103);
-
-			g.addLink(CTI('d'), CTI('h'), 183);
-
-			g.addLink(CTI('e'), CTI('j'), 502);
-
-			g.addLink(CTI('f'), CTI('i'), 250);
-
-			g.addLink(CTI('i'), CTI('j'), 84);
-
-			FloydWarshall<> fw(g);
-			for (int i = 0; i < PATH_FINDERS_COMPUTE_LOOPS; i++)
-				fw.computeShortestPaths();
-
-			const unsigned int costs[] = { 0, 85, 217, 503, 173, 165, 403, 320, 415, 499 };
-			for (unsigned int i = 0; i <= CTI('j'); i++)
-			{
-				Assert::IsTrue(fw.pathExists(0, i));
-				Assert::AreEqual(costs[i], fw.getPathCost(0, i));
-			}
-#undef CTI
+			FloydWarshall<> fw(simpleTest->g);
+			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(simpleTest, fw);
 		}
 	};
 }
