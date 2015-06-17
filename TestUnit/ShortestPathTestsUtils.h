@@ -96,6 +96,7 @@ namespace TestUnit
 	struct ShortestPathTest
 	{
 		unsigned int nbComputeLoops;
+		unsigned int testsRefsCount;
 
 		Graph g;
 		unsigned int startNode;
@@ -106,8 +107,8 @@ namespace TestUnit
 
 		vector<vector<unsigned int> > reversePaths;
 
-		ShortestPathTest(unsigned int nodesNb, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
-			: g(nodesNb), nbComputeLoops(nbLoops)
+		ShortestPathTest(unsigned int nodesNb, unsigned int refsCount, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
+			: g(nodesNb), testsRefsCount(refsCount), nbComputeLoops(nbLoops)
 		{
 			costs.resize(nodesNb, (unsigned int)(-1));
 			paths.resize(nodesNb);
@@ -123,6 +124,17 @@ namespace TestUnit
 	};
 	ShortestPathTest *simpleTest, *littleMaze, *bigMaze, *emptyMap, *randomMap;
 
+#define CHECK_TEST_DELETE(test)					\
+	do {										\
+		if (test && test->testsRefsCount > 0) {	\
+			test->testsRefsCount--;				\
+			if (test->testsRefsCount == 0) {	\
+				delete test;					\
+				test = NULL;					\
+			}									\
+		}										\
+	} while (false)
+
 #define RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(test, spf)										\
 	do {																						\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
@@ -137,6 +149,7 @@ namespace TestUnit
 				}																				\
 			}																					\
 		}																						\
+		CHECK_TEST_DELETE(test);																\
 	} while (false)
 
 #define RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(test, spf)								\
@@ -151,6 +164,7 @@ namespace TestUnit
 				Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPath());			\
 			}																					\
 		}																						\
+		CHECK_TEST_DELETE(test);																\
 	} while (false)
 
 #define RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(test, spf)								\
@@ -166,6 +180,7 @@ namespace TestUnit
 					Assert::AreEqual(deque_to_vect(test->paths[i]), spf.getShortestPath(j, i));	\
 			}																					\
 		}																						\
+		CHECK_TEST_DELETE(test);																\
 	} while (false)
 
 }

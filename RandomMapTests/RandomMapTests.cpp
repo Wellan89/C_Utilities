@@ -2,11 +2,11 @@
 
 namespace TestUnit
 {
-	void RandomMapInit()
+	void RandomMapInit(unsigned int testRefsCount)
 	{
 		srand((unsigned int)time(NULL));
 
-		randomMap = new ShortestPathTest(RANDOM_MAP_SIZE);
+		randomMap = new ShortestPathTest(RANDOM_MAP_SIZE, testRefsCount);
 		for (unsigned int i = 0; i < RANDOM_MAP_SIZE; i++)
 		{
 			unsigned int nbLinks = (unsigned int)rand() % RANDOM_MAP_MAX_NB_LINKS;
@@ -25,7 +25,12 @@ namespace TestUnit
 
 	TEST_MODULE_INITIALIZE(RandomMapTestsInit)
 	{
-		RandomMapInit();
+		RandomMapInit(1);
+	}
+	TEST_MODULE_CLEANUP(RandomMapTestsCleanup)
+	{
+		if (randomMap)
+			delete randomMap;
 	}
 
 	TEST_CLASS(RandomPaths)
@@ -42,13 +47,14 @@ namespace TestUnit
 			//BellmanFordYen<> bfy(randomMap->g);
 			//bfy.computeShortestPathsFrom(randomMap->startNode);
 
-			FloydWarshall<> fw(randomMap->g);
-			fw.computeShortestPaths();
+			// Floyd-Warshall est peu efficace en mémoire sur des grands graphes !
+			//FloydWarshall<> fw(randomMap->g);
+			//fw.computeShortestPaths();
 
 			bool reachableNode = dj.canReachNode(randomMap->closestFinalNode);
 			Assert::AreEqual(reachableNode, as.hasFoundPath());
 			//Assert::AreEqual(reachableNode, bfy.canReachNode(randomMap->closestFinalNode));
-			Assert::AreEqual(reachableNode, fw.pathExists(randomMap->startNode, randomMap->closestFinalNode));
+			//Assert::AreEqual(reachableNode, fw.pathExists(randomMap->startNode, randomMap->closestFinalNode));
 			if (reachableNode)
 			{
 				Assert::AreEqual(randomMap->closestFinalNode, as.getFinalNode());
@@ -56,13 +62,15 @@ namespace TestUnit
 				unsigned int cost = dj.getCostTo(randomMap->closestFinalNode);
 				Assert::AreEqual(cost, as.getPathCost());
 				//Assert::AreEqual(cost, bfy.getCostTo(randomMap->closestFinalNode));
-				Assert::AreEqual(cost, fw.getPathCost(randomMap->startNode, randomMap->closestFinalNode));
+				//Assert::AreEqual(cost, fw.getPathCost(randomMap->startNode, randomMap->closestFinalNode));
 
 				deque<unsigned int> path = dj.getShortestPathTo(randomMap->closestFinalNode);
 				Assert::AreEqual(path, as.getShortestPath());
 				//Assert::AreEqual(path, bfy.getShortestPathTo(randomMap->closestFinalNode));
-				Assert::AreEqual(deque_to_vect(path), fw.getShortestPath(randomMap->startNode, randomMap->closestFinalNode));
+				//Assert::AreEqual(deque_to_vect(path), fw.getShortestPath(randomMap->startNode, randomMap->closestFinalNode));
 			}
+
+			CHECK_TEST_DELETE(randomMap);
 		}
 	};
 }

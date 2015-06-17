@@ -2,7 +2,7 @@
 
 namespace TestUnit
 {
-	void BigMazeInit()
+	void BigMazeInit(unsigned int testRefsCount)
 	{
 #define ID(i, j)	((i) * width + (j))
 		unsigned int width = BIG_MAZE_SIZE;
@@ -15,7 +15,7 @@ namespace TestUnit
 		for (unsigned int j = 1; j < BIG_MAZE_SIZE - 1; j++)
 			path.push_back(ID(BIG_MAZE_SIZE - 2, j));
 
-		bigMaze = new ShortestPathTest(width * height, 1);
+		bigMaze = new ShortestPathTest(width * height, testRefsCount, 1);
 		bigMaze->startNode = path[0];
 		bigMaze->closestFinalNode = path[path.size() - 1];
 
@@ -44,11 +44,12 @@ namespace TestUnit
 
 	TEST_MODULE_INITIALIZE(BigMazeTestsInit)
 	{
-		BigMazeInit();
+		BigMazeInit(5);
 	}
 	TEST_MODULE_CLEANUP(BigMazeTestsCleanup)
 	{
-		delete bigMaze;
+		if (bigMaze)
+			delete bigMaze;
 	}
 
 	TEST_CLASS(DijkstraTests)

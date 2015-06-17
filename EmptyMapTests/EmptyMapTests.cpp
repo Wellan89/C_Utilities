@@ -2,7 +2,7 @@
 
 namespace TestUnit
 {
-	void EmptyMapInit()
+	void EmptyMapInit(unsigned int testRefsCount)
 	{
 #define ID(i, j)	((i) * width + (j))
 		unsigned int width = EMPTY_MAP_SIZE;
@@ -12,7 +12,7 @@ namespace TestUnit
 		unsigned int finalNode = ID(height - 1, width - 1);
 		unsigned int cost = abs((int)(start / width) - (int)(finalNode / width)) + abs((int)(start % width) - (int)(finalNode % width));
 
-		emptyMap = new ShortestPathTest(width * height, 1);
+		emptyMap = new ShortestPathTest(width * height, testRefsCount, 1);
 		emptyMap->startNode = start;
 		emptyMap->closestFinalNode = finalNode;
 		for (unsigned int i = 0; i < height; i++)
@@ -37,11 +37,12 @@ namespace TestUnit
 
 	TEST_MODULE_INITIALIZE(EmptyMapTestsInit)
 	{
-		EmptyMapInit();
+		EmptyMapInit(4);
 	}
 	TEST_MODULE_CLEANUP(EmptyMapTestsCleanup)
 	{
-		delete emptyMap;
+		if (emptyMap)
+			delete emptyMap;
 	}
 
 	TEST_CLASS(DijkstraTests)

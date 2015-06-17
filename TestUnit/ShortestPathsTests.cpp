@@ -2,11 +2,11 @@
 
 namespace TestUnit
 {
-	void SimpleTestInit()
+	void SimpleTestInit(unsigned int testRefsCount)
 	{
 #define CTI(c)	(c - 'a')
 		// Wikipedia example test : http://fr.wikipedia.org/wiki/Algorithme_de_Dijkstra
-		simpleTest = new ShortestPathTest(CTI('j') + 1);
+		simpleTest = new ShortestPathTest(CTI('j') + 1, testRefsCount);
 		simpleTest->g.addLink(CTI('a'), CTI('b'), 85);
 		simpleTest->g.addLink(CTI('a'), CTI('c'), 217);
 		simpleTest->g.addLink(CTI('a'), CTI('e'), 173);
@@ -40,7 +40,7 @@ namespace TestUnit
 		simpleTest->finishTest();
 #undef CTI
 	}
-	void LittleMazeInit()
+	void LittleMazeInit(unsigned int testRefsCount)
 	{
 #define ID(i, j)	((i) * width + (j))
 		vector<string> map = {
@@ -62,7 +62,7 @@ namespace TestUnit
 		const deque<unsigned int> path = { ID(5, 1), ID(6, 1), ID(7, 1), ID(8, 1), ID(9, 1),
 			ID(9, 2), ID(9, 3), ID(9, 4), ID(9, 5), ID(9, 6), ID(9, 7), ID(9, 8), ID(9, 9) };
 
-		littleMaze = new ShortestPathTest(width * height);
+		littleMaze = new ShortestPathTest(width * height, testRefsCount);
 		for (unsigned int i = 0; i < height; i++)
 		{
 			for (unsigned int j = 0; j < width; j++)
@@ -97,13 +97,15 @@ namespace TestUnit
 
 	TEST_MODULE_INITIALIZE(ShortestPathsTestsInit)
 	{
-		SimpleTestInit();
-		LittleMazeInit();
+		SimpleTestInit(7);
+		LittleMazeInit(6);
 	}
 	TEST_MODULE_CLEANUP(ShortestPathsTestsCleanup)
 	{
-		delete simpleTest;
-		delete littleMaze;
+		if (simpleTest)
+			delete simpleTest;
+		if (littleMaze)
+			delete littleMaze;
 	}
 
 	TEST_CLASS(DijkstraTests)
