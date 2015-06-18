@@ -68,7 +68,8 @@ namespace Microsoft
 				str >> outStr;
 				return outStr;
 			}
-			static wstring ToString(const long long int& t)	{ RETURN_WIDE_STRING(t); }
+			static wstring ToString(const unsigned short& t)	{ RETURN_WIDE_STRING(t); }
+			static wstring ToString(const long long int& t)		{ RETURN_WIDE_STRING(t); }
 		}
 	}
 }

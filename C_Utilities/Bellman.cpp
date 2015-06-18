@@ -40,7 +40,7 @@ void Bellman<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 template<class Graphe>
 bool Bellman<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (bm[node].totalCost != Graphe::INVALID_NODE_INDEX());
+	return (bm[node].totalCost != Graphe::INFINITE_COST());
 }
 template<class Graphe>
 typename Bellman<Graphe>::Cout Bellman<Graphe>::getCostTo(IndexNoeud node) const

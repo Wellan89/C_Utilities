@@ -93,7 +93,7 @@ namespace TestUnit
 	};
 
 	template<class T>
-	bool checkReverseTopologicalOrder(const Graph& g, const vector<T>& rto)
+	bool checkReverseTopologicalOrder(const Graph<>& g, const vector<T>& rto)
 	{
 		if (rto.size() != g.size())
 			return false;
@@ -117,7 +117,7 @@ namespace TestUnit
 		TEST_METHOD(GraphSimpleTopologicalOrder_Algo2)
 		{
 			// Exemple tiré du cours d'Algorithmique 2 (Ensimag 1A) :
-			Graph g(8);
+			Graph<> g(8);
 			g.addLink(7, 6, 1, true);
 			g.addLink(7, 5, 1, true);
 			g.addLink(6, 3, 1, true);
@@ -131,7 +131,7 @@ namespace TestUnit
 		TEST_METHOD(GraphSimpleTopologicalOrder_RO)
 		{
 			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
-			Graph g(8);
+			Graph<> g(8);
 			g.addLink(0, 2, 1, true);
 			g.addLink(0, 3, 1, true);
 			g.addLink(1, 3, 1, true);
@@ -147,7 +147,7 @@ namespace TestUnit
 		TEST_METHOD(GraphImpossibleTopologicalOrder)
 		{
 			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
-			Graph g(6);
+			Graph<> g(6);
 			g.addLink(0, 1, 2, true);
 			g.addLink(0, 2, 8, true);
 			g.addLink(1, 2, 5, true);

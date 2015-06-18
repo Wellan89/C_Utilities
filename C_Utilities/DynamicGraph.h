@@ -41,12 +41,12 @@
 class NullGenerator
 {
 public:
-	long long int operator()(unsigned int index) const
+	long operator()(unsigned int index) const
 	{	return 0;	}
 };
 template<class NodeLinksGenerator, class NodeFinalGenerator,
 	class NodeHeuristicGenerator = NullGenerator,
-	class NodeIndex = unsigned int, class Cost = long>
+	class Cost = long, class NodeIndex = unsigned int>
 class DynamicGraph
 {
 public:

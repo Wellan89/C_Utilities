@@ -10,8 +10,6 @@ Créer une fonction pour chaque algorithme de calcul du chemin le plus court perm
 Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
 Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique
-Ecrire un vrai exécutable pour le test CounterCulture pour comparer les temps d'exécution et l'utilisation mémoire
-	entre les méthodes utilisant un graphe dynamique et celles utilisant un graphe statique
 Dans les fonctions Graph::removeLinks, parcourir les liens de la fin vers le début, pour obtenir une meilleure complexité en moyenne
 
 Tester la fonction de suppression de liens du graphe
@@ -86,20 +84,8 @@ namespace TestUnit
 			v.push_back(*it);
 		return v;
 	}
-	template<class T>
-	T swap(T i)
-	{
-		T k = 0;
-		while (i > 0)
-		{
-			T d = i % 10;
-			i /= 10;
-			k = k * 10 + d;
-		}
-		return k;
-	}
 
-	template<class Cost = long>
+	template<class Cost = Graph<>::Cout>
 	struct ShortestPathTest
 	{
 		unsigned int nbComputeLoops;
@@ -129,7 +115,7 @@ namespace TestUnit
 				reversePaths[i] = reverse_vect(paths[i]);
 		}
 	};
-	ShortestPathTest<long> *simpleTest, *littleMaze, *bigMaze, *emptyMap, *randomMap;
+	ShortestPathTest<> *simpleTest, *littleMaze, *bigMaze, *emptyMap, *randomMap;
 
 #define CHECK_TEST_DELETE(test)					\
 	do {										\

@@ -86,7 +86,7 @@ namespace TestUnit
 		for (Graph<>::IndexNoeud i = 0; i < height; i++)
 			for (Graph<>::IndexNoeud j = 0; j < width; j++)
 				littleMaze->g.setNodeHeuristic(ID(i, j),
-				(Graph<>::Cout)(abs((long)(littleMaze->closestFinalNode / width) - (long)i)
+					(Graph<>::Cout)(abs((long)(littleMaze->closestFinalNode / width) - (long)i)
 					+ abs((long)(littleMaze->closestFinalNode % width) - (long)j)));
 
 		littleMaze->costs[littleMaze->closestFinalNode] = cost;
@@ -169,7 +169,7 @@ namespace TestUnit
 				deque < Graph<>::IndexNoeud > { 7, 5 },
 				deque < Graph<>::IndexNoeud > { 7, 6 },
 				deque < Graph<>::IndexNoeud > { 7 } };
-			for (unsigned int i = 0; i < g.size(); i++)
+			for (Graph<>::IndexNoeud i = 0; i < g.size(); i++)
 			{
 				Assert::AreEqual((costs[i] != Graph<>::INFINITE_COST()), bm.canReachNode(i));
 				Assert::AreEqual(costs[i], bm.getCostTo(i));
@@ -206,7 +206,7 @@ namespace TestUnit
 				deque < Graph<>::IndexNoeud > { 0, 2, 5 },
 				deque < Graph<>::IndexNoeud > { 0, 2, 6 },
 				deque < Graph<>::IndexNoeud > { 0, 3, 7 } };
-			for (unsigned int i = 0; i < g.size(); i++)
+			for (Graph<>::IndexNoeud i = 0; i < g.size(); i++)
 			{
 				Assert::AreEqual((costs[i] != Graph<>::INFINITE_COST()), bm.canReachNode(i));
 				Assert::AreEqual(costs[i], bm.getCostTo(i));

@@ -1,4 +1,5 @@
 #include "ShortestPathTestsUtils.h"
+#include "CounterCulture.h"
 
 // Test basé sur l'exercice "Counter Culture" du Google Code Jam 2015 - Round 1B.
 // On exploite ici les graphes dynamiques, mais on compare aussi les résultats
@@ -22,12 +23,12 @@
 //#define COUNTER_CULTURE_FINAL_NODE	2000000
 //#define COUNTER_CULTURE_PATH_COST	14426
 
+//#define COUNTER_CULTURE_FINAL_NODE	10000000
+//#define COUNTER_CULTURE_PATH_COST	14434
+
 // A partir d'ici, seul l'algorithme dynamique permet de donner une solution au problème !
 // Les autres algorithmes utilisent trop de mémoire
 // pour pouvoir être exécutés dans l'environnement de test de Visual Studio.
-
-//#define COUNTER_CULTURE_FINAL_NODE	10000000
-//#define COUNTER_CULTURE_PATH_COST	14434
 
 //#define COUNTER_CULTURE_FINAL_NODE	12345678
 //#define COUNTER_CULTURE_PATH_COST	24433
@@ -39,70 +40,21 @@
 //#define COUNTER_CULTURE_PATH_COST	34425
 #endif
 
-class CounterCultureNodeLinksGenerator;
-class CounterCultureNodeFinalGenerator;
-class CounterCultureNodeHeuristicGenerator;
-namespace TestUnit
-{
-	typedef DynamicGraph<CounterCultureNodeLinksGenerator,
-		CounterCultureNodeFinalGenerator,
-		CounterCultureNodeHeuristicGenerator> CounterCultureGraph;
-	typedef CounterCultureGraph::DynamicLink DynamicLink;
-}
-
-class CounterCultureNodeLinksGenerator
-{
-public:
-	std::vector<TestUnit::DynamicLink> operator()(TestUnit::CounterCultureGraph::IndexNoeud index) const
-	{
-		std::vector<TestUnit::DynamicLink> links;
-		links.reserve(2);
-
-		TestUnit::CounterCultureGraph::IndexNoeud target = index + 1;
-		if (target <= COUNTER_CULTURE_FINAL_NODE)
-			links.push_back(TestUnit::DynamicLink(target, 1));
-
-		target = TestUnit::swap(index);
-		if (target <= COUNTER_CULTURE_FINAL_NODE)
-			links.push_back(TestUnit::DynamicLink(target, 1));
-
-		return links;
-	}
-};
-class CounterCultureNodeFinalGenerator
-{
-public:
-	bool operator()(TestUnit::CounterCultureGraph::IndexNoeud index) const
-	{
-		return (index == COUNTER_CULTURE_FINAL_NODE);
-	}
-};
-class CounterCultureNodeHeuristicGenerator
-{
-public:
-	TestUnit::CounterCultureGraph::Cout operator()(TestUnit::CounterCultureGraph::IndexNoeud index) const
-	{
-		// Attention : on doit toujours vérifier : h(x) <= d(x, finalNode),
-		// ce qui est difficile à garantir ici !
-		return 0;
-	}
-};
-
 namespace TestUnit
 {
 	TEST_CLASS(AStarDynamicTests)
 	{
 		TEST_METHOD(AStarDynamicCounterCulture)
 		{
-			CounterCultureNodeLinksGenerator linksGen;
-			CounterCultureNodeFinalGenerator finalGen;
-			CounterCultureNodeHeuristicGenerator heuristicGen;
-			CounterCultureGraph ccg(linksGen, finalGen, heuristicGen);
+			CCNodeLinksGenerator linksGen(COUNTER_CULTURE_FINAL_NODE);
+			CCNodeFinalGenerator finalGen(COUNTER_CULTURE_FINAL_NODE);
+			CCNodeHeuristicGenerator heuristicGen(COUNTER_CULTURE_FINAL_NODE);
+			CCDynGraph ccdg(linksGen, finalGen, heuristicGen);
 
-			AStarDynamic<CounterCultureGraph> asd(ccg);
+			AStarDynamic<CCDynGraph> asd(ccdg);
 			asd.computeShortestPathFrom(0);
 			Assert::IsTrue(asd.hasFoundPath());
-			Assert::AreEqual((CounterCultureGraph::Cout)COUNTER_CULTURE_PATH_COST, asd.getPathCost());
+			Assert::AreEqual((CCDynGraph::Cout)COUNTER_CULTURE_PATH_COST, asd.getPathCost());
 		}
 	};
 
@@ -110,26 +62,12 @@ namespace TestUnit
 	{
 		TEST_METHOD(AStarCounterCulture)
 		{
-			Graph<> g(COUNTER_CULTURE_FINAL_NODE + 1);
+			CCGraph ccg = generateCCGraph(COUNTER_CULTURE_FINAL_NODE);
 
-			g.setNodeFinal(COUNTER_CULTURE_FINAL_NODE);
-			CounterCultureNodeHeuristicGenerator heuristicGen;
-			for (unsigned int i = 0; i < COUNTER_CULTURE_FINAL_NODE + 1; i++)
-			{
-				if (i < COUNTER_CULTURE_FINAL_NODE)
-					g.addLink(i, i + 1, 1, true);
-
-				unsigned int sw = swap(i);
-				if (sw <= COUNTER_CULTURE_FINAL_NODE)
-					g.addLink(i, sw, 1, true);
-
-				g.setNodeHeuristic(i, heuristicGen(i));
-			}
-
-			AStar<> as(g);
+			AStar<CCGraph> as(ccg);
 			as.computeShortestPathFrom(0);
 			Assert::IsTrue(as.hasFoundPath());
-			Assert::AreEqual((Graph<>::Cout)COUNTER_CULTURE_PATH_COST, as.getPathCost());
+			Assert::AreEqual((CCGraph::Cout)COUNTER_CULTURE_PATH_COST, as.getPathCost());
 		}
 	};
 
@@ -137,21 +75,12 @@ namespace TestUnit
 	{
 		TEST_METHOD(DijkstraCounterCulture)
 		{
-			Graph<> g(COUNTER_CULTURE_FINAL_NODE + 1);
-			for (unsigned int i = 0; i < COUNTER_CULTURE_FINAL_NODE + 1; i++)
-			{
-				if (i < COUNTER_CULTURE_FINAL_NODE)
-					g.addLink(i, i + 1, 1, true);
+			CCGraph ccg = generateCCGraph(COUNTER_CULTURE_FINAL_NODE);
 
-				unsigned int sw = swap(i);
-				if (sw <= COUNTER_CULTURE_FINAL_NODE)
-					g.addLink(i, sw, 1, true);
-			}
-
-			Dijkstra<> dj(g);
+			Dijkstra<CCGraph> dj(ccg);
 			dj.computeShortestPathsFrom(0);
 			Assert::IsTrue(dj.canReachNode(COUNTER_CULTURE_FINAL_NODE));
-			Assert::AreEqual((Graph<>::Cout)COUNTER_CULTURE_PATH_COST, dj.getCostTo(COUNTER_CULTURE_FINAL_NODE));
+			Assert::AreEqual((CCGraph::Cout)COUNTER_CULTURE_PATH_COST, dj.getCostTo(COUNTER_CULTURE_FINAL_NODE));
 		}
 	};
 }

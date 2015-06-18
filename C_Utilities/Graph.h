@@ -52,7 +52,7 @@
 
 
 // Implémentation minimale de ces classes
-template<class Cost = long>
+template<class Cost = unsigned short, class NodeIndex = size_t>
 class Graph
 {
 public:
@@ -60,11 +60,11 @@ public:
 	class Node;
 	typedef Link Lien;
 	typedef Node Noeud;
-	typedef size_t IndexNoeud;
+	typedef NodeIndex IndexNoeud;
 	typedef Cost Cout;
 
 	// On est ici obligé de définir des fonctions pour accéder à ces constantes,
-	// à cause du standard C++ qui définit la valeur max d'un type en tant que fonction.
+	// à cause du standard C++ qui ne permet d'obtenir la valeur max d'un type que par un appel de fonction.
 	static IndexNoeud INVALID_NODE_INDEX()
 	{
 		return std::numeric_limits<IndexNoeud>::max();

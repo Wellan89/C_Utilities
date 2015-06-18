@@ -17,6 +17,7 @@ namespace Microsoft
 			template<class T> static std::wstring ToString(const std::list<T>& l);
 			template<class T> static std::wstring ToString(const std::deque<T>& l);
 			template<class T> static std::wstring ToString(const std::vector<T>& l);
+			static std::wstring ToString(const unsigned short& t);
 			static std::wstring ToString(const long long int& t);
 		}
 	}
