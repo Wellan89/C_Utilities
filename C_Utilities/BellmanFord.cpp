@@ -3,7 +3,7 @@
 using namespace std;
 
 template<class Graphe>
-void BellmanFord<Graphe>::computeShortestPathsFrom(unsigned int startNode)
+void BellmanFord<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -12,26 +12,26 @@ void BellmanFord<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 	bf[startNode].totalCost = 0;
 
 	// On sait que la longueur maximale d'un chemin le plus court est de n-1 noeuds
-	unsigned int nodesCount = g.size();
-	unsigned int lastTurnIndex = (nodesCount - 1);
+	IndexNoeud nodesCount = g.size();
+	IndexNoeud lastTurnIndex = (nodesCount - 1);
 	bool madeChange = true;
-	for (unsigned int i = 0; madeChange; i++)
+	for (IndexNoeud i = 0; madeChange; i++)
 	{
 		madeChange = false;
 		bool lastTurn = (i == lastTurnIndex);
 
 		// Parcours toutes les arêtes du graphe
-		for (unsigned int node = 0; node < nodesCount; node++)
+		for (IndexNoeud node = 0; node < nodesCount; node++)
 		{
-			unsigned int nodeTotalCost = bf[node].totalCost;
-			if (nodeTotalCost == (unsigned int)(-1))
+			Cout nodeTotalCost = bf[node].totalCost;
+			if (nodeTotalCost == Graphe::INFINITE_COST)
 				continue;
 
 			const auto& links = g[node].getLinks();
 			for (auto it = links.begin(); it != links.end(); ++it)
 			{
-				unsigned int targetNode = it->getTargetIndex();
-				unsigned int newCost = nodeTotalCost + it->getCost();
+				IndexNoeud targetNode = it->getTargetIndex();
+				Cout newCost = nodeTotalCost + it->getCost();
 				if (newCost < bf[targetNode].totalCost)
 				{
 					if (!lastTurn)
@@ -58,20 +58,20 @@ bool BellmanFord<Graphe>::absorbCycleDetected() const
 	return absorbCycleFound;
 }
 template<class Graphe>
-bool BellmanFord<Graphe>::canReachNode(unsigned int node) const
+bool BellmanFord<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (bf[node].totalCost != (unsigned int)(-1));
+	return (bf[node].totalCost != Graphe::INVALID_NODE_INDEX);
 }
 template<class Graphe>
-unsigned int BellmanFord<Graphe>::getCostTo(unsigned int node) const
+typename BellmanFord<Graphe>::Cout BellmanFord<Graphe>::getCostTo(IndexNoeud node) const
 {
 	return bf[node].totalCost;
 }
 template<class Graphe>
-deque<unsigned int> BellmanFord<Graphe>::getShortestPathTo(unsigned int endNode) const
+deque<typename BellmanFord<Graphe>::IndexNoeud> BellmanFord<Graphe>::getShortestPathTo(IndexNoeud endNode) const
 {
-	deque<unsigned int> l;
-	while (endNode != (unsigned int)(-1))
+	deque<IndexNoeud> l;
+	while (endNode != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_front(endNode);
 		endNode = bf[endNode].previousNode;
@@ -79,10 +79,10 @@ deque<unsigned int> BellmanFord<Graphe>::getShortestPathTo(unsigned int endNode)
 	return l;
 }
 template<class Graphe>
-vector<unsigned int> BellmanFord<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
+vector<typename BellmanFord<Graphe>::IndexNoeud> BellmanFord<Graphe>::getReverseShortestPathTo(IndexNoeud endNode) const
 {
-	vector<unsigned int> l;
-	while (endNode != (unsigned int)(-1))
+	vector<IndexNoeud> l;
+	while (endNode != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_back(endNode);
 		endNode = bf[endNode].previousNode;

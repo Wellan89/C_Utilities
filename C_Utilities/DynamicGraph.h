@@ -16,12 +16,12 @@
 //		static const Cout INFINITE_COST;
 //			Note :	Cette dernière constante doit être supérieure stricte à tout autre coût possible.
 // Fonctions nécessaires de la classe Graphe :
-//		std::vector<Lien> getNodeLinks(unsigned int index) const;
+//		std::vector<Lien> getNodeLinks(IndexNoeud index) const;
 //			Note :	std::vector peut être remplacé par tout autre conteneur de Lien* pouvant être itéré.
 // Fonction supplémentaire nécessaire pour les algorithmes dynamiques A* et DFS :
-//		bool isNodeFinal(unsigned int node) const;
+//		bool isNodeFinal(IndexNoeud node) const;
 // Fonction supplémentaire nécessaire pour l'algorithme dynamique A* :
-//		unsigned int getNodeHeuristic(unsigned int node) const;
+//		Cout getNodeHeuristic(IndexNoeud node) const;
 //			Note :	Cette fonction doit renvoyer la distance minimale estimée du noeud jusqu'à un noeud final.
 //					Afin que l'algorithme fourni ici fonctionne, cette fonction doit vérifier :
 //						Pour tous noeuds x et y : h(x) <= h(y) + d(x, y).
@@ -32,8 +32,8 @@
 //					son utilisation revient à effectuer l'algorithme de Dijkstra sur le graphe fourni.
 
 // Fonctions nécessaires de la classe Lien :
-//		unsigned int getCost() const;
-//		unsigned int getTargetIndex() const;
+//		Cout getCost() const;
+//		IndexNoeud getTargetIndex() const;
 
 
 
@@ -41,7 +41,7 @@
 class NullGenerator
 {
 public:
-	long long int operator()(unsigned int index) const
+	long long int operator()(long long int index) const
 	{	return 0;	}
 };
 template<class NodeLinksGenerator, class NodeFinalGenerator,
@@ -51,8 +51,8 @@ class DynamicGraph
 public:
 	class DynamicLink;
 	typedef DynamicLink Lien;
-	typedef unsigned int IndexNoeud;
-	static const IndexNoeud INVALID_NODE_INDEX = (unsigned int)(-1);
+	typedef long long int IndexNoeud;
+	static const IndexNoeud INVALID_NODE_INDEX = (long long int)(-1);
 	typedef long long int Cout;
 	static const Cout INFINITE_COST = LLONG_MAX;
 

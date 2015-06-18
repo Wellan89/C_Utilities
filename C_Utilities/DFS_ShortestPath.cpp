@@ -3,12 +3,12 @@
 using namespace std;
 
 template<class Graphe>
-bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(unsigned int node, unsigned int currentCost)
+bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(IndexNoeud node, Cout currentCost)
 {
 	// Vérifie que le chemin actuellement parcouru n'est pas plus long que le chemin le plus court déjà trouvé.
 	// On quitte lorsqu'il y a égalité entre la longueur du chemin actuel et celle du chemin le plus court si un noeud final a déjà été trouvé.
 	if (currentCost > pathCost
-		|| (currentCost >= pathCost && endNode != (unsigned int)(-1)))
+		|| (currentCost >= pathCost && endNode != Graphe::INVALID_NODE_INDEX))
 		return false;
 
 	// Vérifie que ce noeud est un noeud final
@@ -30,7 +30,7 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(unsigned int node, unsign
 	const auto& links = g[node].getLinks();
 	for (auto it = links.begin(); it != links.end(); ++it)
 	{
-		unsigned int targetNode = it->getTargetIndex();
+		IndexNoeud targetNode = it->getTargetIndex();
 		
 		// Vérifie que ce noeud n'est pas exploré actuellement
 		if (visitedNodes.find(targetNode) != visitedNodes.end())
@@ -49,7 +49,7 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(unsigned int node, unsign
 	return pathFound;
 }
 template<class Graphe>
-void DFS_ShortestPath<Graphe>::computeShortestPathFrom(unsigned int startNode, unsigned int maxCost)
+void DFS_ShortestPath<Graphe>::computeShortestPathFrom(IndexNoeud startNode, Cout maxCost)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -73,28 +73,28 @@ void DFS_ShortestPath<Graphe>::computeShortestPathFrom(unsigned int startNode, u
 template<class Graphe>
 bool DFS_ShortestPath<Graphe>::hasFoundPath() const
 {
-	return (endNode != (unsigned int)(-1));
+	return (endNode != Graphe::INVALID_NODE_INDEX);
 }
 template<class Graphe>
-unsigned int DFS_ShortestPath<Graphe>::getFinalNode() const
+typename DFS_ShortestPath<Graphe>::IndexNoeud DFS_ShortestPath<Graphe>::getFinalNode() const
 {
 	return endNode;
 }
 template<class Graphe>
-unsigned int DFS_ShortestPath<Graphe>::getPathCost() const
+typename DFS_ShortestPath<Graphe>::Cout DFS_ShortestPath<Graphe>::getPathCost() const
 {
 	return pathCost;
 }
 template<class Graphe>
-deque<unsigned int> DFS_ShortestPath<Graphe>::getShortestPath() const
+deque<typename DFS_ShortestPath<Graphe>::IndexNoeud> DFS_ShortestPath<Graphe>::getShortestPath() const
 {
-	deque<unsigned int> l;
+	deque<IndexNoeud> l;
 	for (auto it = reverseShortestPath.begin(); it != reverseShortestPath.end(); ++it)
 		l.push_front(*it);
 	return l;
 }
 template<class Graphe>
-const vector<unsigned int>& DFS_ShortestPath<Graphe>::getReverseShortestPath() const
+const vector<typename DFS_ShortestPath<Graphe>::IndexNoeud>& DFS_ShortestPath<Graphe>::getReverseShortestPath() const
 {
 	return reverseShortestPath;
 }

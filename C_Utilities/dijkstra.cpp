@@ -31,7 +31,15 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 			if (dj[targetNode].alreadyVisited)
 				continue;
 
-			Cout newCost = nodeTotalCost + it->getCost();
+			Cout linkCost = it->getCost();
+			if (linkCost < 0)
+			{
+				// On a trouvé une arête avec un coût négatif : on quitte ici.
+				reset();
+				return;
+			}
+
+			Cout newCost = nodeTotalCost + linkCost;
 			if (newCost < dj[targetNode].totalCost)
 			{
 				dj[targetNode].previousNode = node;

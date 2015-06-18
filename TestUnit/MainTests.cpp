@@ -92,7 +92,8 @@ namespace TestUnit
 		}
 	};
 
-	bool checkReverseTopologicalOrder(const Graph& g, const vector<unsigned int>& rto)
+	template<class T>
+	bool checkReverseTopologicalOrder(const Graph& g, const vector<T>& rto)
 	{
 		if (rto.size() != g.size())
 			return false;

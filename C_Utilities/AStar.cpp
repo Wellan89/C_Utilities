@@ -36,7 +36,15 @@ void AStar<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 			if (as[targetNode].alreadyVisited)
 				continue;
 
-			Cout newCost = nodeTotalCost + it->getCost();
+			Cout linkCost = it->getCost();
+			if (linkCost < 0)
+			{
+				// On a trouvé une arête avec un coût négatif : on quitte ici.
+				reset();
+				return;
+			}
+
+			Cout newCost = nodeTotalCost + linkCost;
 			if (newCost < as[targetNode].totalCost)
 			{
 				as[targetNode].previousNode = node;

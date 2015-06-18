@@ -3,7 +3,7 @@
 using namespace std;
 
 template<class Graphe>
-void BellmanFordYen<Graphe>::computeShortestPathsFrom(unsigned int startNode)
+void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
@@ -20,14 +20,14 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 	// et que ces points sont atteignables depuis le noeud de départ.
 	std::vector<const Graphe::Lien*> edgesF;
 	std::vector<const Graphe::Lien*> edgesB;
-	std::vector<unsigned int> absorbNodes;
-	unsigned int nodesCount = g.size();
-	for (unsigned int node = 0; node < nodesCount; node++)
+	std::vector<IndexNoeud> absorbNodes;
+	IndexNoeud nodesCount = g.size();
+	for (IndexNoeud node = 0; node < nodesCount; node++)
 	{
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			unsigned int targetNode = it->getTargetIndex();
+			IndexNoeud targetNode = it->getTargetIndex();
 			if (node < targetNode)
 				edgesF.push_back(&(*it));
 			else if (node > targetNode)
@@ -38,9 +38,9 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 	}
 
 	// Ici (n + 1) / 2 tours de boucles sont suffisants
-	unsigned int lastTurnIndex = 1 + (nodesCount - 1) / 2;
+	IndexNoeud lastTurnIndex = 1 + (nodesCount - 1) / 2;
 	bool madeChange = true;
-	for (unsigned int i = 0; madeChange; i++)
+	for (IndexNoeud i = 0; madeChange; i++)
 	{
 		madeChange = false;
 		bool lastTurn = (i == lastTurnIndex);
@@ -49,13 +49,13 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 		for (auto it = edgesF.begin(); it != edgesF.end(); ++it)
 		{
 			const Graphe::Lien* l = (*it);
-			unsigned int node = l->getFromIndex();
-			unsigned int nodeTotalCost = bfy[node].totalCost;
-			if (nodeTotalCost == (unsigned int)(-1))
+			IndexNoeud node = l->getFromIndex();
+			Cout nodeTotalCost = bfy[node].totalCost;
+			if (nodeTotalCost == Graphe::INFINITE_COST)
 				continue;
 
-			unsigned int targetNode = l->getTargetIndex();
-			unsigned int newCost = nodeTotalCost + l->getCost();
+			IndexNoeud targetNode = l->getTargetIndex();
+			Cout newCost = nodeTotalCost + l->getCost();
 			if (newCost < bfy[targetNode].totalCost)
 			{
 				if (!lastTurn)
@@ -78,13 +78,13 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 		for (auto it = edgesB.rbegin(); it != edgesB.rend(); ++it)
 		{
 			const Graphe::Lien* l = (*it);
-			unsigned int node = l->getFromIndex();
-			unsigned int nodeTotalCost = bfy[node].totalCost;
-			if (nodeTotalCost == (unsigned int)(-1))
+			IndexNoeud node = l->getFromIndex();
+			Cout nodeTotalCost = bfy[node].totalCost;
+			if (nodeTotalCost == Graphe::INFINITE_COST)
 				continue;
 
-			unsigned int targetNode = l->getTargetIndex();
-			unsigned int newCost = nodeTotalCost + l->getCost();
+			IndexNoeud targetNode = l->getTargetIndex();
+			Cout newCost = nodeTotalCost + l->getCost();
 			if (newCost < bfy[targetNode].totalCost)
 			{
 				if (!lastTurn)
@@ -107,7 +107,7 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 	// Vérifie qu'aucun des noeuds avec une boucle absorbante ne peut être atteint depuis le noeud de départ
 	for (auto it = absorbNodes.begin(); it != absorbNodes.end(); ++it)
 	{
-		if (bfy[*it].totalCost != (unsigned int)(-1))
+		if (bfy[*it].totalCost != Graphe::INFINITE_COST)
 		{
 			// On a trouvé un circuit absorbant
 			reset();
@@ -122,20 +122,20 @@ bool BellmanFordYen<Graphe>::absorbCycleDetected() const
 	return absorbCycleFound;
 }
 template<class Graphe>
-bool BellmanFordYen<Graphe>::canReachNode(unsigned int node) const
+bool BellmanFordYen<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (bfy[node].totalCost != (unsigned int)(-1));
+	return (bfy[node].totalCost != Graphe::INFINITE_COST);
 }
 template<class Graphe>
-unsigned int BellmanFordYen<Graphe>::getCostTo(unsigned int node) const
+typename BellmanFordYen<Graphe>::Cout BellmanFordYen<Graphe>::getCostTo(IndexNoeud node) const
 {
 	return bfy[node].totalCost;
 }
 template<class Graphe>
-deque<unsigned int> BellmanFordYen<Graphe>::getShortestPathTo(unsigned int endNode) const
+deque<typename BellmanFordYen<Graphe>::IndexNoeud> BellmanFordYen<Graphe>::getShortestPathTo(IndexNoeud endNode) const
 {
-	deque<unsigned int> l;
-	while (endNode != (unsigned int)(-1))
+	deque<IndexNoeud> l;
+	while (endNode != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_front(endNode);
 		endNode = bfy[endNode].previousNode;
@@ -143,10 +143,10 @@ deque<unsigned int> BellmanFordYen<Graphe>::getShortestPathTo(unsigned int endNo
 	return l;
 }
 template<class Graphe>
-vector<unsigned int> BellmanFordYen<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
+vector<typename BellmanFordYen<Graphe>::IndexNoeud> BellmanFordYen<Graphe>::getReverseShortestPathTo(IndexNoeud endNode) const
 {
-	vector<unsigned int> l;
-	while (endNode != (unsigned int)(-1))
+	vector<IndexNoeud> l;
+	while (endNode != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_back(endNode);
 		endNode = bfy[endNode].previousNode;

@@ -17,6 +17,8 @@ Tester la fonction de suppression de liens du graphe
 Tester la détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
 Tester les algorithmes sur des graphes non simples : avec des boucles (une arête d'un noeud sur lui-même) ou plusieurs liens entre chaque noeud
 Ecrire un test avec un graphe sans cycles, afin de pouvoir comparer Bellman aux autres algorithmes
+
+Passer toutes les fonctions des fichiers sources dépendant de templates dans les headers
 */
 
 

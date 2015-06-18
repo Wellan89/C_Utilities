@@ -5,8 +5,8 @@
 #include <deque>
 #include "Graph.h"
 
-// Algorithme A* : parcours le graphe depuis un point de départ en suivant une heuristique,
-// et s'arrête dès qu'un point final est trouvé.
+// Algorithme A* : pour un graphe où toutes les arêtes ont un coût positif,
+// parcours le graphe depuis un point de départ en suivant une heuristique, et s'arrête dès qu'un point final est trouvé.
 template<class Graphe = Graph>
 class AStar
 {

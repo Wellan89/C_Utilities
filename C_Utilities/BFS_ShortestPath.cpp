@@ -4,28 +4,28 @@
 using namespace std;
 
 template<class Graphe>
-void BFS_ShortestPath<Graphe>::computeShortestPathsFrom(unsigned int startNode)
+void BFS_ShortestPath<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
-	deque<unsigned int> nodesToSee;
+	deque<IndexNoeud> nodesToSee;
 	bfs[startNode].totalCost = 0;
 	nodesToSee.push_back(startNode);
 
 	while (!nodesToSee.empty())
 	{
-		unsigned int node = nodesToSee.front();
+		IndexNoeud node = nodesToSee.front();
 		nodesToSee.pop_front();
 
-		unsigned int nodeTotalCost = bfs[node].totalCost;
+		Cout nodeTotalCost = bfs[node].totalCost;
 
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			unsigned int targetNode = it->getTargetIndex();
-			unsigned int newCost = nodeTotalCost + it->getCost();
+			IndexNoeud targetNode = it->getTargetIndex();
+			Cout newCost = nodeTotalCost + it->getCost();
 			if (newCost < bfs[targetNode].totalCost)
 			{
 				bfs[targetNode].previousNode = node;
@@ -36,20 +36,20 @@ void BFS_ShortestPath<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 	}
 }
 template<class Graphe>
-bool BFS_ShortestPath<Graphe>::canReachNode(unsigned int node) const
+bool BFS_ShortestPath<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (bfs[node].totalCost != (unsigned int)(-1));
+	return (bfs[node].totalCost != Graphe::INFINITE_COST);
 }
 template<class Graphe>
-unsigned int BFS_ShortestPath<Graphe>::getCostTo(unsigned int node) const
+typename BFS_ShortestPath<Graphe>::Cout BFS_ShortestPath<Graphe>::getCostTo(IndexNoeud node) const
 {
 	return bfs[node].totalCost;
 }
 template<class Graphe>
-deque<unsigned int> BFS_ShortestPath<Graphe>::getShortestPathTo(unsigned int endNode) const
+deque<typename BFS_ShortestPath<Graphe>::IndexNoeud> BFS_ShortestPath<Graphe>::getShortestPathTo(IndexNoeud endNode) const
 {
-	deque<unsigned int> l;
-	while (endNode != (unsigned int)(-1))
+	deque<IndexNoeud> l;
+	while (endNode != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_front(endNode);
 		endNode = bfs[endNode].previousNode;
@@ -57,10 +57,10 @@ deque<unsigned int> BFS_ShortestPath<Graphe>::getShortestPathTo(unsigned int end
 	return l;
 }
 template<class Graphe>
-vector<unsigned int> BFS_ShortestPath<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
+vector<typename BFS_ShortestPath<Graphe>::IndexNoeud> BFS_ShortestPath<Graphe>::getReverseShortestPathTo(IndexNoeud endNode) const
 {
-	vector<unsigned int> l;
-	while (endNode != (unsigned int)(-1))
+	vector<IndexNoeud> l;
+	while (endNode != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_back(endNode);
 		endNode = bfs[endNode].previousNode;

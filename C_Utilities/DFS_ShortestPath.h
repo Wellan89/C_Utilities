@@ -12,41 +12,45 @@
 template<class Graphe = Graph>
 class DFS_ShortestPath
 {
+public:
+	typedef typename Graphe::IndexNoeud IndexNoeud;
+	typedef typename Graphe::Cout Cout;
+
 protected:
 	// L'ensemble des noeuds actuellement visités par récursivité
-	std::set<unsigned int> visitedNodes;
+	std::set<IndexNoeud> visitedNodes;
 
 	// Le chemin actuellement trouvé (dans l'ordre inverse)
-	std::vector<unsigned int> reverseShortestPath;
+	std::vector<IndexNoeud> reverseShortestPath;
 
 	const Graphe& g;
 
 	// Le noeud final trouvé par cet algorithme
-	unsigned int endNode;
+	IndexNoeud endNode;
 
 	// Le coût pour accéder à ce noeud depuis le noeud de départ
-	unsigned int pathCost;
+	Cout pathCost;
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
 		reverseShortestPath.clear();
-		endNode = (unsigned int)(-1);
-		pathCost = (unsigned int)(-1);
+		endNode = Graphe::INVALID_NODE_INDEX;
+		pathCost = Graphe::INFINITE_COST;
 	}
 
-	bool computeShortestPath_Rec(unsigned int node, unsigned int currentCost);
+	bool computeShortestPath_Rec(IndexNoeud node, Cout currentCost);
 
 public:
 	DFS_ShortestPath(const Graphe& gr) : g(gr) { reset(); }
 
-	void computeShortestPathFrom(unsigned int startNode, unsigned int maxCost = (unsigned int)(-1));
+	void computeShortestPathFrom(IndexNoeud startNode, Cout maxCost = Graphe::INFINITE_COST);
 
 	bool hasFoundPath() const;
-	unsigned int getFinalNode() const;
-	unsigned int getPathCost() const;
-	std::deque<unsigned int> getShortestPath() const;
-	const std::vector<unsigned int>& getReverseShortestPath() const;
+	IndexNoeud getFinalNode() const;
+	Cout getPathCost() const;
+	std::deque<IndexNoeud> getShortestPath() const;
+	const std::vector<IndexNoeud>& getReverseShortestPath() const;
 };
 
 #endif

@@ -1,7 +1,6 @@
 #ifndef DEF_GRAPH
 #define DEF_GRAPH
 
-#include <climits>
 #include <deque>
 #include <vector>
 
@@ -17,7 +16,7 @@
 //		static const Cout INFINITE_COST;
 //			Note :	Cette dernière constante doit être supérieure stricte à tout autre coût possible.
 // Fonctions nécessaires de la classe Graphe :
-//		unsigned int size() const;
+//		IndexNoeud size() const;
 //		const Noeud& operator[](Graphe::IndexNoeud index) const;
 // Fonctions supplémentaires nécessaire pour l'algorithme de Bellman :
 //		std::vector<Graphe::IndexNoeud> getReverseTopologicalyOrderedNodes() const;
@@ -60,9 +59,9 @@ public:
 	class Node;
 	typedef Link Lien;
 	typedef Node Noeud;
-	typedef unsigned int IndexNoeud;
-	static const IndexNoeud INVALID_NODE_INDEX = (unsigned int)(-1);
+	typedef std::vector<Noeud>::size_type IndexNoeud;
 	typedef long long int Cout;
+	static const IndexNoeud INVALID_NODE_INDEX = UINT_MAX;
 	static const Cout INFINITE_COST = LLONG_MAX;
 
 	class Link
@@ -144,7 +143,7 @@ public:
 	Graph(IndexNoeud nodesNb)
 	{
 		nodes.reserve(nodesNb);
-		for (unsigned int i = 0; i < nodesNb; i++)
+		for (IndexNoeud i = 0; i < nodesNb; i++)
 			nodes.push_back(Noeud(i));
 	}
 
