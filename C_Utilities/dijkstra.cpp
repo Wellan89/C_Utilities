@@ -52,7 +52,7 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 template<class Graphe>
 bool Dijkstra<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (dj[node].totalCost != Graphe::INVALID_NODE_INDEX);
+	return (dj[node].totalCost != Graphe::INVALID_NODE_INDEX());
 }
 template<class Graphe>
 typename Dijkstra<Graphe>::Cout Dijkstra<Graphe>::getCostTo(IndexNoeud node) const
@@ -63,7 +63,7 @@ template<class Graphe>
 deque<typename Dijkstra<Graphe>::IndexNoeud> Dijkstra<Graphe>::getShortestPathTo(IndexNoeud endNode) const
 {
 	deque<IndexNoeud> l;
-	while (endNode != Graphe::INVALID_NODE_INDEX)
+	while (endNode != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_front(endNode);
 		endNode = dj[endNode].previousNode;
@@ -74,7 +74,7 @@ template<class Graphe>
 vector<typename Dijkstra<Graphe>::IndexNoeud> Dijkstra<Graphe>::getReverseShortestPathTo(IndexNoeud endNode) const
 {
 	vector<IndexNoeud> l;
-	while (endNode != Graphe::INVALID_NODE_INDEX)
+	while (endNode != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_back(endNode);
 		endNode = dj[endNode].previousNode;

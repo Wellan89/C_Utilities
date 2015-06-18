@@ -25,7 +25,7 @@ void Bellman<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 		for (auto incLinkIt = incomingLinks.begin(); incLinkIt != incomingLinks.end(); ++incLinkIt)
 		{
 			IndexNoeud prevNode = incLinkIt->getFromIndex();
-			if (bm[prevNode].totalCost == Graphe::INFINITE_COST)
+			if (bm[prevNode].totalCost == Graphe::INFINITE_COST())
 				continue;
 
 			Cout newCost = bm[prevNode].totalCost + incLinkIt->getCost();
@@ -40,7 +40,7 @@ void Bellman<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 template<class Graphe>
 bool Bellman<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (bm[node].totalCost != Graphe::INVALID_NODE_INDEX);
+	return (bm[node].totalCost != Graphe::INVALID_NODE_INDEX());
 }
 template<class Graphe>
 typename Bellman<Graphe>::Cout Bellman<Graphe>::getCostTo(IndexNoeud node) const
@@ -51,7 +51,7 @@ template<class Graphe>
 deque<typename Bellman<Graphe>::IndexNoeud> Bellman<Graphe>::getShortestPathTo(IndexNoeud endNode) const
 {
 	deque<IndexNoeud> l;
-	while (endNode != Graphe::INVALID_NODE_INDEX)
+	while (endNode != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_front(endNode);
 		endNode = bm[endNode].previousNode;
@@ -62,7 +62,7 @@ template<class Graphe>
 vector<typename Bellman<Graphe>::IndexNoeud> Bellman<Graphe>::getReverseShortestPathTo(IndexNoeud endNode) const
 {
 	vector<IndexNoeud> l;
-	while (endNode != Graphe::INVALID_NODE_INDEX)
+	while (endNode != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_back(endNode);
 		endNode = bm[endNode].previousNode;

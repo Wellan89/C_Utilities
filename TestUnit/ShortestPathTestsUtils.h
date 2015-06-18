@@ -12,6 +12,7 @@ Indiquer la complexité et les points forts/points faibles de chacun des algorith
 Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique
 Ecrire un vrai exécutable pour le test CounterCulture pour comparer les temps d'exécution et l'utilisation mémoire
 	entre les méthodes utilisant un graphe dynamique et celles utilisant un graphe statique
+Dans les fonctions Graph::removeLinks, parcourir les liens de la fin vers le début, pour obtenir une meilleure complexité en moyenne
 
 Tester la fonction de suppression de liens du graphe
 Tester la détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
@@ -98,24 +99,25 @@ namespace TestUnit
 		return k;
 	}
 
+	template<class Cost = long>
 	struct ShortestPathTest
 	{
 		unsigned int nbComputeLoops;
 		unsigned int testsRefsCount;
 
-		Graph g;
-		Graph::IndexNoeud startNode;
-		Graph::IndexNoeud closestFinalNode;
+		Graph<Cost> g;
+		typename Graph<Cost>::IndexNoeud startNode;
+		typename Graph<Cost>::IndexNoeud closestFinalNode;
 
-		vector<Graph::Cout> costs;
-		vector<deque<Graph::IndexNoeud> > paths;
+		vector<typename Graph<Cost>::Cout> costs;
+		vector<deque<typename Graph<Cost>::IndexNoeud> > paths;
 
-		vector<vector<Graph::IndexNoeud> > reversePaths;
+		vector<vector<typename Graph<Cost>::IndexNoeud> > reversePaths;
 
-		ShortestPathTest(Graph::IndexNoeud nodesNb, unsigned int refsCount, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
+		ShortestPathTest(typename Graph<Cost>::IndexNoeud nodesNb, unsigned int refsCount, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
 			: g(nodesNb), testsRefsCount(refsCount), nbComputeLoops(nbLoops)
 		{
-			costs.resize(nodesNb, Graph::INFINITE_COST);
+			costs.resize(nodesNb, Graph<>::INFINITE_COST());
 			paths.resize(nodesNb);
 			reversePaths.resize(nodesNb);
 		}
@@ -127,7 +129,7 @@ namespace TestUnit
 				reversePaths[i] = reverse_vect(paths[i]);
 		}
 	};
-	ShortestPathTest *simpleTest, *littleMaze, *bigMaze, *emptyMap, *randomMap;
+	ShortestPathTest<long> *simpleTest, *littleMaze, *bigMaze, *emptyMap, *randomMap;
 
 #define CHECK_TEST_DELETE(test)					\
 	do {										\
@@ -144,8 +146,8 @@ namespace TestUnit
 	do {																						\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPathsFrom(test->startNode);										\
-		for (Graph::IndexNoeud i = 0; i < test->g.size(); i++) {								\
-			if (test->costs[i] != Graph::INFINITE_COST) {										\
+		for (Graph<>::IndexNoeud i = 0; i < test->g.size(); i++) {								\
+			if (test->costs[i] != Graph<>::INFINITE_COST()) {									\
 				Assert::IsTrue(spf.canReachNode(i));											\
 				Assert::AreEqual(test->costs[i], spf.getCostTo(i));								\
 				if (test->paths[i].size() > 1) {												\
@@ -161,8 +163,8 @@ namespace TestUnit
 	do {																						\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPathFrom(test->startNode);										\
-		Graph::IndexNoeud i = test->closestFinalNode;											\
-		if (test->costs[i] != Graph::INFINITE_COST) {											\
+		Graph<>::IndexNoeud i = test->closestFinalNode;											\
+		if (test->costs[i] != Graph<>::INFINITE_COST()) {										\
 			Assert::AreEqual(test->costs[i], spf.getPathCost());								\
 			if (test->paths[i].size() > 1) {													\
 				Assert::AreEqual(test->paths[i], spf.getShortestPath());						\
@@ -176,9 +178,9 @@ namespace TestUnit
 	do {																						\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPaths();															\
-		Graph::IndexNoeud j = test->startNode;													\
-		for (Graph::IndexNoeud i = 0; i < test->g.size(); i++) {								\
-			if (test->costs[i] != Graph::INFINITE_COST) {										\
+		Graph<>::IndexNoeud j = test->startNode;												\
+		for (Graph<>::IndexNoeud i = 0; i < test->g.size(); i++) {								\
+			if (test->costs[i] != Graph<>::INFINITE_COST()) {									\
 				Assert::IsTrue(spf.pathExists(j, i));											\
 				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i));						\
 				if (test->paths[i].size() > 1)													\

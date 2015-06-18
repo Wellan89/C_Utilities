@@ -49,7 +49,7 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 template<class Graphe>
 bool AStarDynamic<Graphe>::hasFoundPath() const
 {
-	return (endNode != Graphe::INVALID_NODE_INDEX);
+	return (endNode != Graphe::INVALID_NODE_INDEX());
 }
 template<class Graphe>
 typename AStarDynamic<Graphe>::IndexNoeud AStarDynamic<Graphe>::getFinalNode() const
@@ -61,14 +61,14 @@ typename AStarDynamic<Graphe>::Cout AStarDynamic<Graphe>::getPathCost()
 {
 	if (hasFoundPath())
 		return asd[endNode].totalCost;
-	return Graphe::INFINITE_COST;
+	return Graphe::INFINITE_COST();
 }
 template<class Graphe>
 deque<typename AStarDynamic<Graphe>::IndexNoeud> AStarDynamic<Graphe>::getShortestPath()
 {
 	deque<IndexNoeud> l;
 	IndexNoeud node = endNode;
-	while (node != Graphe::INVALID_NODE_INDEX)
+	while (node != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_front(node);
 		node = asd[node].previousNode;
@@ -80,7 +80,7 @@ vector<typename AStarDynamic<Graphe>::IndexNoeud> AStarDynamic<Graphe>::getRever
 {
 	vector<IndexNoeud> l;
 	IndexNoeud node = endNode;
-	while (node != Graphe::INVALID_NODE_INDEX)
+	while (node != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_back(node);
 		node = asd[node].previousNode;

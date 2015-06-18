@@ -7,7 +7,7 @@
 
 // Algorithme de Bellman : pour un graphe sans circuits (i.e. avec un ordre topologique),
 // calcule tous les chemins les plus courts depuis un sommmet donné.
-template<class Graphe = Graph>
+template<class Graphe = Graph<> >
 class Bellman
 {
 public:
@@ -20,7 +20,7 @@ protected:
 		IndexNoeud previousNode;
 		Cout totalCost;
 
-		BmNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
+		BmNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
 			{ }
 	};
 

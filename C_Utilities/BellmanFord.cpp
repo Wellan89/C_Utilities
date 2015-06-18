@@ -24,7 +24,7 @@ void BellmanFord<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 		for (IndexNoeud node = 0; node < nodesCount; node++)
 		{
 			Cout nodeTotalCost = bf[node].totalCost;
-			if (nodeTotalCost == Graphe::INFINITE_COST)
+			if (nodeTotalCost == Graphe::INFINITE_COST())
 				continue;
 
 			const auto& links = g[node].getLinks();
@@ -60,7 +60,7 @@ bool BellmanFord<Graphe>::absorbCycleDetected() const
 template<class Graphe>
 bool BellmanFord<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (bf[node].totalCost != Graphe::INVALID_NODE_INDEX);
+	return (bf[node].totalCost != Graphe::INVALID_NODE_INDEX());
 }
 template<class Graphe>
 typename BellmanFord<Graphe>::Cout BellmanFord<Graphe>::getCostTo(IndexNoeud node) const
@@ -71,7 +71,7 @@ template<class Graphe>
 deque<typename BellmanFord<Graphe>::IndexNoeud> BellmanFord<Graphe>::getShortestPathTo(IndexNoeud endNode) const
 {
 	deque<IndexNoeud> l;
-	while (endNode != Graphe::INVALID_NODE_INDEX)
+	while (endNode != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_front(endNode);
 		endNode = bf[endNode].previousNode;
@@ -82,7 +82,7 @@ template<class Graphe>
 vector<typename BellmanFord<Graphe>::IndexNoeud> BellmanFord<Graphe>::getReverseShortestPathTo(IndexNoeud endNode) const
 {
 	vector<IndexNoeud> l;
-	while (endNode != Graphe::INVALID_NODE_INDEX)
+	while (endNode != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_back(endNode);
 		endNode = bf[endNode].previousNode;

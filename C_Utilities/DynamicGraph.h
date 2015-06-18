@@ -11,10 +11,10 @@
 //		typedef <> IndexNoeud;
 //		typedef <> Cout;
 //			Note :	Ces types doivent être des types entiers.
-// Constantes nécessaires de la classe Graphe :
-//		static const IndexNoeud INVALID_NODE_INDEX;
-//		static const Cout INFINITE_COST;
-//			Note :	Cette dernière constante doit être supérieure stricte à tout autre coût possible.
+// Fonctions statiques constantes nécessaires de la classe Graphe :
+//		static IndexNoeud INVALID_NODE_INDEX();
+//		static Cout INFINITE_COST();
+//			Note :	Cette dernière fonction constante doit être supérieure stricte à tout autre coût possible.
 // Fonctions nécessaires de la classe Graphe :
 //		std::vector<Lien> getNodeLinks(IndexNoeud index) const;
 //			Note :	std::vector peut être remplacé par tout autre conteneur de Lien* pouvant être itéré.
@@ -41,20 +41,30 @@
 class NullGenerator
 {
 public:
-	long long int operator()(long long int index) const
+	long long int operator()(unsigned int index) const
 	{	return 0;	}
 };
 template<class NodeLinksGenerator, class NodeFinalGenerator,
-	class NodeHeuristicGenerator = NullGenerator >
+	class NodeHeuristicGenerator = NullGenerator,
+	class NodeIndex = unsigned int, class Cost = long>
 class DynamicGraph
 {
 public:
 	class DynamicLink;
 	typedef DynamicLink Lien;
-	typedef long long int IndexNoeud;
-	static const IndexNoeud INVALID_NODE_INDEX = (long long int)(-1);
-	typedef long long int Cout;
-	static const Cout INFINITE_COST = LLONG_MAX;
+	typedef NodeIndex IndexNoeud;
+	typedef Cost Cout;
+
+	// On est ici obligé de définir des fonctions pour accéder à ces constantes,
+	// à cause du standard C++ qui définit la valeur max d'un type en tant que fonction.
+	static IndexNoeud INVALID_NODE_INDEX()
+	{
+		return std::numeric_limits<IndexNoeud>::max();
+	}
+	static Cout INFINITE_COST()
+	{
+		return std::numeric_limits<Cout>::max();
+	}
 
 	class DynamicLink
 	{

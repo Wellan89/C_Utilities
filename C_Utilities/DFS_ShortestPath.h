@@ -9,7 +9,7 @@
 // Algorithme du plus court chemin suivant un parcours en profondeur :
 // parcours le graphe en profondeur (jusqu'à une profondeur maximale donnée le cas échéant),
 // et s'arrête dès qu'un point final est trouvé.
-template<class Graphe = Graph>
+template<class Graphe = Graph<> >
 class DFS_ShortestPath
 {
 public:
@@ -35,8 +35,8 @@ protected:
 	void reset()
 	{
 		reverseShortestPath.clear();
-		endNode = Graphe::INVALID_NODE_INDEX;
-		pathCost = Graphe::INFINITE_COST;
+		endNode = Graphe::INVALID_NODE_INDEX();
+		pathCost = Graphe::INFINITE_COST();
 	}
 
 	bool computeShortestPath_Rec(IndexNoeud node, Cout currentCost);
@@ -44,7 +44,7 @@ protected:
 public:
 	DFS_ShortestPath(const Graphe& gr) : g(gr) { reset(); }
 
-	void computeShortestPathFrom(IndexNoeud startNode, Cout maxCost = Graphe::INFINITE_COST);
+	void computeShortestPathFrom(IndexNoeud startNode, Cout maxCost = Graphe::INFINITE_COST());
 
 	bool hasFoundPath() const;
 	IndexNoeud getFinalNode() const;

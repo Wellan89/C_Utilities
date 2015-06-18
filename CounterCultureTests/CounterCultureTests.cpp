@@ -110,7 +110,7 @@ namespace TestUnit
 	{
 		TEST_METHOD(AStarCounterCulture)
 		{
-			Graph g(COUNTER_CULTURE_FINAL_NODE + 1);
+			Graph<> g(COUNTER_CULTURE_FINAL_NODE + 1);
 
 			g.setNodeFinal(COUNTER_CULTURE_FINAL_NODE);
 			CounterCultureNodeHeuristicGenerator heuristicGen;
@@ -129,7 +129,7 @@ namespace TestUnit
 			AStar<> as(g);
 			as.computeShortestPathFrom(0);
 			Assert::IsTrue(as.hasFoundPath());
-			Assert::AreEqual((Graph::Cout)COUNTER_CULTURE_PATH_COST, as.getPathCost());
+			Assert::AreEqual((Graph<>::Cout)COUNTER_CULTURE_PATH_COST, as.getPathCost());
 		}
 	};
 
@@ -137,7 +137,7 @@ namespace TestUnit
 	{
 		TEST_METHOD(DijkstraCounterCulture)
 		{
-			Graph g(COUNTER_CULTURE_FINAL_NODE + 1);
+			Graph<> g(COUNTER_CULTURE_FINAL_NODE + 1);
 			for (unsigned int i = 0; i < COUNTER_CULTURE_FINAL_NODE + 1; i++)
 			{
 				if (i < COUNTER_CULTURE_FINAL_NODE)
@@ -151,7 +151,7 @@ namespace TestUnit
 			Dijkstra<> dj(g);
 			dj.computeShortestPathsFrom(0);
 			Assert::IsTrue(dj.canReachNode(COUNTER_CULTURE_FINAL_NODE));
-			Assert::AreEqual((Graph::Cout)COUNTER_CULTURE_PATH_COST, dj.getCostTo(COUNTER_CULTURE_FINAL_NODE));
+			Assert::AreEqual((Graph<>::Cout)COUNTER_CULTURE_PATH_COST, dj.getCostTo(COUNTER_CULTURE_FINAL_NODE));
 		}
 	};
 }

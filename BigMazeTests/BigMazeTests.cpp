@@ -4,36 +4,36 @@ namespace TestUnit
 {
 	void BigMazeInit(unsigned int testRefsCount)
 	{
-#define ID(i, j)	(Graph::IndexNoeud)((i) * width + (j))
-		Graph::IndexNoeud width = BIG_MAZE_SIZE;
-		Graph::IndexNoeud height = BIG_MAZE_SIZE;
+#define ID(i, j)	(Graph<>::IndexNoeud)((i) * width + (j))
+		Graph<>::IndexNoeud width = BIG_MAZE_SIZE;
+		Graph<>::IndexNoeud height = BIG_MAZE_SIZE;
 
-		Graph::Cout cost = (BIG_MAZE_SIZE / 2) + BIG_MAZE_SIZE - 4;
-		deque<Graph::IndexNoeud> path;
-		for (Graph::IndexNoeud i = (BIG_MAZE_SIZE / 2); i < BIG_MAZE_SIZE - 2; i++)
+		Graph<>::Cout cost = (BIG_MAZE_SIZE / 2) + BIG_MAZE_SIZE - 4;
+		deque<Graph<>::IndexNoeud> path;
+		for (Graph<>::IndexNoeud i = (BIG_MAZE_SIZE / 2); i < BIG_MAZE_SIZE - 2; i++)
 			path.push_back(ID(i, 1));
-		for (Graph::IndexNoeud j = 1; j < BIG_MAZE_SIZE - 1; j++)
+		for (Graph<>::IndexNoeud j = 1; j < BIG_MAZE_SIZE - 1; j++)
 			path.push_back(ID(BIG_MAZE_SIZE - 2, j));
 
-		bigMaze = new ShortestPathTest(width * height, testRefsCount, 1);
+		bigMaze = new ShortestPathTest<>(width * height, testRefsCount, 1);
 		bigMaze->startNode = path[0];
 		bigMaze->closestFinalNode = path[path.size() - 1];
 
-		for (Graph::IndexNoeud i = 1; i < height - 1; i++)
+		for (Graph<>::IndexNoeud i = 1; i < height - 1; i++)
 		{
-			for (Graph::IndexNoeud j = 1; j < width - 1; j++)
+			for (Graph<>::IndexNoeud j = 1; j < width - 1; j++)
 			{
-				Graph::IndexNoeud id = ID(i, j);
+				Graph<>::IndexNoeud id = ID(i, j);
 				if (j == 1 && i != height - 1)
 					bigMaze->g.addLink(id, ID(i + 1, j), 1);
 				if (i % 2 == 1 && j != width - 1)
 					bigMaze->g.addLink(id, ID(i, j + 1), 1);
 			}
 		}
-		for (Graph::IndexNoeud i = 0; i < height; i++)
-			for (Graph::IndexNoeud j = 0; j < width; j++)
+		for (Graph<>::IndexNoeud i = 0; i < height; i++)
+			for (Graph<>::IndexNoeud j = 0; j < width; j++)
 				bigMaze->g.setNodeHeuristic(ID(i, j),
-					(Graph::Cout)(abs((long)(bigMaze->closestFinalNode / width) - (long)i)
+					(Graph<>::Cout)(abs((long)(bigMaze->closestFinalNode / width) - (long)i)
 					+ abs((long)(bigMaze->closestFinalNode % width) - (long)j)));
 
 		bigMaze->costs[bigMaze->closestFinalNode] = cost;

@@ -7,7 +7,7 @@
 
 // Algorithme de Dijkstra : pour un graphe où toutes les arêtes ont un coût positif,
 // parcours tout le graphe depuis un point de départ et détermine tous les chemins les plus courts depuis ce point.
-template<class Graphe = Graph>
+template<class Graphe = Graph<> >
 class Dijkstra
 {
 public:
@@ -21,7 +21,7 @@ protected:
 		Cout totalCost;
 		bool alreadyVisited;
 
-		DjNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST), alreadyVisited(false)
+		DjNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST()), alreadyVisited(false)
 			{ }
 	};
 

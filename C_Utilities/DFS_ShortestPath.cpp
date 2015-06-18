@@ -8,7 +8,7 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(IndexNoeud node, Cout cur
 	// Vérifie que le chemin actuellement parcouru n'est pas plus long que le chemin le plus court déjà trouvé.
 	// On quitte lorsqu'il y a égalité entre la longueur du chemin actuel et celle du chemin le plus court si un noeud final a déjà été trouvé.
 	if (currentCost > pathCost
-		|| (currentCost >= pathCost && endNode != Graphe::INVALID_NODE_INDEX))
+		|| (currentCost >= pathCost && endNode != Graphe::INVALID_NODE_INDEX()))
 		return false;
 
 	// Vérifie que ce noeud est un noeud final
@@ -73,7 +73,7 @@ void DFS_ShortestPath<Graphe>::computeShortestPathFrom(IndexNoeud startNode, Cou
 template<class Graphe>
 bool DFS_ShortestPath<Graphe>::hasFoundPath() const
 {
-	return (endNode != Graphe::INVALID_NODE_INDEX);
+	return (endNode != Graphe::INVALID_NODE_INDEX());
 }
 template<class Graphe>
 typename DFS_ShortestPath<Graphe>::IndexNoeud DFS_ShortestPath<Graphe>::getFinalNode() const

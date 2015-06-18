@@ -8,7 +8,7 @@
 
 // Algorithme du plus court chemin suivant un parcours en largeur :
 // parcours le graphe en largeur et trouve tous les chemins les plus courts à partir d'un point donné.
-template<class Graphe = Graph>
+template<class Graphe = Graph<> >
 class BFS_ShortestPath
 {
 public:
@@ -22,7 +22,7 @@ protected:
 		IndexNoeud previousNode;
 		Cout totalCost;
 
-		BFSNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
+		BFSNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
 			{ }
 	};
 

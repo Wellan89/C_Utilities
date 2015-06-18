@@ -51,7 +51,7 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 			const Graphe::Lien* l = (*it);
 			IndexNoeud node = l->getFromIndex();
 			Cout nodeTotalCost = bfy[node].totalCost;
-			if (nodeTotalCost == Graphe::INFINITE_COST)
+			if (nodeTotalCost == Graphe::INFINITE_COST())
 				continue;
 
 			IndexNoeud targetNode = l->getTargetIndex();
@@ -80,7 +80,7 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 			const Graphe::Lien* l = (*it);
 			IndexNoeud node = l->getFromIndex();
 			Cout nodeTotalCost = bfy[node].totalCost;
-			if (nodeTotalCost == Graphe::INFINITE_COST)
+			if (nodeTotalCost == Graphe::INFINITE_COST())
 				continue;
 
 			IndexNoeud targetNode = l->getTargetIndex();
@@ -107,7 +107,7 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 	// Vérifie qu'aucun des noeuds avec une boucle absorbante ne peut être atteint depuis le noeud de départ
 	for (auto it = absorbNodes.begin(); it != absorbNodes.end(); ++it)
 	{
-		if (bfy[*it].totalCost != Graphe::INFINITE_COST)
+		if (bfy[*it].totalCost != Graphe::INFINITE_COST())
 		{
 			// On a trouvé un circuit absorbant
 			reset();
@@ -124,7 +124,7 @@ bool BellmanFordYen<Graphe>::absorbCycleDetected() const
 template<class Graphe>
 bool BellmanFordYen<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (bfy[node].totalCost != Graphe::INFINITE_COST);
+	return (bfy[node].totalCost != Graphe::INFINITE_COST());
 }
 template<class Graphe>
 typename BellmanFordYen<Graphe>::Cout BellmanFordYen<Graphe>::getCostTo(IndexNoeud node) const
@@ -135,7 +135,7 @@ template<class Graphe>
 deque<typename BellmanFordYen<Graphe>::IndexNoeud> BellmanFordYen<Graphe>::getShortestPathTo(IndexNoeud endNode) const
 {
 	deque<IndexNoeud> l;
-	while (endNode != Graphe::INVALID_NODE_INDEX)
+	while (endNode != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_front(endNode);
 		endNode = bfy[endNode].previousNode;
@@ -146,7 +146,7 @@ template<class Graphe>
 vector<typename BellmanFordYen<Graphe>::IndexNoeud> BellmanFordYen<Graphe>::getReverseShortestPathTo(IndexNoeud endNode) const
 {
 	vector<IndexNoeud> l;
-	while (endNode != Graphe::INVALID_NODE_INDEX)
+	while (endNode != Graphe::INVALID_NODE_INDEX())
 	{
 		l.push_back(endNode);
 		endNode = bfy[endNode].previousNode;

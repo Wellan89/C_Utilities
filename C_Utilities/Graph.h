@@ -11,10 +11,10 @@
 //		typedef <> IndexNoeud;
 //		typedef <> Cout;
 //			Note :	Ces types doivent être des types entiers.
-// Constantes nécessaires de la classe Graphe :
-//		static const IndexNoeud INVALID_NODE_INDEX;
-//		static const Cout INFINITE_COST;
-//			Note :	Cette dernière constante doit être supérieure stricte à tout autre coût possible.
+// Fonctions statiques constantes nécessaires de la classe Graphe :
+//		static IndexNoeud INVALID_NODE_INDEX();
+//		static Cout INFINITE_COST();
+//			Note :	Cette dernière fonction constante doit être supérieure stricte à tout autre coût possible.
 // Fonctions nécessaires de la classe Graphe :
 //		IndexNoeud size() const;
 //		const Noeud& operator[](Graphe::IndexNoeud index) const;
@@ -52,6 +52,7 @@
 
 
 // Implémentation minimale de ces classes
+template<class Cost = long>
 class Graph
 {
 public:
@@ -59,10 +60,19 @@ public:
 	class Node;
 	typedef Link Lien;
 	typedef Node Noeud;
-	typedef std::vector<Noeud>::size_type IndexNoeud;
-	typedef long long int Cout;
-	static const IndexNoeud INVALID_NODE_INDEX = UINT_MAX;
-	static const Cout INFINITE_COST = LLONG_MAX;
+	typedef size_t IndexNoeud;
+	typedef Cost Cout;
+
+	// On est ici obligé de définir des fonctions pour accéder à ces constantes,
+	// à cause du standard C++ qui définit la valeur max d'un type en tant que fonction.
+	static IndexNoeud INVALID_NODE_INDEX()
+	{
+		return std::numeric_limits<IndexNoeud>::max();
+	}
+	static Cout INFINITE_COST()
+	{
+		return std::numeric_limits<Cout>::max();
+	}
 
 	class Link
 	{
@@ -94,7 +104,7 @@ public:
 		bool finalNode;
 
 		Node(IndexNoeud _index)
-			: index(_index), finalNode(false), heuristic(INFINITE_COST) { }
+			: index(_index), finalNode(false), heuristic(INFINITE_COST()) { }
 
 	public:
 		IndexNoeud getIndex() const							{ return index; }
@@ -157,27 +167,45 @@ public:
 			nodes[start].incomingLinks.push_back(Lien(end, start, cost));
 		}
 	}
-	void removeLink(IndexNoeud start, IndexNoeud end, bool oneDirection = false, bool costCheck = false, Cout cost = INFINITE_COST)
+	void removeLink(IndexNoeud start, IndexNoeud end, bool oneDirection = false)
 	{
-#define REMOVE_LINKS_FROM_ITERABLE(links, target, costCheck, cost)									\
-			do {																					\
-				auto& nodeLinks = (links);															\
-				for (auto it = nodeLinks.end(); it != nodeLinks.end(); ++it)						\
-					if (it->getTargetIndex() == (end) && (!(costCheck) || it->getCost() == (cost)))	\
-						it = nodeLinks.erase(it);													\
+#define REMOVE_LINKS_FROM_ITERABLE(links, target)								\
+			do {																\
+				auto& nodeLinks = (links);										\
+				for (auto it = nodeLinks.begin(); it != nodeLinks.end(); ++it)	\
+					if (it->getTargetIndex() == (end))							\
+						it = nodeLinks.erase(it);								\
 			} while(false)
 
-		// On parcours les liens de la fin vers le début, pour obtenir une meilleure complexité en moyenne
-
-		// Si costCheck == true : tous les liens de start à end sont supprimés, peu importe leur coût ;
-		// sinon on ne supprime que les liens de start à end avec le coût spécifié.
-		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end, costCheck, cost);
-		REMOVE_LINKS_FROM_ITERABLE(nodes[end].incomingLinks, start, costCheck, cost);
+		// Ici, tous les liens de start à end sont supprimés, peu importe leur coût.
+		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end);
+		REMOVE_LINKS_FROM_ITERABLE(nodes[end].incomingLinks, start);
 
 		if (!oneDirection)
 		{
-			REMOVE_LINKS_FROM_ITERABLE(nodes[end].links, start, costCheck, cost);
-			REMOVE_LINKS_FROM_ITERABLE(nodes[start].incomingLinks, end, costCheck, cost);
+			REMOVE_LINKS_FROM_ITERABLE(nodes[end].links, start);
+			REMOVE_LINKS_FROM_ITERABLE(nodes[start].incomingLinks, end);
+		}
+#undef REMOVE_LINKS_FROM_ITERABLE
+	}
+	void removeLinkWithCostCheck(IndexNoeud start, IndexNoeud end, Cout cost, bool oneDirection = false)
+	{
+#define REMOVE_LINKS_FROM_ITERABLE(links, target, cost)								\
+			do {																	\
+				auto& nodeLinks = (links);											\
+				for (auto it = nodeLinks.begin(); it != nodeLinks.end(); ++it)		\
+					if (it->getTargetIndex() == (end) && it->getCost() == (cost))	\
+						it = nodeLinks.erase(it);									\
+			} while(false)
+
+		// Ici, on ne supprime que les liens de start à end avec le coût spécifié.
+		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end, cost);
+		REMOVE_LINKS_FROM_ITERABLE(nodes[end].incomingLinks, start, cost);
+
+		if (!oneDirection)
+		{
+			REMOVE_LINKS_FROM_ITERABLE(nodes[end].links, start, cost);
+			REMOVE_LINKS_FROM_ITERABLE(nodes[start].incomingLinks, end, cost);
 		}
 #undef REMOVE_LINKS_FROM_ITERABLE
 	}

@@ -23,7 +23,7 @@ protected:
 		Cout totalCost;
 		bool alreadyVisited;
 
-		ASDNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST), alreadyVisited(false)
+		ASDNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST()), alreadyVisited(false)
 			{ }
 	};
 
@@ -37,7 +37,7 @@ protected:
 	void reset()
 	{
 		asd.clear();
-		endNode = Graphe::INVALID_NODE_INDEX;
+		endNode = Graphe::INVALID_NODE_INDEX();
 	}
 
 public:

@@ -7,7 +7,7 @@
 
 // Algorithme A* : pour un graphe où toutes les arêtes ont un coût positif,
 // parcours le graphe depuis un point de départ en suivant une heuristique, et s'arrête dès qu'un point final est trouvé.
-template<class Graphe = Graph>
+template<class Graphe = Graph<> >
 class AStar
 {
 public:
@@ -21,7 +21,7 @@ protected:
 		Cout totalCost;
 		bool alreadyVisited;
 
-		ASNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST), alreadyVisited(false)
+		ASNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST()), alreadyVisited(false)
 			{ }
 	};
 
@@ -36,7 +36,7 @@ protected:
 	{
 		as.clear();
 		as.resize(g.size());
-		endNode = Graphe::INVALID_NODE_INDEX;
+		endNode = Graphe::INVALID_NODE_INDEX();
 	}
 
 public:

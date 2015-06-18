@@ -5,7 +5,7 @@
 #include "Graph.h"
 
 // Algorithme de Floyd-Warshall : détermine toutes les plus courtes distances entre toutes les paires de points.
-template<class Graphe = Graph>
+template<class Graphe = Graph<> >
 class FloydWarshall
 {
 public:
@@ -21,7 +21,7 @@ protected:
 		// Lorsque k = j, ce chemin est un simple lien.
 		IndexNoeud middleNode;
 
-		FwPathInfo() : totalCost(Graphe::INFINITE_COST), middleNode(Graphe::INVALID_NODE_INDEX)
+		FwPathInfo() : totalCost(Graphe::INFINITE_COST()), middleNode(Graphe::INVALID_NODE_INDEX())
 			{ }
 	};
 

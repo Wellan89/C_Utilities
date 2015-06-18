@@ -8,7 +8,7 @@
 // Algorithme de Bellman-Ford :
 // parcours tout le graphe depuis un point de départ et détermine tous les chemins les plus courts depuis ce point.
 // Détecte aussi la présence de circuits absorbants dans le graphe.
-template<class Graphe = Graph>
+template<class Graphe = Graph<> >
 class BellmanFord
 {
 public:
@@ -21,7 +21,7 @@ protected:
 		IndexNoeud previousNode;
 		Cout totalCost;
 
-		BfNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
+		BfNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
 			{ }
 	};
 

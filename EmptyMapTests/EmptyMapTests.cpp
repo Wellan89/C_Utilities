@@ -4,22 +4,22 @@ namespace TestUnit
 {
 	void EmptyMapInit(unsigned int testRefsCount)
 	{
-#define ID(i, j)	(Graph::IndexNoeud)((i) * width + (j))
-		Graph::IndexNoeud width = EMPTY_MAP_SIZE;
-		Graph::IndexNoeud height = EMPTY_MAP_SIZE;
+#define ID(i, j)	(Graph<>::IndexNoeud)((i) * width + (j))
+		Graph<>::IndexNoeud width = EMPTY_MAP_SIZE;
+		Graph<>::IndexNoeud height = EMPTY_MAP_SIZE;
 
-		Graph::IndexNoeud start = ID(height / 2, width / 2);
-		Graph::IndexNoeud finalNode = ID(height - 1, width - 1);
+		Graph<>::IndexNoeud start = ID(height / 2, width / 2);
+		Graph<>::IndexNoeud finalNode = ID(height - 1, width - 1);
 		unsigned int cost = abs((long)(start / width) - (long)(finalNode / width)) + abs((long)(start % width) - (long)(finalNode % width));
 
-		emptyMap = new ShortestPathTest(width * height, testRefsCount, 1);
+		emptyMap = new ShortestPathTest<>(width * height, testRefsCount, 1);
 		emptyMap->startNode = start;
 		emptyMap->closestFinalNode = finalNode;
-		for (Graph::IndexNoeud i = 0; i < height; i++)
+		for (Graph<>::IndexNoeud i = 0; i < height; i++)
 		{
-			for (Graph::IndexNoeud j = 0; j < width; j++)
+			for (Graph<>::IndexNoeud j = 0; j < width; j++)
 			{
-				Graph::IndexNoeud id = ID(i, j);
+				Graph<>::IndexNoeud id = ID(i, j);
 #if 0
 				// Ajoute 2 fois plus de liens que nécessaire
 				if (i > 0)			emptyMap->g.addLink(id, ID(i - 1, j), 3);	// Haut<->Bas : coûte 3     
@@ -34,7 +34,7 @@ namespace TestUnit
 #endif
 
 				emptyMap->g.setNodeHeuristic(ID(i, j),
-					abs((long)(finalNode / width) - (long)i) + abs((long)(finalNode % width) - (long)j));
+					(Graph<>::Cout)(abs((long)(finalNode / width) - (long)i) + abs((long)(finalNode % width) - (long)j)));
 			}
 		}
 
