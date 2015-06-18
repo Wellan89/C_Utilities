@@ -4,19 +4,19 @@
 using namespace std;
 
 template<class Graphe>
-void AStarDynamic<Graphe>::computeShortestPathFrom(unsigned int startNode)
+void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	asd[startNode].totalCost = 0;
-	cost_priority_queue<unsigned int, unsigned int> nodesToSee;
+	cost_priority_queue<IndexNoeud, Cout> nodesToSee;
 	nodesToSee.push(startNode, g.getNodeHeuristic(startNode));
 
 	while (!nodesToSee.empty())
 	{
-		unsigned int node = nodesToSee.top();
+		IndexNoeud node = nodesToSee.top();
 		if (g.isNodeFinal(node))
 		{
 			endNode = node;
@@ -27,16 +27,16 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(unsigned int startNode)
 			continue;
 
 		asd[node].alreadyVisited = true;
-		unsigned int nodeTotalCost = asd[node].totalCost;
+		Cout nodeTotalCost = asd[node].totalCost;
 
 		auto links = g.getNodeLinks(node);
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			unsigned int targetNode = it->getTargetIndex();
+			IndexNoeud targetNode = it->getTargetIndex();
 			if (asd[targetNode].alreadyVisited)
 				continue;
 
-			unsigned int newCost = nodeTotalCost + it->getCost();
+			Cout newCost = nodeTotalCost + it->getCost();
 			if (newCost < asd[targetNode].totalCost)
 			{
 				asd[targetNode].previousNode = node;
@@ -49,26 +49,26 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(unsigned int startNode)
 template<class Graphe>
 bool AStarDynamic<Graphe>::hasFoundPath() const
 {
-	return (endNode != (unsigned int)(-1));
+	return (endNode != Graphe::INVALID_NODE_INDEX);
 }
 template<class Graphe>
-unsigned int AStarDynamic<Graphe>::getFinalNode() const
+typename AStarDynamic<Graphe>::IndexNoeud AStarDynamic<Graphe>::getFinalNode() const
 {
 	return endNode;
 }
 template<class Graphe>
-unsigned int AStarDynamic<Graphe>::getPathCost()
+typename AStarDynamic<Graphe>::Cout AStarDynamic<Graphe>::getPathCost()
 {
-	if (endNode != (unsigned int)(-1))
+	if (hasFoundPath())
 		return asd[endNode].totalCost;
-	return (unsigned int)(-1);
+	return Graphe::INFINITE_COST;
 }
 template<class Graphe>
-deque<unsigned int> AStarDynamic<Graphe>::getShortestPath()
+deque<typename AStarDynamic<Graphe>::IndexNoeud> AStarDynamic<Graphe>::getShortestPath()
 {
-	deque<unsigned int> l;
-	unsigned int node = endNode;
-	while (node != (unsigned int)(-1))
+	deque<IndexNoeud> l;
+	IndexNoeud node = endNode;
+	while (node != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_front(node);
 		node = asd[node].previousNode;
@@ -76,11 +76,11 @@ deque<unsigned int> AStarDynamic<Graphe>::getShortestPath()
 	return l;
 }
 template<class Graphe>
-vector<unsigned int> AStarDynamic<Graphe>::getReverseShortestPath()
+vector<typename AStarDynamic<Graphe>::IndexNoeud> AStarDynamic<Graphe>::getReverseShortestPath()
 {
-	vector<unsigned int> l;
-	unsigned int node = endNode;
-	while (node != (unsigned int)(-1))
+	vector<IndexNoeud> l;
+	IndexNoeud node = endNode;
+	while (node != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_back(node);
 		node = asd[node].previousNode;

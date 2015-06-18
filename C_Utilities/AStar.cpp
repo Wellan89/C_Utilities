@@ -4,19 +4,19 @@
 using namespace std;
 
 template<class Graphe>
-void AStar<Graphe>::computeShortestPathFrom(unsigned int startNode)
+void AStar<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
 	as[startNode].totalCost = 0;
-	cost_priority_queue<unsigned int, unsigned int> nodesToSee;
+	cost_priority_queue<IndexNoeud, Cout> nodesToSee;
 	nodesToSee.push(startNode, g[startNode].getHeuristic());
 
 	while (!nodesToSee.empty())
 	{
-		unsigned int node = nodesToSee.top();
+		IndexNoeud node = nodesToSee.top();
 		if (g[node].isFinal())
 		{
 			endNode = node;
@@ -27,16 +27,16 @@ void AStar<Graphe>::computeShortestPathFrom(unsigned int startNode)
 			continue;
 
 		as[node].alreadyVisited = true;
-		unsigned int nodeTotalCost = as[node].totalCost;
+		Cout nodeTotalCost = as[node].totalCost;
 
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			unsigned int targetNode = it->getTargetIndex();
+			IndexNoeud targetNode = it->getTargetIndex();
 			if (as[targetNode].alreadyVisited)
 				continue;
 
-			unsigned int newCost = nodeTotalCost + it->getCost();
+			Cout newCost = nodeTotalCost + it->getCost();
 			if (newCost < as[targetNode].totalCost)
 			{
 				as[targetNode].previousNode = node;
@@ -49,26 +49,26 @@ void AStar<Graphe>::computeShortestPathFrom(unsigned int startNode)
 template<class Graphe>
 bool AStar<Graphe>::hasFoundPath() const
 {
-	return (endNode != (unsigned int)(-1));
+	return (endNode != Graphe::INFINITE_COST);
 }
 template<class Graphe>
-unsigned int AStar<Graphe>::getFinalNode() const
+typename AStar<Graphe>::IndexNoeud AStar<Graphe>::getFinalNode() const
 {
 	return endNode;
 }
 template<class Graphe>
-unsigned int AStar<Graphe>::getPathCost() const
+typename AStar<Graphe>::Cout AStar<Graphe>::getPathCost() const
 {
-	if (endNode != (unsigned int)(-1))
+	if (hasFoundPath())
 		return as[endNode].totalCost;
-	return (unsigned int)(-1);
+	return Graphe::INFINITE_COST;
 }
 template<class Graphe>
-deque<unsigned int> AStar<Graphe>::getShortestPath() const
+deque<typename AStar<Graphe>::IndexNoeud> AStar<Graphe>::getShortestPath() const
 {
-	deque<unsigned int> l;
-	unsigned int node = endNode;
-	while (node != (unsigned int)(-1))
+	deque<typename AStar<Graphe>::IndexNoeud> l;
+	typename AStar<Graphe>::IndexNoeud node = endNode;
+	while (node != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_front(node);
 		node = as[node].previousNode;
@@ -76,11 +76,11 @@ deque<unsigned int> AStar<Graphe>::getShortestPath() const
 	return l;
 }
 template<class Graphe>
-vector<unsigned int> AStar<Graphe>::getReverseShortestPath() const
+vector<typename AStar<Graphe>::IndexNoeud> AStar<Graphe>::getReverseShortestPath() const
 {
-	vector<unsigned int> l;
-	unsigned int node = endNode;
-	while (node != (unsigned int)(-1))
+	vector<typename AStar<Graphe>::IndexNoeud> l;
+	typename AStar<Graphe>::IndexNoeud node = endNode;
+	while (node != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_back(node);
 		node = as[node].previousNode;

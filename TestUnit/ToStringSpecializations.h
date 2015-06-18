@@ -14,9 +14,10 @@ namespace Microsoft
 		namespace CppUnitTestFramework
 		{
 			static std::wstring ToString(List* l);
-			static std::wstring ToString(const std::list<unsigned int>& l);
-			static std::wstring ToString(const std::deque<unsigned int>& l);
-			static std::wstring ToString(const std::vector<unsigned int>& l);
+			template<class T> static std::wstring ToString(const std::list<T>& l);
+			template<class T> static std::wstring ToString(const std::deque<T>& l);
+			template<class T> static std::wstring ToString(const std::vector<T>& l);
+			static std::wstring ToString(const long long int& t);
 		}
 	}
 }

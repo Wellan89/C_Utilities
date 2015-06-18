@@ -39,21 +39,32 @@
 //#define COUNTER_CULTURE_PATH_COST	34425
 #endif
 
+class CounterCultureNodeLinksGenerator;
+class CounterCultureNodeFinalGenerator;
+class CounterCultureNodeHeuristicGenerator;
+namespace TestUnit
+{
+	typedef DynamicGraph<CounterCultureNodeLinksGenerator,
+		CounterCultureNodeFinalGenerator,
+		CounterCultureNodeHeuristicGenerator> CounterCultureGraph;
+	typedef CounterCultureGraph::DynamicLink DynamicLink;
+}
+
 class CounterCultureNodeLinksGenerator
 {
 public:
-	std::vector<DynamicLink> operator()(unsigned int index) const
+	std::vector<TestUnit::DynamicLink> operator()(TestUnit::CounterCultureGraph::IndexNoeud index) const
 	{
-		std::vector<DynamicLink> links;
+		std::vector<TestUnit::DynamicLink> links;
 		links.reserve(2);
 
-		unsigned int target = index + 1;
+		TestUnit::CounterCultureGraph::IndexNoeud target = index + 1;
 		if (target <= COUNTER_CULTURE_FINAL_NODE)
-			links.push_back(DynamicLink(target, 1));
+			links.push_back(TestUnit::DynamicLink(target, 1));
 
 		target = TestUnit::swap(index);
 		if (target <= COUNTER_CULTURE_FINAL_NODE)
-			links.push_back(DynamicLink(target, 1));
+			links.push_back(TestUnit::DynamicLink(target, 1));
 
 		return links;
 	}
@@ -61,7 +72,7 @@ public:
 class CounterCultureNodeFinalGenerator
 {
 public:
-	bool operator()(unsigned int index) const
+	bool operator()(TestUnit::CounterCultureGraph::IndexNoeud index) const
 	{
 		return (index == COUNTER_CULTURE_FINAL_NODE);
 	}
@@ -69,7 +80,7 @@ public:
 class CounterCultureNodeHeuristicGenerator
 {
 public:
-	unsigned int operator()(unsigned int index) const
+	TestUnit::CounterCultureGraph::Cout operator()(TestUnit::CounterCultureGraph::IndexNoeud index) const
 	{
 		// Attention : on doit toujours vérifier : h(x) <= d(x, finalNode),
 		// ce qui est difficile à garantir ici !
@@ -79,10 +90,6 @@ public:
 
 namespace TestUnit
 {
-	typedef DynamicGraph<CounterCultureNodeLinksGenerator,
-		CounterCultureNodeFinalGenerator,
-		CounterCultureNodeHeuristicGenerator> CounterCultureGraph;
-
 	TEST_CLASS(AStarDynamicTests)
 	{
 		TEST_METHOD(AStarDynamicCounterCulture)
@@ -95,7 +102,7 @@ namespace TestUnit
 			AStarDynamic<CounterCultureGraph> asd(ccg);
 			asd.computeShortestPathFrom(0);
 			Assert::IsTrue(asd.hasFoundPath());
-			Assert::AreEqual((unsigned int)COUNTER_CULTURE_PATH_COST, asd.getPathCost());
+			Assert::AreEqual((CounterCultureGraph::Cout)COUNTER_CULTURE_PATH_COST, asd.getPathCost());
 		}
 	};
 
@@ -122,7 +129,7 @@ namespace TestUnit
 			AStar<> as(g);
 			as.computeShortestPathFrom(0);
 			Assert::IsTrue(as.hasFoundPath());
-			Assert::AreEqual((unsigned int)COUNTER_CULTURE_PATH_COST, as.getPathCost());
+			Assert::AreEqual((Graph::Cout)COUNTER_CULTURE_PATH_COST, as.getPathCost());
 		}
 	};
 
@@ -144,7 +151,7 @@ namespace TestUnit
 			Dijkstra<> dj(g);
 			dj.computeShortestPathsFrom(0);
 			Assert::IsTrue(dj.canReachNode(COUNTER_CULTURE_FINAL_NODE));
-			Assert::AreEqual((unsigned int)COUNTER_CULTURE_PATH_COST, dj.getCostTo(COUNTER_CULTURE_FINAL_NODE));
+			Assert::AreEqual((Graph::Cout)COUNTER_CULTURE_PATH_COST, dj.getCostTo(COUNTER_CULTURE_FINAL_NODE));
 		}
 	};
 }

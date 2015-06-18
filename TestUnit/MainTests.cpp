@@ -101,9 +101,9 @@ namespace TestUnit
 		for (auto it = rto.begin() + 1; it != rto.end(); ++it)
 		{
 			const auto& links = g[*it].getLinks();
-			for each (Link l in links)
+			for (auto l = links.begin(); l != links.end(); ++l)
 			{
-				auto targetIt = find(rto.begin(), it, l.getTargetIndex());
+				auto targetIt = find(rto.begin(), it, l->getTargetIndex());
 				if (targetIt == it)
 					return false;
 			}

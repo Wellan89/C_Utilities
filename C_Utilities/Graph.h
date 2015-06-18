@@ -1,17 +1,26 @@
 #ifndef DEF_GRAPH
 #define DEF_GRAPH
 
+#include <climits>
 #include <deque>
 #include <vector>
 
 // Un graphe est un tableau de noeuds dont chacun contient la liste des liens vers ses voisins.
 // Un lien contient un noeud (le voisin) et son coût de trajet.
 
+// Types nécessaire de la classe Graphe :
+//		typedef <> IndexNoeud;
+//		typedef <> Cout;
+//			Note :	Ces types doivent être des types entiers.
+// Constantes nécessaires de la classe Graphe :
+//		static const IndexNoeud INVALID_NODE_INDEX;
+//		static const Cout INFINITE_COST;
+//			Note :	Cette dernière constante doit être supérieure stricte à tout autre coût possible.
 // Fonctions nécessaires de la classe Graphe :
 //		unsigned int size() const;
-//		const Noeud& operator[](unsigned int index) const;
+//		const Noeud& operator[](Graphe::IndexNoeud index) const;
 // Fonctions supplémentaires nécessaire pour l'algorithme de Bellman :
-//		std::vector<unsigned int> getReverseTopologicalyOrderedNodes() const;
+//		std::vector<Graphe::IndexNoeud> getReverseTopologicalyOrderedNodes() const;
 //			Note :	std::vector peut être remplacé par tout autre conteneur de unsigned int pouvant être itéré.
 // Type nécessaire de la classe Graphe pour l'algorithme de Bellman-Ford-Yen :
 //		typedef <> Lien;
@@ -22,10 +31,13 @@
 // Fonction supplémentaire nécessaire pour les algorithmes A* et DFS :
 //		bool isFinal() const;
 // Fonction supplémentaire nécessaire pour l'algorithme A* :
-//		unsigned int getHeuristic() const;
+//		Graphe::Cout getHeuristic() const;
 //			Note :	Cette fonction doit renvoyer la distance minimale estimée du noeud jusqu'à un noeud final.
 //					Afin que l'algorithme fourni ici fonctionne, cette fonction doit vérifier :
 //						Pour tous noeuds x et y : h(x) <= h(y) + d(x, y).
+//					Plus simplement, l'heuristique d'un noeud x doit toujours être inférieure
+//					à la distance réelle entre x et le point final le plus proche. Plus cette heuristique est proche
+//					de cette distance réelle, meilleure est l'heuristique, et l'algorithme est alors plus efficace.
 //					La classe fournie par défaut ici implémente une heuristique nulle :
 //					son utilisation revient à effectuer l'algorithme de Dijkstra sur le graphe fourni.
 // Fonction supplémentaire nécessaire pour l'algorithme de Bellman :
@@ -33,55 +45,67 @@
 //			Note :	std::vector peut être remplacé par tout autre conteneur de Lien* pouvant être itéré.
 
 // Fonctions nécessaires de la classe Lien :
-//		unsigned int getCost() const;
-//		unsigned int getTargetIndex() const;
+//		Graphe::Cout getCost() const;
+//		Graphe::IndexNoeud getTargetIndex() const;
 // Fonction supplémentaire nécessaire pour les algorithmes de Bellman et Bellman-Ford-Yen :
-//		unsigned int getFromIndex() const;
+//		Graphe::IndexNoeud getFromIndex() const;
 
 
 
 // Implémentation minimale de ces classes
-class Graph;
-class Link
-{
-protected:
-	unsigned int fromIndex;
-	unsigned int targetIndex;
-	unsigned int cost;
-
-public:
-	unsigned int getFromIndex() const	{ return fromIndex; }
-	unsigned int getTargetIndex() const	{ return targetIndex; }
-	unsigned int getCost() const		{ return cost; }
-
-	Link(unsigned int _fromIndex, unsigned int _targetIndex, unsigned int _cost)
-		: fromIndex(_fromIndex), targetIndex(_targetIndex), cost(_cost) { }
-};
-class Node
-{
-	friend Graph;
-
-protected:
-	std::vector<Link> links;
-	std::vector<Link> incomingLinks;
-	unsigned int index;
-
-	unsigned int heuristic;
-	bool finalNode;
-
-public:
-	unsigned int getIndex() const						{ return index; }
-	const std::vector<Link>& getLinks() const			{ return links; }
-	const std::vector<Link>& getIncomingLinks() const	{ return incomingLinks; }
-
-	bool isFinal() const								{ return finalNode; }
-	unsigned int getHeuristic() const					{ return heuristic; }
-
-	Node(unsigned int _index)
-		: index(_index), finalNode(false), heuristic((unsigned int)(-1)) { }
-};
 class Graph
 {
+public:
+	class Link;
+	class Node;
+	typedef Link Lien;
+	typedef Node Noeud;
+	typedef unsigned int IndexNoeud;
+	static const IndexNoeud INVALID_NODE_INDEX = (unsigned int)(-1);
+	typedef long long int Cout;
+	static const Cout INFINITE_COST = LLONG_MAX;
+
+	class Link
+	{
+		friend Graph;
+
+	protected:
+		IndexNoeud fromIndex;
+		IndexNoeud targetIndex;
+		Cout cost;
+
+		Link(IndexNoeud _fromIndex, IndexNoeud _targetIndex, Cout _cost)
+			: fromIndex(_fromIndex), targetIndex(_targetIndex), cost(_cost) { }
+
+	public:
+		IndexNoeud getFromIndex() const		{ return fromIndex; }
+		IndexNoeud getTargetIndex() const	{ return targetIndex; }
+		Cout getCost() const				{ return cost; }
+	};
+	class Node
+	{
+		friend Graph;
+
+	protected:
+		std::vector<Lien> links;
+		std::vector<Lien> incomingLinks;
+		IndexNoeud index;
+
+		Cout heuristic;
+		bool finalNode;
+
+		Node(IndexNoeud _index)
+			: index(_index), finalNode(false), heuristic(INFINITE_COST) { }
+
+	public:
+		IndexNoeud getIndex() const							{ return index; }
+		const std::vector<Lien>& getLinks() const			{ return links; }
+		const std::vector<Lien>& getIncomingLinks() const	{ return incomingLinks; }
+
+		bool isFinal() const								{ return finalNode; }
+		Cout getHeuristic() const							{ return heuristic; }
+	};
+
 protected:
 	// Enum définissant l'état d'un noeud lors de la construction d'un ordre topologique
 	enum E_TOPOLOGICAL_ORDER_NODE_STATE
@@ -91,17 +115,18 @@ protected:
 		ETONS_ADDED
 	};
 
-	std::vector<Node> nodes;
+	std::vector<Noeud> nodes;
 
 	// Ajoute un noeud et ses fils à un ordre topologique.
 	// Renvoit false si on détecte une erreur lors de la construction de l'ordre topologique.
-	bool addToTopologicalOrder(unsigned int index, std::vector<unsigned int>& v,
+	bool addToTopologicalOrder(IndexNoeud index, std::vector<IndexNoeud>& v,
 		std::vector<E_TOPOLOGICAL_ORDER_NODE_STATE>& nodesState) const
 	{
 		nodesState[index] = ETONS_SEEN;
-		for (auto it = nodes[index].links.begin(); it != nodes[index].links.end(); ++it)
+		const auto& links = nodes[index].links;
+		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			unsigned int node = it->getTargetIndex();
+			IndexNoeud node = it->getTargetIndex();
 			if (nodesState[node] == ETONS_UNSEEN)
 			{
 				if (!addToTopologicalOrder(node, v, nodesState))
@@ -116,27 +141,24 @@ protected:
 	}
 
 public:
-	typedef Node Noeud;
-	typedef Link Lien;
-
-	Graph(unsigned int nodesNb)
+	Graph(IndexNoeud nodesNb)
 	{
 		nodes.reserve(nodesNb);
 		for (unsigned int i = 0; i < nodesNb; i++)
-			nodes.push_back(Node(i));
+			nodes.push_back(Noeud(i));
 	}
 
-	void addLink(unsigned int start, unsigned int end, unsigned int cost, bool unidirectionnal = false)
+	void addLink(IndexNoeud start, IndexNoeud end, Cout cost, bool unidirectionnal = false)
 	{
-		nodes[start].links.push_back(Link(start, end, cost));
-		nodes[end].incomingLinks.push_back(Link(start, end, cost));
+		nodes[start].links.push_back(Lien(start, end, cost));
+		nodes[end].incomingLinks.push_back(Lien(start, end, cost));
 		if (!unidirectionnal)
 		{
-			nodes[end].links.push_back(Link(end, start, cost));
-			nodes[start].incomingLinks.push_back(Link(end, start, cost));
+			nodes[end].links.push_back(Lien(end, start, cost));
+			nodes[start].incomingLinks.push_back(Lien(end, start, cost));
 		}
 	}
-	void removeLink(unsigned int start, unsigned int end, bool oneDirection = false, bool costCheck = false, unsigned int cost = 0)
+	void removeLink(IndexNoeud start, IndexNoeud end, bool oneDirection = false, bool costCheck = false, Cout cost = INFINITE_COST)
 	{
 #define REMOVE_LINKS_FROM_ITERABLE(links, target, costCheck, cost)									\
 			do {																					\
@@ -161,11 +183,11 @@ public:
 #undef REMOVE_LINKS_FROM_ITERABLE
 	}
 
-	void setNodeFinal(unsigned int node, bool isFinal = true)
+	void setNodeFinal(IndexNoeud node, bool isFinal = true)
 	{
 		nodes[node].finalNode = isFinal;
 	}
-	void setNodeHeuristic(unsigned int node, unsigned int heuristic)
+	void setNodeHeuristic(IndexNoeud node, Cout heuristic)
 	{
 		nodes[node].heuristic = heuristic;
 	}
@@ -173,13 +195,14 @@ public:
 	// Détermine un ordre topologique inverse sur ce graphe :
 	// les noeuds puits seront au début de ce vecteur, et les noeuds source seront à la fin.
 	// Renvoit le vecteur vide s'il n'existe pas de tel ordre topologique.
-	std::vector<unsigned int> getReverseTopologicalyOrderedNodes() const
+	std::vector<IndexNoeud> getReverseTopologicalyOrderedNodes() const
 	{
-		std::vector<unsigned int> v;
-		v.reserve(nodes.size());
+		IndexNoeud nodesCount = nodes.size();
+		std::vector<IndexNoeud> v;
+		v.reserve(nodesCount);
 
-		std::vector<E_TOPOLOGICAL_ORDER_NODE_STATE> nodesState(nodes.size(), ETONS_UNSEEN);
-		for (unsigned int i = 0; i < nodes.size(); i++)
+		std::vector<E_TOPOLOGICAL_ORDER_NODE_STATE> nodesState(nodesCount, ETONS_UNSEEN);
+		for (IndexNoeud i = 0; i < nodesCount; i++)
 		{
 			if (nodesState[i] == ETONS_UNSEEN)
 			{
@@ -193,22 +216,22 @@ public:
 		return v;
 	}
 
-	void addNodes(unsigned int nbOfNodesToAdd = 1)
+	void addNodes(IndexNoeud nbOfNodesToAdd = 1)
 	{
 		nodes.reserve(nodes.size() + nbOfNodesToAdd);
-		for (unsigned int i = 0; i < nbOfNodesToAdd; i++)
-			nodes.push_back(Node(nodes.size()));
+		for (IndexNoeud i = 0; i < nbOfNodesToAdd; i++)
+			nodes.push_back(Noeud(nodes.size()));
 	}
 	
-	unsigned int size() const
+	IndexNoeud size() const
 	{
 		return nodes.size();
 	}
-	Node& operator[](unsigned int index)
+	Noeud& operator[](IndexNoeud index)
 	{
 		return nodes[index];
 	}
-	const Node& operator[](unsigned int index) const
+	const Noeud& operator[](IndexNoeud index) const
 	{
 		return nodes[index];
 	}

@@ -9,6 +9,9 @@ Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs
 Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
+Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique
+Ecrire un vrai exécutable pour le test CounterCulture pour comparer les temps d'exécution et l'utilisation mémoire
+	entre les méthodes utilisant un graphe dynamique et celles utilisant un graphe statique
 
 Tester la fonction de suppression de liens du graphe
 Tester la détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
@@ -62,28 +65,31 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace TestUnit
 {
-	vector<unsigned int> reverse_vect(const deque<unsigned int>& d)
+	template<class T>
+	vector<T> reverse_vect(const deque<T>& d)
 	{
-		vector<unsigned int> v;
+		vector<T> v;
 		v.reserve(d.size());
 		for (auto it = d.rbegin(); it != d.rend(); ++it)
 			v.push_back(*it);
 		return v;
 	}
-	vector<unsigned int> deque_to_vect(const deque<unsigned int>& d)
+	template<class T>
+	vector<T> deque_to_vect(const deque<T>& d)
 	{
-		vector<unsigned int> v;
+		vector<T> v;
 		v.reserve(d.size());
 		for (auto it = d.begin(); it != d.end(); ++it)
 			v.push_back(*it);
 		return v;
 	}
-	unsigned int swap(unsigned int i)
+	template<class T>
+	T swap(T i)
 	{
-		unsigned int k = 0;
+		T k = 0;
 		while (i > 0)
 		{
-			unsigned int d = i % 10;
+			T d = i % 10;
 			i /= 10;
 			k = k * 10 + d;
 		}
@@ -96,18 +102,18 @@ namespace TestUnit
 		unsigned int testsRefsCount;
 
 		Graph g;
-		unsigned int startNode;
-		unsigned int closestFinalNode;
+		Graph::IndexNoeud startNode;
+		Graph::IndexNoeud closestFinalNode;
 
-		vector<unsigned int> costs;
-		vector<deque<unsigned int> > paths;
+		vector<Graph::Cout> costs;
+		vector<deque<Graph::IndexNoeud> > paths;
 
-		vector<vector<unsigned int> > reversePaths;
+		vector<vector<Graph::IndexNoeud> > reversePaths;
 
-		ShortestPathTest(unsigned int nodesNb, unsigned int refsCount, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
+		ShortestPathTest(Graph::IndexNoeud nodesNb, unsigned int refsCount, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
 			: g(nodesNb), testsRefsCount(refsCount), nbComputeLoops(nbLoops)
 		{
-			costs.resize(nodesNb, (unsigned int)(-1));
+			costs.resize(nodesNb, Graph::INFINITE_COST);
 			paths.resize(nodesNb);
 			reversePaths.resize(nodesNb);
 		}
@@ -136,8 +142,8 @@ namespace TestUnit
 	do {																						\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPathsFrom(test->startNode);										\
-		for (unsigned int i = 0; i < test->g.size(); i++) {										\
-			if (test->costs[i] != (unsigned int)(-1)) {											\
+		for (Graph::IndexNoeud i = 0; i < test->g.size(); i++) {								\
+			if (test->costs[i] != Graph::INFINITE_COST) {										\
 				Assert::IsTrue(spf.canReachNode(i));											\
 				Assert::AreEqual(test->costs[i], spf.getCostTo(i));								\
 				if (test->paths[i].size() > 1) {												\
@@ -153,8 +159,8 @@ namespace TestUnit
 	do {																						\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPathFrom(test->startNode);										\
-		unsigned int i = test->closestFinalNode;												\
-		if (test->costs[i] != (unsigned int)(-1)) {												\
+		Graph::IndexNoeud i = test->closestFinalNode;											\
+		if (test->costs[i] != Graph::INFINITE_COST) {											\
 			Assert::AreEqual(test->costs[i], spf.getPathCost());								\
 			if (test->paths[i].size() > 1) {													\
 				Assert::AreEqual(test->paths[i], spf.getShortestPath());						\
@@ -168,9 +174,9 @@ namespace TestUnit
 	do {																						\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPaths();															\
-		unsigned int j = test->startNode;														\
-		for (unsigned int i = 0; i < test->g.size(); i++) {										\
-			if (test->costs[i] != (unsigned int)(-1)) {											\
+		Graph::IndexNoeud j = test->startNode;													\
+		for (Graph::IndexNoeud i = 0; i < test->g.size(); i++) {								\
+			if (test->costs[i] != Graph::INFINITE_COST) {										\
 				Assert::IsTrue(spf.pathExists(j, i));											\
 				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i));						\
 				if (test->paths[i].size() > 1)													\

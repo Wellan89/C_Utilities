@@ -10,14 +10,18 @@
 template<class Graphe = Graph>
 class AStar
 {
+public:
+	typedef typename Graphe::IndexNoeud IndexNoeud;
+	typedef typename Graphe::Cout Cout;
+
 protected:
 	struct ASNodeInfo
 	{
-		unsigned int previousNode;
-		unsigned int totalCost;
+		IndexNoeud previousNode;
+		Cout totalCost;
 		bool alreadyVisited;
 
-		ASNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)), alreadyVisited(false)
+		ASNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST), alreadyVisited(false)
 			{ }
 	};
 
@@ -25,26 +29,26 @@ protected:
 	const Graphe& g;
 
 	// Le noeud final trouvé par cet algorithme
-	unsigned int endNode;
+	IndexNoeud endNode;
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
 		as.clear();
 		as.resize(g.size());
-		endNode = (unsigned int)(-1);
+		endNode = Graphe::INVALID_NODE_INDEX;
 	}
 
 public:
 	AStar(const Graphe& gr) : g(gr) { reset(); }
 
-	void computeShortestPathFrom(unsigned int startNode);
+	void computeShortestPathFrom(IndexNoeud startNode);
 
 	bool hasFoundPath() const;
-	unsigned int getFinalNode() const;
-	unsigned int getPathCost() const;
-	std::deque<unsigned int> getShortestPath() const;
-	std::vector<unsigned int> getReverseShortestPath() const;
+	IndexNoeud getFinalNode() const;
+	Cout getPathCost() const;
+	std::deque<IndexNoeud> getShortestPath() const;
+	std::vector<IndexNoeud> getReverseShortestPath() const;
 };
 
 #endif

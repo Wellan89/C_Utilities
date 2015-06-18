@@ -12,40 +12,44 @@
 template<class Graphe = DynamicGraph<> >
 class AStarDynamic
 {
+public:
+	typedef typename Graphe::IndexNoeud IndexNoeud;
+	typedef typename Graphe::Cout Cout;
+
 protected:
 	struct ASDNodeInfo
 	{
-		unsigned int previousNode;
-		unsigned int totalCost;
+		IndexNoeud previousNode;
+		Cout totalCost;
 		bool alreadyVisited;
 
-		ASDNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)), alreadyVisited(false)
+		ASDNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST), alreadyVisited(false)
 			{ }
 	};
 
-	std::map<unsigned int, ASDNodeInfo> asd;
+	std::map<IndexNoeud, ASDNodeInfo> asd;
 	const Graphe& g;
 
 	// Le noeud final trouvé par cet algorithme
-	unsigned int endNode;
+	IndexNoeud endNode;
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
 		asd.clear();
-		endNode = (unsigned int)(-1);
+		endNode = Graphe::INVALID_NODE_INDEX;
 	}
 
 public:
 	AStarDynamic(const Graphe& gr) : g(gr) { reset(); }
 
-	void computeShortestPathFrom(unsigned int startNode);
+	void computeShortestPathFrom(IndexNoeud startNode);
 
 	bool hasFoundPath() const;
-	unsigned int getFinalNode() const;
-	unsigned int getPathCost();
-	std::deque<unsigned int> getShortestPath();
-	std::vector<unsigned int> getReverseShortestPath();
+	IndexNoeud getFinalNode() const;
+	Cout getPathCost();
+	std::deque<IndexNoeud> getShortestPath();
+	std::vector<IndexNoeud> getReverseShortestPath();
 };
 
 #endif

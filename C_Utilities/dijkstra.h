@@ -10,14 +10,18 @@
 template<class Graphe = Graph>
 class Dijkstra
 {
+public:
+	typedef typename Graphe::IndexNoeud IndexNoeud;
+	typedef typename Graphe::Cout Cout;
+
 protected:
 	struct DjNodeInfo
 	{
-		unsigned int previousNode;
-		unsigned int totalCost;
+		IndexNoeud previousNode;
+		Cout totalCost;
 		bool alreadyVisited;
 
-		DjNodeInfo() : previousNode((unsigned int)(-1)), totalCost((unsigned int)(-1)), alreadyVisited(false)
+		DjNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST), alreadyVisited(false)
 			{ }
 	};
 
@@ -34,12 +38,12 @@ protected:
 public:
 	Dijkstra(const Graphe& gr) : g(gr) { reset(); }
 
-	void computeShortestPathsFrom(unsigned int startNode);
+	void computeShortestPathsFrom(IndexNoeud startNode);
 
-	bool canReachNode(unsigned int node) const;
-	unsigned int getCostTo(unsigned int node) const;
-	std::deque<unsigned int> getShortestPathTo(unsigned int endNode) const;
-	std::vector<unsigned int> getReverseShortestPathTo(unsigned int endNode) const;
+	bool canReachNode(IndexNoeud node) const;
+	Cout getCostTo(IndexNoeud node) const;
+	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const;
+	std::vector<IndexNoeud> getReverseShortestPathTo(IndexNoeud endNode) const;
 };
 
 #endif

@@ -4,34 +4,34 @@
 using namespace std;
 
 template<class Graphe>
-void Dijkstra<Graphe>::computeShortestPathsFrom(unsigned int startNode)
+void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 {
 	// Réinitialise les informations sur les noeuds
 	reset();
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
-	cost_priority_queue<unsigned int, unsigned int> nodesToSee;
+	cost_priority_queue<IndexNoeud, Cout> nodesToSee;
 	dj[startNode].totalCost = 0;
 	nodesToSee.push(startNode, dj[startNode].totalCost);
 
 	while (!nodesToSee.empty())
 	{
-		unsigned int node = nodesToSee.top();
+		IndexNoeud node = nodesToSee.top();
 		nodesToSee.pop();
 		if (dj[node].alreadyVisited)
 			continue;
 
 		dj[node].alreadyVisited = true;
-		unsigned int nodeTotalCost = dj[node].totalCost;
+		Cout nodeTotalCost = dj[node].totalCost;
 
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			unsigned int targetNode = it->getTargetIndex();
+			IndexNoeud targetNode = it->getTargetIndex();
 			if (dj[targetNode].alreadyVisited)
 				continue;
 
-			unsigned int newCost = nodeTotalCost + it->getCost();
+			Cout newCost = nodeTotalCost + it->getCost();
 			if (newCost < dj[targetNode].totalCost)
 			{
 				dj[targetNode].previousNode = node;
@@ -42,20 +42,20 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(unsigned int startNode)
 	}
 }
 template<class Graphe>
-bool Dijkstra<Graphe>::canReachNode(unsigned int node) const
+bool Dijkstra<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (dj[node].totalCost != (unsigned int)(-1));
+	return (dj[node].totalCost != Graphe::INVALID_NODE_INDEX);
 }
 template<class Graphe>
-unsigned int Dijkstra<Graphe>::getCostTo(unsigned int node) const
+typename Dijkstra<Graphe>::Cout Dijkstra<Graphe>::getCostTo(IndexNoeud node) const
 {
 	return dj[node].totalCost;
 }
 template<class Graphe>
-deque<unsigned int> Dijkstra<Graphe>::getShortestPathTo(unsigned int endNode) const
+deque<typename Dijkstra<Graphe>::IndexNoeud> Dijkstra<Graphe>::getShortestPathTo(IndexNoeud endNode) const
 {
-	deque<unsigned int> l;
-	while (endNode != (unsigned int)(-1))
+	deque<IndexNoeud> l;
+	while (endNode != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_front(endNode);
 		endNode = dj[endNode].previousNode;
@@ -63,10 +63,10 @@ deque<unsigned int> Dijkstra<Graphe>::getShortestPathTo(unsigned int endNode) co
 	return l;
 }
 template<class Graphe>
-vector<unsigned int> Dijkstra<Graphe>::getReverseShortestPathTo(unsigned int endNode) const
+vector<typename Dijkstra<Graphe>::IndexNoeud> Dijkstra<Graphe>::getReverseShortestPathTo(IndexNoeud endNode) const
 {
-	vector<unsigned int> l;
-	while (endNode != (unsigned int)(-1))
+	vector<IndexNoeud> l;
+	while (endNode != Graphe::INVALID_NODE_INDEX)
 	{
 		l.push_back(endNode);
 		endNode = dj[endNode].previousNode;

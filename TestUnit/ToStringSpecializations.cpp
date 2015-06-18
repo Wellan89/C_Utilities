@@ -26,7 +26,7 @@ namespace Microsoft
 				str >> outStr;
 				return outStr;
 			}
-			static wstring ToString(const list<unsigned int>& l)
+			template<class T> static wstring ToString(const list<T>& l)
 			{
 				wstringstream str;
 				for (auto it = l.cbegin(); it != l.cend(); ++it)
@@ -40,7 +40,7 @@ namespace Microsoft
 				str >> outStr;
 				return outStr;
 			}
-			static wstring ToString(const deque<unsigned int>& l)
+			template<class T> static wstring ToString(const deque<T>& l)
 			{
 				wstringstream str;
 				for (auto it = l.cbegin(); it != l.cend(); ++it)
@@ -54,7 +54,7 @@ namespace Microsoft
 				str >> outStr;
 				return outStr;
 			}
-			static wstring ToString(const vector<unsigned int>& l)
+			template<class T> static wstring ToString(const vector<T>& l)
 			{
 				wstringstream str;
 				for (auto it = l.cbegin(); it != l.cend(); ++it)
@@ -68,6 +68,7 @@ namespace Microsoft
 				str >> outStr;
 				return outStr;
 			}
+			static wstring ToString(const long long int& t)	{ RETURN_WIDE_STRING(t); }
 		}
 	}
 }
