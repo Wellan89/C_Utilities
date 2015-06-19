@@ -35,9 +35,9 @@ protected:
 		{
 			// On ne teste pas directement le cas d'égalité
 			// au cas où le type Cout serait un type personnalisé (ou par exemple dans le cas de flottants).
-			if (left.cost < right.cost)
+			if (right.cost < left.cost)
 				return true;
-			else if (right.cost < left.cost)
+			else if (left.cost < right.cost)
 				return false;
 			else
 				return (left.eltId < right.eltId);

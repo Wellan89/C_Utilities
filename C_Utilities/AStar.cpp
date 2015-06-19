@@ -57,7 +57,7 @@ void AStar<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 template<class Graphe>
 bool AStar<Graphe>::hasFoundPath() const
 {
-	return (endNode != Graphe::INFINITE_COST());
+	return (endNode != Graphe::INVALID_NODE_INDEX());
 }
 template<class Graphe>
 typename AStar<Graphe>::IndexNoeud AStar<Graphe>::getFinalNode() const

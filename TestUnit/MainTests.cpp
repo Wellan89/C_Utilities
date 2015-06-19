@@ -56,22 +56,23 @@ namespace TestUnit
 		{
 			cost_priority_queue<int, int> pq;
 			Assert::IsTrue(pq.empty());
-#define COST_PRIORITY_QUEUE_SIMPLE_ELTS_SIZE	10
+#define COST_PRIORITY_QUEUE_SIMPLE_ELTS_SIZE	11
 			const pair<int, int> elts[COST_PRIORITY_QUEUE_SIMPLE_ELTS_SIZE] =
 			{
 				pair<int, int>(2, 65),
 				pair<int, int>(2, 70),
-				pair<int, int>(5, 65),
+				pair<int, int>(5, 65),	// Pour les cas d'égalité, les éléments les plus récents doivent être renvoyés en premier
 				pair<int, int>(9, -32),
 				pair<int, int>(10, -62),
 				pair<int, int>(9, 32),
 				pair<int, int>(415, 8697),
 				pair<int, int>(-6590, 466),
+				pair<int, int>(3, 65),
 				pair<int, int>(983, 256),
 				pair<int, int>(-489, -58)
 			};
 			const int ordered_elts[COST_PRIORITY_QUEUE_SIMPLE_ELTS_SIZE] =
-				{ 10, -489, 9, 9, -1, -1, 2, 983, -6590, 415 };
+				{ 10, -489, 9, 9, 3, 5, 2, 2, 983, -6590, 415 };
 			for (int i = 0; i < COST_PRIORITY_QUEUE_SIMPLE_ELTS_SIZE; i++)
 			{
 				pq.push(elts[i].first, elts[i].second);
@@ -83,10 +84,7 @@ namespace TestUnit
 				Assert::IsFalse(pq.empty());
 				int actual = pq.top();
 				pq.pop();
-				if (expected == -1)
-					Assert::IsTrue(actual == 2 || actual == 5);
-				else
-					Assert::AreEqual(expected, actual);
+				Assert::AreEqual(expected, actual);
 			}
 			Assert::IsTrue(pq.empty());
 		}

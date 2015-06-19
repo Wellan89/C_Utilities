@@ -24,7 +24,7 @@
 //		Cout getNodeHeuristic(IndexNoeud node) const;
 //			Note :	Cette fonction doit renvoyer la distance minimale estimée du noeud jusqu'à un noeud final.
 //					Afin que l'algorithme fourni ici fonctionne, cette fonction doit vérifier :
-//						Pour tous noeuds x et y : h(x) <= h(y) + d(x, y).
+//						Pour tout noeud x et tout noeud final f : h(x) <= d(x, f).
 //					Plus simplement, l'heuristique d'un noeud x doit toujours être inférieure
 //					à la distance réelle entre x et le point final le plus proche. Plus cette heuristique est proche
 //					de cette distance réelle, meilleure est l'heuristique, et l'algorithme est alors plus efficace.

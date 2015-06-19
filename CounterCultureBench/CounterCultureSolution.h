@@ -3,20 +3,20 @@
 #include <string>
 #include <algorithm>
 
-bool is_1_followed_by_0s(std::string S) {
+// Solution du problème Counter Culture donné par Google
+
+bool is_1_followed_by_0s(std::string S)
+{
 	std::reverse(S.begin(), S.end());
 	return (atoi(S.c_str()) == 1);
 }
-unsigned long long cc_solve(unsigned long long N) {
-	unsigned long long p10[10];	// p10[i] == 10^i
-	p10[0] = 1;
-	for (int i = 1; i < 10; i++)
-		p10[i] = p10[i - 1] * 10;
-
+unsigned long long cc_solve(unsigned long long N)
+{
 	if (N < 10)			// Trivial case.
 		return N;
 
-	char X[20]; sprintf_s(X, "%lld", N);
+	char X[20];
+	sprintf_s(X, "%lld", N);
 	std::string S = X;
 	size_t M = S.length();	// Number of digits of N.
 
@@ -24,13 +24,18 @@ unsigned long long cc_solve(unsigned long long N) {
 	unsigned long long ans = 1;
 
 	// Part 1: from 1, get to the M digits as fast as possible.
-	for (size_t d = 1; d < M; d++) {
+	unsigned long long p10[10];	// p10[i] == 10^i
+	p10[0] = 1;
+	for (int i = 1; i < 10; i++)
+		p10[i] = p10[i - 1] * 10;
+	for (size_t d = 1; d < M; d++)
+	{
 		// For digits = 7, it starts from 7 digits:    1000000
 		ans += p10[(d + 1) / 2] - 1;	// Count up 9999: 1009999
-		if (d > 1) ans++;				// Flip once:     9999001
-		ans += p10[d / 2] - 1;				// Count up 999: 10000000
+		if (d > 1)						// Flip once:     9999001
+			ans++;
+		ans += p10[d / 2] - 1;			// Count up 999: 10000000
 	}
-
 
 	// Part 2:
 
