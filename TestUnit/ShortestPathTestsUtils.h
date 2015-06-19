@@ -3,8 +3,6 @@
 
 /*
 TODO :
-Bug : les tests ne supportent pas un type de coût non signé actuellement
-
 Détecter les conditions d'application des algorithmes lorsqu'ils s'appliquent sur un graphe : ex : détection d'un lien négatif pour Dijkstra
 Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
@@ -24,22 +22,8 @@ Déplacer toutes les fonctions des fichiers sources dépendant de templates dans l
 
 #ifdef _DEBUG
 #define PATH_FINDERS_COMPUTE_LOOPS				800
-
-#define BIG_MAZE_SIZE							201		// Doit être impair
-#define EMPTY_MAP_SIZE							81
-
-#define RANDOM_MAP_SIZE							151
-#define RANDOM_MAP_MAX_NB_LINKS					15
-#define RANDOM_MAP_MAX_COST						1000000
 #else
 #define PATH_FINDERS_COMPUTE_LOOPS				500000
-
-#define BIG_MAZE_SIZE							3001	// Doit être impair
-#define EMPTY_MAP_SIZE							2001
-
-#define RANDOM_MAP_SIZE							20000
-#define RANDOM_MAP_MAX_NB_LINKS					5000	// Graphe dense
-#define RANDOM_MAP_MAX_COST						1000000
 #endif
 
 
@@ -85,7 +69,7 @@ namespace TestUnit
 		return v;
 	}
 
-	template<class Cost = unsigned int, class NodeIndex = Graph<>::IndexNoeud>
+	template<class Cost = int, class NodeIndex = Graph<>::IndexNoeud>
 	struct ShortestPathTest
 	{
 		typedef Cost Cout;
@@ -94,6 +78,7 @@ namespace TestUnit
 
 		unsigned int nbComputeLoops;
 		unsigned int testsRefsCount;
+		bool infiniteCostCheck;
 
 		Graphe g;
 		IndexNoeud startNode;
@@ -105,7 +90,7 @@ namespace TestUnit
 		vector<vector<IndexNoeud> > reversePaths;
 
 		ShortestPathTest(IndexNoeud nodesNb, unsigned int refsCount, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
-			: g(nodesNb), testsRefsCount(refsCount), nbComputeLoops(nbLoops)
+			: g(nodesNb), testsRefsCount(refsCount), nbComputeLoops(nbLoops), infiniteCostCheck(false)
 		{
 			costs.resize(nodesNb, Graphe::INFINITE_COST());
 			paths.resize(nodesNb);
@@ -119,9 +104,12 @@ namespace TestUnit
 				reversePaths[i] = reverse_vect(paths[i]);
 		}
 	};
+	typedef ShortestPathTest<>::Graphe Graphe;
+
 	ShortestPathTest<> *simpleTest, *littleMaze,
-		*negativeLinksGraph, *notSimpleGraph, *algo2Graph, *roGraph,
-		*bigMaze, *emptyMap, *randomMap;
+		*negativeLinksGraph, *negativeCycleGraph,
+		*notSimpleGraph, *algo2Graph, *roGraph,
+		*bigMaze, *emptyMap, *randomMap, *fullGraph;
 
 #define CHECK_TEST_DELETE(test)					\
 	do {										\
@@ -140,14 +128,17 @@ namespace TestUnit
 			Assert::Fail(L"Invalid test references count !");									\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPathsFrom(test->startNode);										\
-		for (Graph<>::IndexNoeud i = 0; i < test->g.size(); i++) {								\
-			if (test->costs[i] != Graph<>::INFINITE_COST()) {									\
+		for (Graphe::IndexNoeud i = 0; i < test->g.size(); i++) {								\
+			if (test->costs[i] != Graphe::INFINITE_COST()) {									\
 				Assert::IsTrue(spf.canReachNode(i));											\
 				Assert::AreEqual(test->costs[i], spf.getCostTo(i));								\
 				if (test->paths[i].size() > 1) {												\
 					Assert::AreEqual(test->paths[i], spf.getShortestPathTo(i));					\
 					Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPathTo(i));	\
 				}																				\
+			} else if (test->infiniteCostCheck) {												\
+				Assert::IsFalse(spf.canReachNode(i));											\
+				Assert::AreEqual(test->costs[i], spf.getCostTo(i));								\
 			}																					\
 		}																						\
 		CHECK_TEST_DELETE(test);																\
@@ -159,8 +150,8 @@ namespace TestUnit
 			Assert::Fail(L"Invalid test references count !");									\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPathFrom(test->startNode);										\
-		Graph<>::IndexNoeud i = test->closestFinalNode;											\
-		if (test->costs[i] != Graph<>::INFINITE_COST()) {										\
+		Graphe::IndexNoeud i = test->closestFinalNode;											\
+		if (test->costs[i] != Graphe::INFINITE_COST()) {										\
 			Assert::AreEqual(test->costs[i], spf.getPathCost());								\
 			if (test->paths[i].size() > 1) {													\
 				Assert::AreEqual(test->paths[i], spf.getShortestPath());						\
@@ -176,22 +167,25 @@ namespace TestUnit
 			Assert::Fail(L"Invalid test references count !");									\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPaths();															\
-		Graph<>::IndexNoeud j = test->startNode;												\
-		for (Graph<>::IndexNoeud i = 0; i < test->g.size(); i++) {								\
-			if (test->costs[i] != Graph<>::INFINITE_COST()) {									\
+		Graphe::IndexNoeud j = test->startNode;													\
+		for (Graphe::IndexNoeud i = 0; i < test->g.size(); i++) {								\
+			if (test->costs[i] != Graphe::INFINITE_COST()) {									\
 				Assert::IsTrue(spf.pathExists(j, i));											\
 				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i));						\
 				if (test->paths[i].size() > 1)													\
 					Assert::AreEqual(deque_to_vect(test->paths[i]), spf.getShortestPath(j, i));	\
+			} else if (test->infiniteCostCheck) {												\
+				Assert::IsFalse(spf.pathExists(j, i));											\
+				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i));						\
 			}																					\
 		}																						\
 		CHECK_TEST_DELETE(test);																\
 	} while (false)
 
 #define SHORTEST_PATH_TEST_METHOD_SEP(test, SPClass, RUN_MACRO, sep)	\
-	TEST_METHOD(##SPClass ##sep ##test) {							\
-		SPClass<ShortestPathTest<>::Graphe> sp(test->g);	\
-		RUN_MACRO(test, sp);								\
+	TEST_METHOD(##SPClass ##sep ##test) {								\
+		SPClass<Graphe> sp(test->g);									\
+		RUN_MACRO(test, sp);											\
 	}
 
 #define SHORTEST_PATH_TEST_METHOD(test, SPClass, RUN_MACRO)	SHORTEST_PATH_TEST_METHOD_SEP(test, SPClass, RUN_MACRO, _)

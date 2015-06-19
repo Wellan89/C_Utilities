@@ -1,5 +1,19 @@
 #include "ShortestPathTestsUtils.h"
 
+#ifdef _DEBUG
+
+#define RANDOM_MAP_SIZE							151
+#define RANDOM_MAP_MAX_NB_LINKS					15
+#define RANDOM_MAP_MAX_COST						1000000
+
+#else
+
+#define RANDOM_MAP_SIZE							20000
+#define RANDOM_MAP_MAX_NB_LINKS					5000	// Graphe dense
+#define RANDOM_MAP_MAX_COST						1000000
+
+#endif
+
 namespace TestUnit
 {
 	void RandomMapInit(unsigned int testRefsCount)
@@ -7,19 +21,19 @@ namespace TestUnit
 		srand((unsigned int)time(NULL));
 
 		randomMap = new ShortestPathTest<>(RANDOM_MAP_SIZE, testRefsCount);
-		for (Graph<>::IndexNoeud i = 0; i < RANDOM_MAP_SIZE; i++)
+		for (Graphe::IndexNoeud i = 0; i < RANDOM_MAP_SIZE; i++)
 		{
 			unsigned int nbLinks = (unsigned int)rand() % RANDOM_MAP_MAX_NB_LINKS;
 			for (unsigned int j = 0; j < nbLinks; j++)
 			{
-				Graph<>::IndexNoeud target = (Graph<>::IndexNoeud)((unsigned int)rand() % RANDOM_MAP_SIZE);
-				Graph<>::Cout cost = (Graph<>::Cout)((unsigned int)rand() % RANDOM_MAP_MAX_COST);
+				Graphe::IndexNoeud target = (Graphe::IndexNoeud)((unsigned int)rand() % RANDOM_MAP_SIZE);
+				Graphe::Cout cost = (Graphe::Cout)((unsigned int)rand() % RANDOM_MAP_MAX_COST);
 				randomMap->g.addLink(i, target, cost, true);
 			}
 		}
 
-		randomMap->startNode = (Graph<>::IndexNoeud)((unsigned int)rand() % RANDOM_MAP_SIZE);
-		randomMap->closestFinalNode = (Graph<>::IndexNoeud)((unsigned int)rand() % RANDOM_MAP_SIZE);
+		randomMap->startNode = (Graphe::IndexNoeud)((unsigned int)rand() % RANDOM_MAP_SIZE);
+		randomMap->closestFinalNode = (Graphe::IndexNoeud)((unsigned int)rand() % RANDOM_MAP_SIZE);
 		randomMap->finishTest();
 	}
 

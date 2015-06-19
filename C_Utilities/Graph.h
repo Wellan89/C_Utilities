@@ -161,7 +161,7 @@ public:
 	{
 		nodes[start].links.push_back(Lien(start, end, cost));
 		nodes[end].incomingLinks.push_back(Lien(start, end, cost));
-		if (!unidirectionnal)
+		if (!unidirectionnal && start != end)
 		{
 			nodes[end].links.push_back(Lien(end, start, cost));
 			nodes[start].incomingLinks.push_back(Lien(end, start, cost));
@@ -181,7 +181,7 @@ public:
 		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end);
 		REMOVE_LINKS_FROM_ITERABLE(nodes[end].incomingLinks, start);
 
-		if (!oneDirection)
+		if (!oneDirection && start != end)
 		{
 			REMOVE_LINKS_FROM_ITERABLE(nodes[end].links, start);
 			REMOVE_LINKS_FROM_ITERABLE(nodes[start].incomingLinks, end);
@@ -202,7 +202,7 @@ public:
 		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end, cost);
 		REMOVE_LINKS_FROM_ITERABLE(nodes[end].incomingLinks, start, cost);
 
-		if (!oneDirection)
+		if (!oneDirection && start != end)
 		{
 			REMOVE_LINKS_FROM_ITERABLE(nodes[end].links, start, cost);
 			REMOVE_LINKS_FROM_ITERABLE(nodes[start].incomingLinks, end, cost);

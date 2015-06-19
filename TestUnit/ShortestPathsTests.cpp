@@ -4,7 +4,7 @@ namespace TestUnit
 {
 	void SimpleTestInit(unsigned int testRefsCount)
 	{
-#define CTI(c)	(Graph<long>::IndexNoeud)(c - 'a')
+#define CTI(c)	(Graphe::IndexNoeud)(c - 'a')
 		// Wikipedia example test : http://fr.wikipedia.org/wiki/Algorithme_de_Dijkstra
 		simpleTest = new ShortestPathTest<>(CTI('j') + 1, testRefsCount);
 		simpleTest->g.addLink(CTI('a'), CTI('b'), 85);
@@ -21,28 +21,29 @@ namespace TestUnit
 		simpleTest->startNode = CTI('a');
 		simpleTest->closestFinalNode = CTI('j');
 
-		const Graph<>::Cout heuristics[] = { 450, 400, 250, 300, 500, 300, 400, 150, 50, 0 };
-		for (Graph<>::IndexNoeud i = 0; i <= CTI('j'); i++)
+		const Graphe::Cout heuristics[] = { 450, 400, 250, 300, 500, 300, 400, 150, 50, 0 };
+		for (Graphe::IndexNoeud i = 0; i <= CTI('j'); i++)
 			simpleTest->g.setNodeHeuristic(i, heuristics[i]);
 
+		simpleTest->infiniteCostCheck = true;
 		simpleTest->costs = { 0, 85, 217, 503, 173, 165, 403, 320, 415, 499 };
 		simpleTest->paths = {
-			deque < Graph<>::IndexNoeud > { CTI('a') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('b') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('c') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('c'), CTI('h'), CTI('d') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('e') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('b'), CTI('f') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('c'), CTI('g') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('c'), CTI('h') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('b'), CTI('f'), CTI('i') },
-			deque < Graph<>::IndexNoeud > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
+			deque < Graphe::IndexNoeud > { CTI('a') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('b') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('c') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('c'), CTI('h'), CTI('d') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('e') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('b'), CTI('f') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('c'), CTI('g') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('c'), CTI('h') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('b'), CTI('f'), CTI('i') },
+			deque < Graphe::IndexNoeud > { CTI('a'), CTI('b'), CTI('f'), CTI('i'), CTI('j') } };
 		simpleTest->finishTest();
 #undef CTI
 	}
 	void LittleMazeInit(unsigned int testRefsCount)
 	{
-#define ID(i, j)	(Graph<>::IndexNoeud)((i) * width + (j))
+#define ID(i, j)	(Graphe::IndexNoeud)((i) * width + (j))
 		vector<string> map = {
 			"###########",
 			"#         #",
@@ -55,21 +56,21 @@ namespace TestUnit
 			"# #########",
 			"#        E#",
 			"###########" };
-		const Graph<>::IndexNoeud width = map[0].size();
-		const Graph<>::IndexNoeud height = map.size();
+		const Graphe::IndexNoeud width = map[0].size();
+		const Graphe::IndexNoeud height = map.size();
 
-		const Graph<>::Cout cost = 12;
-		const deque<Graph<>::IndexNoeud> path = { ID(5, 1), ID(6, 1), ID(7, 1), ID(8, 1), ID(9, 1),
+		const Graphe::Cout cost = 12;
+		const deque<Graphe::IndexNoeud> path = { ID(5, 1), ID(6, 1), ID(7, 1), ID(8, 1), ID(9, 1),
 			ID(9, 2), ID(9, 3), ID(9, 4), ID(9, 5), ID(9, 6), ID(9, 7), ID(9, 8), ID(9, 9) };
 
 		littleMaze = new ShortestPathTest<>(width * height, testRefsCount);
-		for (Graph<>::IndexNoeud i = 0; i < height; i++)
+		for (Graphe::IndexNoeud i = 0; i < height; i++)
 		{
-			for (Graph<>::IndexNoeud j = 0; j < width; j++)
+			for (Graphe::IndexNoeud j = 0; j < width; j++)
 			{
 				if (map[i][j] != '#')
 				{
-					Graph<>::IndexNoeud id = ID(i, j);
+					Graphe::IndexNoeud id = ID(i, j);
 
 					if (i < height - 1 && map[i + 1][j] != '#')
 						littleMaze->g.addLink(id, ID(i + 1, j), 1);
@@ -83,10 +84,10 @@ namespace TestUnit
 				}
 			}
 		}
-		for (Graph<>::IndexNoeud i = 0; i < height; i++)
-			for (Graph<>::IndexNoeud j = 0; j < width; j++)
+		for (Graphe::IndexNoeud i = 0; i < height; i++)
+			for (Graphe::IndexNoeud j = 0; j < width; j++)
 				littleMaze->g.setNodeHeuristic(ID(i, j),
-					(Graph<>::Cout)(abs((long)(littleMaze->closestFinalNode / width) - (long)i)
+					(Graphe::Cout)(abs((long)(littleMaze->closestFinalNode / width) - (long)i)
 					+ abs((long)(littleMaze->closestFinalNode % width) - (long)j)));
 
 		littleMaze->costs[littleMaze->closestFinalNode] = cost;
@@ -97,18 +98,132 @@ namespace TestUnit
 	void NegativeLinksGraphInit(unsigned int testRefsCount)
 	{
 		negativeLinksGraph = NULL;
+		return;
+		negativeLinksGraph = new ShortestPathTest<>(0, testRefsCount);
+		negativeLinksGraph->g.addLink(0, 0, 0);
+
+		negativeLinksGraph->startNode = 0;
+		negativeLinksGraph->closestFinalNode = 0;
+
+		negativeLinksGraph->infiniteCostCheck = true;
+		negativeLinksGraph->costs = { 4, 3, Graphe::INFINITE_COST(), 2, Graphe::INFINITE_COST(), 1, 1, 0 };
+		negativeLinksGraph->paths = {
+			deque < Graphe::IndexNoeud > { 7, 5, 3, 1, 0 },
+			deque < Graphe::IndexNoeud > { 7, 5, 3, 1 },
+			deque < Graphe::IndexNoeud > { 2 },
+			deque < Graphe::IndexNoeud > { 7, 5, 3 },
+			deque < Graphe::IndexNoeud > { 4 },
+			deque < Graphe::IndexNoeud > { 7, 5 },
+			deque < Graphe::IndexNoeud > { 7, 6 },
+			deque < Graphe::IndexNoeud > { 7 } };
+		negativeLinksGraph->finishTest();
+	}
+	void NegativeCycleGraphInit(unsigned int testRefsCount)
+	{
+		negativeCycleGraph = new ShortestPathTest<>(8, testRefsCount);
+		negativeCycleGraph->g.addLink(0, 1, 1);
+		negativeCycleGraph->g.addLink(0, 5, -1);
+		negativeCycleGraph->g.addLink(0, 6, 3);
+		negativeCycleGraph->g.addLink(1, 2, -1);
+		negativeCycleGraph->g.addLink(1, 2, -1);
+		negativeCycleGraph->g.addLink(2, 3, 0);
+		negativeCycleGraph->g.addLink(2, 6, 1);
+		negativeCycleGraph->g.addLink(3, 4, -1);
+		negativeCycleGraph->g.addLink(4, 5, 1);
+		negativeCycleGraph->g.addLink(6, 7, 5);
+
+		negativeCycleGraph->startNode = 0;
+		negativeCycleGraph->closestFinalNode = 7;
+
+		negativeCycleGraph->infiniteCostCheck = true;
+		negativeCycleGraph->costs = { Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
+										Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
+										Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
+										Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
+		negativeCycleGraph->finishTest();
 	}
 	void NotSimpleGraphInit(unsigned int testRefsCount)
 	{
 		notSimpleGraph = NULL;
+		return;
+		notSimpleGraph = new ShortestPathTest<>(0, testRefsCount);
+		notSimpleGraph->g.addLink(0, 0, 0);
+
+		notSimpleGraph->startNode = 0;
+		notSimpleGraph->closestFinalNode = 0;
+
+		notSimpleGraph->infiniteCostCheck = true;
+		notSimpleGraph->costs = { 4, 3, Graphe::INFINITE_COST(), 2, Graphe::INFINITE_COST(), 1, 1, 0 };
+		notSimpleGraph->paths = {
+			deque < Graphe::IndexNoeud > { 7, 5, 3, 1, 0 },
+			deque < Graphe::IndexNoeud > { 7, 5, 3, 1 },
+			deque < Graphe::IndexNoeud > { 2 },
+			deque < Graphe::IndexNoeud > { 7, 5, 3 },
+			deque < Graphe::IndexNoeud > { 4 },
+			deque < Graphe::IndexNoeud > { 7, 5 },
+			deque < Graphe::IndexNoeud > { 7, 6 },
+			deque < Graphe::IndexNoeud > { 7 } };
+		notSimpleGraph->finishTest();
 	}
 	void Algo2GraphInit(unsigned int testRefsCount)
 	{
-		algo2Graph = NULL;
+		// Exemple tiré du cours d'Algorithmique 2 (Ensimag 1A) :
+		algo2Graph = new ShortestPathTest<>(8, testRefsCount);
+		algo2Graph->g.addLink(7, 6, 1, true);
+		algo2Graph->g.addLink(7, 5, 1, true);
+		algo2Graph->g.addLink(6, 3, 2, true);
+		algo2Graph->g.addLink(5, 3, 1, true);
+		algo2Graph->g.addLink(4, 2, 1, true);
+		algo2Graph->g.addLink(3, 1, 1, true);
+		algo2Graph->g.addLink(2, 1, 1, true);
+		algo2Graph->g.addLink(1, 0, 1, true);
+
+		algo2Graph->startNode = 7;
+		algo2Graph->closestFinalNode = 0;
+
+		algo2Graph->infiniteCostCheck = true;
+		algo2Graph->costs = { 4, 3, Graphe::INFINITE_COST(), 2, Graphe::INFINITE_COST(), 1, 1, 0 };
+		algo2Graph->paths = {
+			deque < Graphe::IndexNoeud > { 7, 5, 3, 1, 0 },
+			deque < Graphe::IndexNoeud > { 7, 5, 3, 1 },
+			deque < Graphe::IndexNoeud > { 2 },
+			deque < Graphe::IndexNoeud > { 7, 5, 3 },
+			deque < Graphe::IndexNoeud > { 4 },
+			deque < Graphe::IndexNoeud > { 7, 5 },
+			deque < Graphe::IndexNoeud > { 7, 6 },
+			deque < Graphe::IndexNoeud > { 7 } };
+		algo2Graph->finishTest();
 	}
 	void ROGraphInit(unsigned int testRefsCount)
 	{
-		roGraph = NULL;
+		// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
+		roGraph = new ShortestPathTest<>(8, testRefsCount);
+		roGraph->g.addLink(0, 2, 1, true);
+		roGraph->g.addLink(0, 3, 1, true);
+		roGraph->g.addLink(1, 3, 1, true);
+		roGraph->g.addLink(2, 5, 1, true);
+		roGraph->g.addLink(2, 6, 1, true);
+		roGraph->g.addLink(3, 4, 1, true);
+		roGraph->g.addLink(3, 5, 2, true);
+		roGraph->g.addLink(3, 7, 1, true);
+		roGraph->g.addLink(5, 6, 1, true);
+		roGraph->g.addLink(5, 7, 1, true);
+
+		roGraph->startNode = 0;
+		roGraph->closestFinalNode = 7;
+
+		roGraph->infiniteCostCheck = true;
+		roGraph->costs = { 0, Graphe::INFINITE_COST(), 1, 1, 2, 2, 2, 2 };
+		roGraph->paths = {
+			deque < Graphe::IndexNoeud > { 0 },
+			deque < Graphe::IndexNoeud > { 1 },
+			deque < Graphe::IndexNoeud > { 0, 2 },
+			deque < Graphe::IndexNoeud > { 0, 3 },
+			deque < Graphe::IndexNoeud > { 0, 3, 4 },
+			deque < Graphe::IndexNoeud > { 0, 2, 5 },
+			deque < Graphe::IndexNoeud > { 0, 2, 6 },
+			deque < Graphe::IndexNoeud > { 0, 3, 7 } };
+		roGraph->finishTest();
 	}
 
 	TEST_MODULE_INITIALIZE(ShortestPathsTestsInit)
@@ -116,6 +231,7 @@ namespace TestUnit
 		SimpleTestInit(7);
 		LittleMazeInit(6);
 		NegativeLinksGraphInit(7);
+		NegativeCycleGraphInit(7);
 		NotSimpleGraphInit(7);
 		Algo2GraphInit(8);
 		ROGraphInit(8);
@@ -128,6 +244,8 @@ namespace TestUnit
 			delete littleMaze;
 		if (negativeLinksGraph)
 			delete negativeLinksGraph;
+		if (negativeCycleGraph)
+			delete negativeCycleGraph;
 		if (notSimpleGraph)
 			delete notSimpleGraph;
 		if (algo2Graph)
@@ -141,6 +259,11 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(roGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(AStarTests)
@@ -148,86 +271,19 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(roGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 	};
 
 	TEST_CLASS(BellmanTests)
 	{
-		TEST_METHOD(Bellman_Algo2)
-		{
-			// Exemple tiré du cours d'Algorithmique 2 (Ensimag 1A) :
-			Graph<> g(8);
-			g.addLink(7, 6, 1, true);
-			g.addLink(7, 5, 1, true);
-			g.addLink(6, 3, 2, true);
-			g.addLink(5, 3, 1, true);
-			g.addLink(4, 2, 1, true);
-			g.addLink(3, 1, 1, true);
-			g.addLink(2, 1, 1, true);
-			g.addLink(1, 0, 1, true);
-
-			Bellman<> bm(g);
-			bm.computeShortestPathsFrom(7);
-
-			const Graph<>::Cout costs[8] =
-				{ 4, 3, Graph<>::INFINITE_COST(), 2, Graph<>::INFINITE_COST(), 1, 1, 0 };
-			const deque<Graph<>::IndexNoeud> paths[8] = {
-				deque < Graph<>::IndexNoeud > { 7, 5, 3, 1, 0 },
-				deque < Graph<>::IndexNoeud > { 7, 5, 3, 1 },
-				deque < Graph<>::IndexNoeud > { 2 },
-				deque < Graph<>::IndexNoeud > { 7, 5, 3 },
-				deque < Graph<>::IndexNoeud > { 4 },
-				deque < Graph<>::IndexNoeud > { 7, 5 },
-				deque < Graph<>::IndexNoeud > { 7, 6 },
-				deque < Graph<>::IndexNoeud > { 7 } };
-			for (Graph<>::IndexNoeud i = 0; i < g.size(); i++)
-			{
-				Assert::AreEqual((costs[i] != Graph<>::INFINITE_COST()), bm.canReachNode(i));
-				Assert::AreEqual(costs[i], bm.getCostTo(i));
-				Assert::AreEqual(paths[i], bm.getShortestPathTo(i));
-				Assert::AreEqual(reverse_vect(paths[i]), bm.getReverseShortestPathTo(i));
-			}
-		}
-		TEST_METHOD(Bellman_RO)
+		TEST_METHOD(Bellman_ImpossibleTopologicalOrder)
 		{
 			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
-			Graph<> g(8);
-			g.addLink(0, 2, 1, true);
-			g.addLink(0, 3, 1, true);
-			g.addLink(1, 3, 1, true);
-			g.addLink(2, 5, 1, true);
-			g.addLink(2, 6, 1, true);
-			g.addLink(3, 4, 1, true);
-			g.addLink(3, 5, 2, true);
-			g.addLink(3, 7, 1, true);
-			g.addLink(5, 6, 1, true);
-			g.addLink(5, 7, 1, true);
-
-			Bellman<> bm(g);
-			bm.computeShortestPathsFrom(0);
-
-			const Graph<>::Cout costs[8] =
-				{ 0, Graph<>::INFINITE_COST(), 1, 1, 2, 2, 2, 2 };
-			const deque<Graph<>::IndexNoeud> paths[8] = {
-				deque < Graph<>::IndexNoeud > { 0 },
-				deque < Graph<>::IndexNoeud > { 1 },
-				deque < Graph<>::IndexNoeud > { 0, 2 },
-				deque < Graph<>::IndexNoeud > { 0, 3 },
-				deque < Graph<>::IndexNoeud > { 0, 3, 4 },
-				deque < Graph<>::IndexNoeud > { 0, 2, 5 },
-				deque < Graph<>::IndexNoeud > { 0, 2, 6 },
-				deque < Graph<>::IndexNoeud > { 0, 3, 7 } };
-			for (Graph<>::IndexNoeud i = 0; i < g.size(); i++)
-			{
-				Assert::AreEqual((costs[i] != Graph<>::INFINITE_COST()), bm.canReachNode(i));
-				Assert::AreEqual(costs[i], bm.getCostTo(i));
-				Assert::AreEqual(paths[i], bm.getShortestPathTo(i));
-				Assert::AreEqual(reverse_vect(paths[i]), bm.getReverseShortestPathTo(i));
-			}
-		}
-		TEST_METHOD(BellmanImpossibleTopologicalOrder)
-		{
-			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
-			Graph<> g(6);
+			Graphe g(6);
 			g.addLink(0, 1, 2, true);
 			g.addLink(0, 2, 8, true);
 			g.addLink(1, 2, 5, true);
@@ -239,11 +295,14 @@ namespace TestUnit
 			g.addLink(4, 1, 3, true);
 			g.addLink(4, 5, 1, true);
 
-			Bellman<> bm(g);
+			Bellman<Graphe> bm(g);
 			bm.computeShortestPathsFrom(0);
-			for (Graph<>::IndexNoeud i = 0; i < g.size(); i++)
+			for (Graphe::IndexNoeud i = 0; i < g.size(); i++)
 				Assert::IsFalse(bm.canReachNode(i));
 		}
+
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, Bellman, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(roGraph, Bellman, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(DFS_Tests)
@@ -251,6 +310,11 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(roGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 	};
 
 	TEST_CLASS(BFS_Tests)
@@ -258,6 +322,11 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(roGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(BellmanFordTests)
@@ -265,6 +334,11 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
@@ -272,6 +346,11 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
@@ -280,5 +359,11 @@ namespace TestUnit
 
 		// Floyd-Warshall est extrêmement lent pour ce test !
 		//SHORTEST_PATH_TEST_METHOD(littleMaze, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		SHORTEST_PATH_TEST_METHOD(roGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 	};
 }
