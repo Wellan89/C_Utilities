@@ -50,6 +50,11 @@ public:
 	Cout getPathCost();
 	std::deque<IndexNoeud> getShortestPath();
 	std::vector<IndexNoeud> getReverseShortestPath();
+
+	size_t getNbExploredNodes() const
+	{
+		return asd.size();
+	}
 };
 
 #endif

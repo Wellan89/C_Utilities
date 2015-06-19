@@ -7,57 +7,47 @@
 
 using namespace std;
 
-void printResult_AStarDynamic(CCDynGraph::IndexNoeud finalNode)
+void printResult_AStarDynamic(CCDynGraph::IndexNoeud finalNode, const CCNodeHeuristicGenerator& heuristicGen)
 {
 	try
 	{
-		cout << "AStarDynamic : ";
+		cout << "AStarDynamic";
+		if (heuristicGen.isHeuristicPrecomputed())
+			cout << " (precomputed heuristic)";
+		else
+			cout << "                        ";
+		cout << " : ";
 		clock_t startTime = clock();
 
 		CCNodeLinksGenerator linksGen(finalNode);
 		CCNodeFinalGenerator finalGen(finalNode);
-		CCNodeHeuristicGenerator heuristicGen(finalNode);
 		CCDynGraph ccdg(linksGen, finalGen, heuristicGen);
 
 		AStarDynamic<CCDynGraph> asd(ccdg);
 		asd.computeShortestPathFrom(0);
 
 		time_t diffTime = clock() - startTime;
-		cout << "Result = " << asd.getPathCost() << " ; Time = " << diffTime << " ms" << endl;
+		cout << "Result = " << asd.getPathCost() << " ; Time = " << diffTime << " ms" << endl
+			<< "                                     ; " << asd.getNbExploredNodes() << " nodes explored " << endl;
 	}
 	catch (...)
 	{
 		cout << "Error !" << endl;
 	}
 }
-void printResult_Dijkstra(CCDynGraph::IndexNoeud finalNode)
+void printResult_AStar(CCDynGraph::IndexNoeud finalNode, const CCNodeHeuristicGenerator& heuristicGen)
 {
 	try
 	{
-		cout << "Dijkstra     : ";
+		cout << "AStar";
+		if (heuristicGen.isHeuristicPrecomputed())
+			cout << " (precomputed heuristic)       ";
+		else
+			cout << "                               ";
+		cout << " : ";
 		clock_t startTime = clock();
 
-		CCGraph ccg = generateCCGraph(finalNode);
-
-		Dijkstra<CCGraph> dj(ccg);
-		dj.computeShortestPathsFrom(0);
-
-		time_t diffTime = clock() - startTime;
-		cout << "Result = " << dj.getCostTo(finalNode) << " ; Time = " << diffTime << " ms" << endl;
-	}
-	catch (...)
-	{
-		cout << "Error !" << endl;
-	}
-}
-void printResult_AStar(CCDynGraph::IndexNoeud finalNode)
-{
-	try
-	{
-		cout << "AStar        : ";
-		clock_t startTime = clock();
-
-		CCGraph ccg = generateCCGraph(finalNode);
+		CCGraph ccg = generateCCGraph(finalNode, &heuristicGen);
 
 		AStar<CCGraph> as(ccg);
 		as.computeShortestPathFrom(0);
@@ -70,20 +60,53 @@ void printResult_AStar(CCDynGraph::IndexNoeud finalNode)
 		cout << "Error !" << endl;
 	}
 }
+void printResult_Dijkstra(CCDynGraph::IndexNoeud finalNode, CCNodeHeuristicGenerator& heuristicGen)
+{
+	try
+	{
+		cout << "Dijkstra                             : ";
+		clock_t startTime = clock();
+
+		CCGraph ccg = generateCCGraph(finalNode, &heuristicGen);
+
+		Dijkstra<CCGraph> dj(ccg);
+		dj.computeShortestPathsFrom(0);
+
+		time_t diffTime = clock() - startTime;
+		cout << "Result = " << dj.getCostTo(finalNode) << " ; Time = " << diffTime << " ms" << endl;
+
+		// Se souviens de l'heuristique d'après les résultats pré-calculés
+		heuristicGen.precomputeHeuristic(dj);
+	}
+	catch (...)
+	{
+		cout << "Error !" << endl;
+	}
+}
 int main()
 {
-	cout << "Entrez le nombre a atteindre :" << endl;
+	while (true)
+	{
+		cout << "Entrez le nombre a atteindre (ou 0 pour quitter) :" << endl;
 
-	CCDynGraph::IndexNoeud finalNode;
-	cin >> finalNode;
+		CCDynGraph::IndexNoeud finalNode;
+		cin >> finalNode;
+		if (finalNode == 0)
+			break;
 
-	cout << endl;
-	printResult_AStarDynamic(finalNode);
-	printResult_Dijkstra(finalNode);
-	printResult_AStar(finalNode);
-	cout << endl;
+		CCNodeHeuristicGenerator heuristicGen(finalNode);
 
-	system("PAUSE");
+		cout << endl;
+		printResult_AStarDynamic(finalNode, heuristicGen);
+		printResult_AStar(finalNode, heuristicGen);
+		printResult_Dijkstra(finalNode, heuristicGen);
+		if (heuristicGen.isHeuristicPrecomputed())
+		{
+			printResult_AStarDynamic(finalNode, heuristicGen);
+			printResult_AStar(finalNode, heuristicGen);
+		}
+		cout << endl << endl << endl;
+	}
 
 	return EXIT_SUCCESS;
 }
