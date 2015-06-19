@@ -14,6 +14,7 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 	cost_priority_queue<IndexNoeud, Cout> nodesToSee;
 	nodesToSee.push(startNode, g.getNodeHeuristic(startNode));
 
+	vector<Graphe::Lien> links;
 	while (!nodesToSee.empty())
 	{
 		IndexNoeud node = nodesToSee.top();
@@ -32,7 +33,8 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 #endif
 		Cout nodeTotalCost = asd[node].totalCost;
 
-		auto links = g.getNodeLinks(node);
+		links.clear();
+		g.getNodeLinks(node, links);
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
 			IndexNoeud targetNode = it->getTargetIndex();

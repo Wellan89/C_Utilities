@@ -41,31 +41,26 @@ protected:
 public:
 	CCNodeLinksGenerator(CCDynGraph::IndexNoeud _finalNode) : finalNode(_finalNode)	{ }
 
-	std::vector<DynamicLink> operator()(CCDynGraph::IndexNoeud index) const
+	void operator()(CCDynGraph::IndexNoeud index, std::vector<DynamicLink>& outLinks) const
 	{
-		std::vector<DynamicLink> links;
-		links.reserve(2);
-
 #ifndef CC_USE_INVERTED_GRAPH
 		if (index < finalNode)
-			links.push_back(DynamicLink(index + 1, 1));
+			outLinks.push_back(DynamicLink(index + 1, 1));
 
 		CCDynGraph::IndexNoeud sw = swap(index);
 		if (sw <= finalNode)
-			links.push_back(DynamicLink(sw, 1));
+			outLinks.push_back(DynamicLink(sw, 1));
 #else
 		if (index > 0)
-			links.push_back(DynamicLink(index - 1, 1));
+			outLinks.push_back(DynamicLink(index - 1, 1));
 
 		if (index % 10 != 0)
 		{
 			CCDynGraph::IndexNoeud sw = swap(index);
 			if (sw <= finalNode)
-				links.push_back(DynamicLink(sw, 1));
+				outLinks.push_back(DynamicLink(sw, 1));
 		}
 #endif
-
-		return links;
 	}
 };
 class CCNodeFinalGenerator
