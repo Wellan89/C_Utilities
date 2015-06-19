@@ -3,9 +3,7 @@
 
 /*
 TODO :
-Comparer ce Dijkstra avec la version de wikipédia
 Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra (entre autres)
-	=> Utiliser des templates pour le type des coûts des liens (et aussi pour le type des noeuds ? permettrait parfois d'économiser de la mémoire ?)
 Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
@@ -17,7 +15,7 @@ Tester la détection de circuits absorbants, et les cas de graphes à un ou deux n
 Tester les algorithmes sur des graphes non simples : avec des boucles (une arête d'un noeud sur lui-même) ou plusieurs liens entre chaque noeud
 Ecrire un test avec un graphe sans cycles, afin de pouvoir comparer Bellman aux autres algorithmes
 
-Passer toutes les fonctions des fichiers sources dépendant de templates dans les headers
+Déplacer toutes les fonctions des fichiers sources dépendant de templates dans les headers
 */
 
 

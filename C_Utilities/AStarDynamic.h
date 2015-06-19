@@ -33,9 +33,16 @@ protected:
 	// Le noeud final trouvé par cet algorithme
 	IndexNoeud endNode;
 
+#ifdef _DEBUG
+	IndexNoeud nbExploredNodes;
+#endif
+
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
+#ifdef _DEBUG
+		nbExploredNodes = 0;
+#endif
 		asd.clear();
 		endNode = Graphe::INVALID_NODE_INDEX();
 	}
@@ -51,10 +58,12 @@ public:
 	std::deque<IndexNoeud> getShortestPath();
 	std::vector<IndexNoeud> getReverseShortestPath();
 
-	size_t getNbExploredNodes() const
+#ifdef _DEBUG
+	IndexNoeud getNbExploredNodes() const
 	{
-		return asd.size();
+		return nbExploredNodes;
 	}
+#endif
 };
 
 #endif

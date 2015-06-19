@@ -29,6 +29,10 @@ typedef Graph<CCDynGraph::Cout, CCDynGraph::IndexNoeud> CCGraph;
 
 CCGraph generateCCGraph(CCGraph::IndexNoeud finalNode, const CCNodeHeuristicGenerator* heuristicGen = NULL);
 
+#ifndef CC_PRECOMPUTATION_HEURISTIC_MAX_SIZE
+#define CC_PRECOMPUTATION_HEURISTIC_MAX_SIZE	std::numeric_limits<CCDynGraph::IndexNoeud>::max()
+#endif
+
 class CCNodeLinksGenerator
 {
 protected:
@@ -97,15 +101,18 @@ public:
 	// en utilisant la solution donnée par Google.
 	void precomputeHeuristic()
 	{
-		precomputedHeuristic.resize(finalNode + 1);
-
 #ifndef CC_USE_INVERTED_GRAPH
 		unsigned long long finalDist = cc_solve(finalNode);
+		precomputedHeuristic.resize(finalNode + 1);
 		for (CCDynGraph::IndexNoeud i = 0; i <= finalNode; i++)
 			precomputedHeuristic[i] = (CCDynGraph::IndexNoeud)(finalDist - cc_solve(i));	// Minorant peu précis de d(i, f)
 #else
+		// Limite la taille du tableau de l'heuristique
+		CCDynGraph::IndexNoeud maxHeuristicNode = std::min<CCDynGraph::IndexNoeud>(finalNode, CC_PRECOMPUTATION_HEURISTIC_MAX_SIZE);
+
 		// Le graphe CC inversé permet ici d'obtenir une heuristique exacte !
-		for (CCDynGraph::IndexNoeud i = 0; i <= finalNode; i++)
+		precomputedHeuristic.resize(maxHeuristicNode + 1);
+		for (CCDynGraph::IndexNoeud i = 0; i <= maxHeuristicNode; i++)
 			precomputedHeuristic[i] = (CCDynGraph::IndexNoeud)cc_solve(i);					// Vaut exactement d(i, f) car f = 0
 #endif
 	}

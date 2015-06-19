@@ -27,6 +27,9 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 			continue;
 
 		asd[node].alreadyVisited = true;
+#ifdef _DEBUG
+		nbExploredNodes++;
+#endif
 		Cout nodeTotalCost = asd[node].totalCost;
 
 		auto links = g.getNodeLinks(node);
