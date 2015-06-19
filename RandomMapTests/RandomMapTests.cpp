@@ -37,18 +37,20 @@ namespace TestUnit
 	{
 		TEST_METHOD(RandomGraph)
 		{
-			Dijkstra<> dj(randomMap->g);
+			typedef ShortestPathTest<>::Graphe Graphe;
+
+			Dijkstra<Graphe> dj(randomMap->g);
 			dj.computeShortestPathsFrom(randomMap->startNode);
 
-			AStar<> as(randomMap->g);
+			AStar<Graphe> as(randomMap->g);
 			as.computeShortestPathFrom(randomMap->startNode);
 
 			// Bellman-Ford-Yen est peu efficace en mémoire sur des graphes denses !
-			//BellmanFordYen<> bfy(randomMap->g);
+			//BellmanFordYen<Graphe> bfy(randomMap->g);
 			//bfy.computeShortestPathsFrom(randomMap->startNode);
 
 			// Floyd-Warshall est peu efficace en mémoire sur des grands graphes !
-			//FloydWarshall<> fw(randomMap->g);
+			//FloydWarshall<Graphe> fw(randomMap->g);
 			//fw.computeShortestPaths();
 
 			bool reachableNode = dj.canReachNode(randomMap->closestFinalNode);
@@ -59,12 +61,12 @@ namespace TestUnit
 			{
 				Assert::AreEqual(randomMap->closestFinalNode, as.getFinalNode());
 
-				Graph<>::Cout cost = dj.getCostTo(randomMap->closestFinalNode);
+				Graphe::Cout cost = dj.getCostTo(randomMap->closestFinalNode);
 				Assert::AreEqual(cost, as.getPathCost());
 				//Assert::AreEqual(cost, bfy.getCostTo(randomMap->closestFinalNode));
 				//Assert::AreEqual(cost, fw.getPathCost(randomMap->startNode, randomMap->closestFinalNode));
 
-				deque<Graph<>::IndexNoeud> path = dj.getShortestPathTo(randomMap->closestFinalNode);
+				deque<Graphe::IndexNoeud> path = dj.getShortestPathTo(randomMap->closestFinalNode);
 				Assert::AreEqual(path, as.getShortestPath());
 				//Assert::AreEqual(path, bfy.getShortestPathTo(randomMap->closestFinalNode));
 				//Assert::AreEqual(deque_to_vect(path), fw.getShortestPath(randomMap->startNode, randomMap->closestFinalNode));

@@ -94,11 +94,31 @@ namespace TestUnit
 		littleMaze->finishTest();
 #undef ID
 	}
+	void NegativeLinksGraphInit(unsigned int testRefsCount)
+	{
+		negativeLinksGraph = NULL;
+	}
+	void NotSimpleGraphInit(unsigned int testRefsCount)
+	{
+		notSimpleGraph = NULL;
+	}
+	void Algo2GraphInit(unsigned int testRefsCount)
+	{
+		algo2Graph = NULL;
+	}
+	void ROGraphInit(unsigned int testRefsCount)
+	{
+		roGraph = NULL;
+	}
 
 	TEST_MODULE_INITIALIZE(ShortestPathsTestsInit)
 	{
 		SimpleTestInit(7);
 		LittleMazeInit(6);
+		NegativeLinksGraphInit(7);
+		NotSimpleGraphInit(7);
+		Algo2GraphInit(8);
+		ROGraphInit(8);
 	}
 	TEST_MODULE_CLEANUP(ShortestPathsTestsCleanup)
 	{
@@ -106,43 +126,33 @@ namespace TestUnit
 			delete simpleTest;
 		if (littleMaze)
 			delete littleMaze;
+		if (negativeLinksGraph)
+			delete negativeLinksGraph;
+		if (notSimpleGraph)
+			delete notSimpleGraph;
+		if (algo2Graph)
+			delete algo2Graph;
+		if (roGraph)
+			delete roGraph;
 	}
 
 	TEST_CLASS(DijkstraTests)
 	{
 	public:
-		TEST_METHOD(DijkstraSimpleTest)
-		{
-			Dijkstra<> dj(simpleTest->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(simpleTest, dj);
-		}
-
-		TEST_METHOD(DijkstraLittleMaze)
-		{
-			Dijkstra<> dj(littleMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(littleMaze, dj);
-		}
+		SHORTEST_PATH_TEST_METHOD(simpleTest, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(AStarTests)
 	{
 	public:
-		TEST_METHOD(AStarSimpleTest)
-		{
-			AStar<> as(simpleTest->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(simpleTest, as);
-		}
-
-		TEST_METHOD(AStarLittleMaze)
-		{
-			AStar<> as(littleMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(littleMaze, as);
-		}
+		SHORTEST_PATH_TEST_METHOD(simpleTest, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 	};
 
 	TEST_CLASS(BellmanTests)
 	{
-		TEST_METHOD(BellmanSimpleTest_Algo2)
+		TEST_METHOD(Bellman_Algo2)
 		{
 			// Exemple tiré du cours d'Algorithmique 2 (Ensimag 1A) :
 			Graph<> g(8);
@@ -177,7 +187,7 @@ namespace TestUnit
 				Assert::AreEqual(reverse_vect(paths[i]), bm.getReverseShortestPathTo(i));
 			}
 		}
-		TEST_METHOD(BellmanSimpleTest_RO)
+		TEST_METHOD(Bellman_RO)
 		{
 			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
 			Graph<> g(8);
@@ -239,81 +249,36 @@ namespace TestUnit
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
-		TEST_METHOD(DFS_SimpleTest)
-		{
-			DFS_ShortestPath<> dfs(simpleTest->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(simpleTest, dfs);
-		}
-
-		TEST_METHOD(DFS_LittleMaze)
-		{
-			DFS_ShortestPath<> dfs(littleMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(littleMaze, dfs);
-		}
+		SHORTEST_PATH_TEST_METHOD(simpleTest, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 	};
 
 	TEST_CLASS(BFS_Tests)
 	{
 	public:
-		TEST_METHOD(BFS_SimpleTest)
-		{
-			BFS_ShortestPath<> bfs(simpleTest->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(simpleTest, bfs);
-		}
-
-		TEST_METHOD(BFS_LittleMaze)
-		{
-			BFS_ShortestPath<> bfs(littleMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(littleMaze, bfs);
-		}
+		SHORTEST_PATH_TEST_METHOD(simpleTest, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
-		TEST_METHOD(BellmanFordSimpleTest)
-		{
-			BellmanFord<> bf(simpleTest->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(simpleTest, bf);
-		}
-
-		TEST_METHOD(BellmanFordLittleMaze)
-		{
-			BellmanFord<> bf(littleMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(littleMaze, bf);
-		}
+		SHORTEST_PATH_TEST_METHOD(simpleTest, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
 	{
 	public:
-		TEST_METHOD(BellmanFordYenSimpleTest)
-		{
-			BellmanFordYen<> bfy(simpleTest->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(simpleTest, bfy);
-		}
-
-		TEST_METHOD(BellmanFordYenLittleMaze)
-		{
-			BellmanFordYen<> bfy(littleMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(littleMaze, bfy);
-		}
+		SHORTEST_PATH_TEST_METHOD(simpleTest, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
 	{
-		TEST_METHOD(FloydWarshallSimpleTest)
-		{
-			FloydWarshall<> fw(simpleTest->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(simpleTest, fw);
-		}
+		SHORTEST_PATH_TEST_METHOD(simpleTest, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 
-		/* Floyd-Warshall est extrêmement lent pour ce test !
-		TEST_METHOD(FloydWarshallLittleMaze)
-		{
-			FloydWarshall<> fw(littleMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(littleMaze, fw);
-		}
-		*/
+		// Floyd-Warshall est extrêmement lent pour ce test !
+		//SHORTEST_PATH_TEST_METHOD(littleMaze, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 	};
 }

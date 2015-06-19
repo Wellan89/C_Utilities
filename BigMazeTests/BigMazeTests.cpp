@@ -55,73 +55,43 @@ namespace TestUnit
 	TEST_CLASS(DijkstraTests)
 	{
 	public:
-		TEST_METHOD(DijkstraBigMaze)
-		{
-			Dijkstra<> dj(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, dj);
-		}
+		SHORTEST_PATH_TEST_METHOD(bigMaze, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(AStarTests)
 	{
 	public:
-		TEST_METHOD(AStarBigMaze)
-		{
-			AStar<> as(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(bigMaze, as);
-		}
+		SHORTEST_PATH_TEST_METHOD(bigMaze, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 	};
 
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
-		TEST_METHOD(DFS_BigMaze)
-		{
-			DFS_ShortestPath<> dfs(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(bigMaze, dfs);
-		}
+		SHORTEST_PATH_TEST_METHOD(bigMaze, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 	};
 
 	TEST_CLASS(BFS_Tests)
 	{
 	public:
-		TEST_METHOD(BFS_BigMaze)
-		{
-			BFS_ShortestPath<> bfs(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, bfs);
-		}
+		SHORTEST_PATH_TEST_METHOD(bigMaze, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
-		/* Bellman-Ford est extrêmement lent pour les gros tests !
-		TEST_METHOD(BellmanFordBigMaze)
-		{
-			BellmanFord<> bf(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, bf);
-		}
-		*/
+		// Bellman-Ford est extrêmement lent pour les gros tests !
+		//SHORTEST_PATH_TEST_METHOD(bigMaze, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
 	{
 	public:
-		TEST_METHOD(BellmanFordYenBigMaze)
-		{
-			BellmanFordYen<> bfy(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(bigMaze, bfy);
-		}
+		SHORTEST_PATH_TEST_METHOD(bigMaze, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
 	{
-		/* Floyd-Warshall est extrêmement lent pour les gros tests !
-		TEST_METHOD(FloydWarshallBigMaze)
-		{
-			FloydWarshall<> fw(bigMaze->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(bigMaze, fw);
-		}
-		*/
+		// Floyd-Warshall est extrêmement lent pour les gros tests !
+		//SHORTEST_PATH_TEST_METHOD(bigMaze, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 	};
 }

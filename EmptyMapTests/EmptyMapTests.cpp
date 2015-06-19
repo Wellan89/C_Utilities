@@ -56,75 +56,44 @@ namespace TestUnit
 	TEST_CLASS(DijkstraTests)
 	{
 	public:
-		TEST_METHOD(DijkstraEmptyMap)
-		{
-			Dijkstra<> dj(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, dj);
-		}
+		SHORTEST_PATH_TEST_METHOD(emptyMap, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(AStarTests)
 	{
 	public:
-		TEST_METHOD(AStarEmptyMap)
-		{
-			AStar<> as(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(emptyMap, as);
-		}
+		SHORTEST_PATH_TEST_METHOD(emptyMap, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 	};
 
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
-		/* Ce test échoue toujours !
-		TEST_METHOD(DFS_EmptyMap)
-		{
-		DFS_ShortestPath<> dfs(emptyMap->g);
-		RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(emptyMap, dfs);
-		}
-		*/
+		// Ce test échoue toujours ! (stack overflow probablement)
+		//SHORTEST_PATH_TEST_METHOD(emptyMap, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 	};
 
 	TEST_CLASS(BFS_Tests)
 	{
 	public:
-		TEST_METHOD(BFS_EmptyMap)
-		{
-			BFS_ShortestPath<> bfs(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, bfs);
-		}
+		SHORTEST_PATH_TEST_METHOD(emptyMap, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
-		/* Bellman-Ford est extrêmement lent pour les gros tests !
-		TEST_METHOD(BellmanFordEmptyMap)
-		{
-			BellmanFord<> bf(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, bf);
-		}
-		*/
+		// Bellman-Ford est extrêmement lent pour les gros tests !
+		//SHORTEST_PATH_TEST_METHOD(emptyMap, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
 	{
 	public:
-		TEST_METHOD(BellmanFordYenEmptyMap)
-		{
-			BellmanFordYen<> bfy(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(emptyMap, bfy);
-		}
+		SHORTEST_PATH_TEST_METHOD(emptyMap, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
 	{
-		/* Floyd-Warshall est extrêmement lent pour les gros tests !
-		TEST_METHOD(FloydWarshallEmptyMap)
-		{
-			FloydWarshall<> fw(emptyMap->g);
-			RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(emptyMap, fw);
-		}
-		*/
+		// Floyd-Warshall est extrêmement lent pour les gros tests !
+		//SHORTEST_PATH_TEST_METHOD(emptyMap, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 	};
 }

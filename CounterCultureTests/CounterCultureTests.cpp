@@ -42,7 +42,7 @@ namespace TestUnit
 
 	TEST_CLASS(AStarDynamicTests)
 	{
-		TEST_METHOD(AStarDynamicCounterCulture)
+		TEST_METHOD(AStarDynamic_CounterCulture)
 		{
 			CCNodeLinksGenerator linksGen(COUNTER_CULTURE_FINAL_NODE);
 			CCNodeFinalGenerator finalGen(COUNTER_CULTURE_FINAL_NODE);
@@ -58,7 +58,7 @@ namespace TestUnit
 
 	TEST_CLASS(AStarTests)
 	{
-		TEST_METHOD(AStarCounterCulture)
+		TEST_METHOD(AStar_CounterCulture)
 		{
 			CCGraph ccg = generateCCGraph(COUNTER_CULTURE_FINAL_NODE);
 
@@ -71,7 +71,7 @@ namespace TestUnit
 
 	TEST_CLASS(DijkstraTests)
 	{
-		TEST_METHOD(DijkstraCounterCulture)
+		TEST_METHOD(Dijkstra_CounterCulture)
 		{
 			CCGraph ccg = generateCCGraph(COUNTER_CULTURE_FINAL_NODE);
 

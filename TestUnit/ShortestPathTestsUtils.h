@@ -3,7 +3,9 @@
 
 /*
 TODO :
-Permettre la gestion des coûts négatifs, avec une gestion appropriée des erreurs pour les algos A* et Dijkstra (entre autres)
+Bug : les tests ne supportent pas un type de coût non signé actuellement
+
+Détecter les conditions d'application des algorithmes lorsqu'ils s'appliquent sur un graphe : ex : détection d'un lien négatif pour Dijkstra
 Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
@@ -83,25 +85,29 @@ namespace TestUnit
 		return v;
 	}
 
-	template<class Cost = Graph<>::Cout>
+	template<class Cost = unsigned int, class NodeIndex = Graph<>::IndexNoeud>
 	struct ShortestPathTest
 	{
+		typedef Cost Cout;
+		typedef NodeIndex IndexNoeud;
+		typedef Graph<Cout, IndexNoeud> Graphe;
+
 		unsigned int nbComputeLoops;
 		unsigned int testsRefsCount;
 
-		Graph<Cost> g;
-		typename Graph<Cost>::IndexNoeud startNode;
-		typename Graph<Cost>::IndexNoeud closestFinalNode;
+		Graphe g;
+		IndexNoeud startNode;
+		IndexNoeud closestFinalNode;
 
-		vector<typename Graph<Cost>::Cout> costs;
-		vector<deque<typename Graph<Cost>::IndexNoeud> > paths;
+		vector<Cout> costs;
+		vector<deque<IndexNoeud> > paths;
 
-		vector<vector<typename Graph<Cost>::IndexNoeud> > reversePaths;
+		vector<vector<IndexNoeud> > reversePaths;
 
-		ShortestPathTest(typename Graph<Cost>::IndexNoeud nodesNb, unsigned int refsCount, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
+		ShortestPathTest(IndexNoeud nodesNb, unsigned int refsCount, unsigned int nbLoops = PATH_FINDERS_COMPUTE_LOOPS)
 			: g(nodesNb), testsRefsCount(refsCount), nbComputeLoops(nbLoops)
 		{
-			costs.resize(nodesNb, Graph<>::INFINITE_COST());
+			costs.resize(nodesNb, Graphe::INFINITE_COST());
 			paths.resize(nodesNb);
 			reversePaths.resize(nodesNb);
 		}
@@ -113,7 +119,9 @@ namespace TestUnit
 				reversePaths[i] = reverse_vect(paths[i]);
 		}
 	};
-	ShortestPathTest<> *simpleTest, *littleMaze, *bigMaze, *emptyMap, *randomMap;
+	ShortestPathTest<> *simpleTest, *littleMaze,
+		*negativeLinksGraph, *notSimpleGraph, *algo2Graph, *roGraph,
+		*bigMaze, *emptyMap, *randomMap;
 
 #define CHECK_TEST_DELETE(test)					\
 	do {										\
@@ -128,6 +136,8 @@ namespace TestUnit
 
 #define RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(test, spf)										\
 	do {																						\
+		if (!test)																				\
+			Assert::Fail(L"Invalid test references count !");									\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPathsFrom(test->startNode);										\
 		for (Graph<>::IndexNoeud i = 0; i < test->g.size(); i++) {								\
@@ -145,6 +155,8 @@ namespace TestUnit
 
 #define RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(test, spf)								\
 	do {																						\
+		if (!test)																				\
+			Assert::Fail(L"Invalid test references count !");									\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPathFrom(test->startNode);										\
 		Graph<>::IndexNoeud i = test->closestFinalNode;											\
@@ -160,6 +172,8 @@ namespace TestUnit
 
 #define RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(test, spf)								\
 	do {																						\
+		if (!test)																				\
+			Assert::Fail(L"Invalid test references count !");									\
 		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
 			spf.computeShortestPaths();															\
 		Graph<>::IndexNoeud j = test->startNode;												\
@@ -174,6 +188,13 @@ namespace TestUnit
 		CHECK_TEST_DELETE(test);																\
 	} while (false)
 
+#define SHORTEST_PATH_TEST_METHOD_SEP(test, SPClass, RUN_MACRO, sep)	\
+	TEST_METHOD(##SPClass ##sep ##test) {							\
+		SPClass<ShortestPathTest<>::Graphe> sp(test->g);	\
+		RUN_MACRO(test, sp);								\
+	}
+
+#define SHORTEST_PATH_TEST_METHOD(test, SPClass, RUN_MACRO)	SHORTEST_PATH_TEST_METHOD_SEP(test, SPClass, RUN_MACRO, _)
 }
 
 #endif
