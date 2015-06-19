@@ -4,6 +4,7 @@
 #include "Graph.h"
 #include "DynamicGraph.h"
 #include "Dijkstra.h"
+#include "CounterCultureSolution.h"
 
 template<class T>
 T swap(T i)

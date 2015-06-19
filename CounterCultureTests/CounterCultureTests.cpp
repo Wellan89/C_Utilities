@@ -6,42 +6,40 @@
 // avec les méthodes utilisant les graphes classiques. De plus, on prend en compte
 // le temps de création du graphe en lui-même dans le temps d'exécution du test.
 
-// Réponses obtenues grâce au programme CounterCulture créé pour ce concours.
 // En moyenne, l'algorithme basé sur le graphe dynamique est deux fois plus lent
 // mais utilise deux fois moins de mémoire que l'algorithme basique.
 
 #ifdef _DEBUG
 #define COUNTER_CULTURE_FINAL_NODE	1234
-#define COUNTER_CULTURE_PATH_COST	193
 #else
 #define COUNTER_CULTURE_FINAL_NODE	600000
-#define COUNTER_CULTURE_PATH_COST	3431
 
 //#define COUNTER_CULTURE_FINAL_NODE	1000000
-//#define COUNTER_CULTURE_PATH_COST	3435
 
 //#define COUNTER_CULTURE_FINAL_NODE	2000000
-//#define COUNTER_CULTURE_PATH_COST	14426
 
 //#define COUNTER_CULTURE_FINAL_NODE	10000000
-//#define COUNTER_CULTURE_PATH_COST	14434
 
 // A partir d'ici, seul l'algorithme dynamique permet de donner une solution au problème !
 // Les autres algorithmes utilisent trop de mémoire
 // pour pouvoir être exécutés dans l'environnement de test de Visual Studio.
 
 //#define COUNTER_CULTURE_FINAL_NODE	12345678
-//#define COUNTER_CULTURE_PATH_COST	24433
 
 //#define COUNTER_CULTURE_FINAL_NODE	18273645
-//#define COUNTER_CULTURE_PATH_COST	25360
 
 //#define COUNTER_CULTURE_FINAL_NODE	20000000
-//#define COUNTER_CULTURE_PATH_COST	34425
 #endif
 
 namespace TestUnit
 {
+	unsigned long long COUNTER_CULTURE_PATH_COST;
+
+	TEST_MODULE_INITIALIZE(CounterCultureTestsInit)
+	{
+		COUNTER_CULTURE_PATH_COST = cc_solve(COUNTER_CULTURE_FINAL_NODE);
+	}
+
 	TEST_CLASS(AStarDynamicTests)
 	{
 		TEST_METHOD(AStarDynamicCounterCulture)
