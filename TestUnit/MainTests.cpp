@@ -129,7 +129,7 @@ namespace TestUnit
 		TEST_METHOD(GraphSimpleTopologicalOrder_RO)
 		{
 			// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
-			Graph<> g(8);
+			Graph<> g(10);
 			g.addLink(0, 2, 1, true);
 			g.addLink(0, 3, 1, true);
 			g.addLink(1, 3, 1, true);
@@ -140,6 +140,10 @@ namespace TestUnit
 			g.addLink(3, 7, 1, true);
 			g.addLink(5, 6, 1, true);
 			g.addLink(5, 7, 1, true);
+
+			// Ajoute deux noeuds supplémentaires non connectés au reste du graphe
+			g.addLink(8, 9, -1, true);
+
 			Assert::IsTrue(checkReverseTopologicalOrder(g, g.getReverseTopologicalyOrderedNodes()));
 		}
 		TEST_METHOD(GraphImpossibleTopologicalOrder)

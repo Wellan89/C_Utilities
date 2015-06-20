@@ -27,10 +27,6 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			IndexNoeud targetNode = it->getTargetIndex();
-			if (dj[targetNode].alreadyVisited)
-				continue;
-
 			Cout linkCost = it->getCost();
 			if (linkCost < 0)
 			{
@@ -38,6 +34,10 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 				reset();
 				return;
 			}
+
+			IndexNoeud targetNode = it->getTargetIndex();
+			if (dj[targetNode].alreadyVisited)
+				continue;
 
 			Cout newCost = nodeTotalCost + linkCost;
 			if (newCost < dj[targetNode].totalCost)
@@ -52,7 +52,7 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 template<class Graphe>
 bool Dijkstra<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (dj[node].totalCost != Graphe::INVALID_NODE_INDEX());
+	return (dj[node].totalCost != Graphe::INFINITE_COST());
 }
 template<class Graphe>
 typename Dijkstra<Graphe>::Cout Dijkstra<Graphe>::getCostTo(IndexNoeud node) const

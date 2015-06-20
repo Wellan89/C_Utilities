@@ -32,7 +32,7 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 				edgesF.push_back(&(*it));
 			else if (node > targetNode)
 				edgesB.push_back(&(*it));
-			else if (it->getCost() <= 0)
+			else if (it->getCost() < 0)
 				absorbNodes.push_back(node);
 		}
 	}

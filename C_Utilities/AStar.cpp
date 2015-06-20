@@ -35,10 +35,6 @@ void AStar<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			IndexNoeud targetNode = it->getTargetIndex();
-			if (as[targetNode].alreadyVisited)
-				continue;
-
 			Cout linkCost = it->getCost();
 			if (linkCost < 0)
 			{
@@ -46,6 +42,10 @@ void AStar<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 				reset();
 				return;
 			}
+
+			IndexNoeud targetNode = it->getTargetIndex();
+			if (as[targetNode].alreadyVisited)
+				continue;
 
 			Cout newCost = nodeTotalCost + linkCost;
 			if (newCost < as[targetNode].totalCost)

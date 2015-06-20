@@ -55,8 +55,7 @@ namespace TestUnit
 	}
 	TEST_MODULE_CLEANUP(EmptyMapTestsCleanup)
 	{
-		if (emptyMap)
-			delete emptyMap;
+		SAFE_TEST_DELETE(emptyMap);
 	}
 
 	TEST_CLASS(DijkstraTests)

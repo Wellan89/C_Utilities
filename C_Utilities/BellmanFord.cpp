@@ -60,7 +60,7 @@ bool BellmanFord<Graphe>::absorbCycleDetected() const
 template<class Graphe>
 bool BellmanFord<Graphe>::canReachNode(IndexNoeud node) const
 {
-	return (bf[node].totalCost != Graphe::INVALID_NODE_INDEX());
+	return (bf[node].totalCost != Graphe::INFINITE_COST());
 }
 template<class Graphe>
 typename BellmanFord<Graphe>::Cout BellmanFord<Graphe>::getCostTo(IndexNoeud node) const

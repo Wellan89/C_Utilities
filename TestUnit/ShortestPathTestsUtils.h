@@ -11,9 +11,9 @@ Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique
 Dans les fonctions Graph::removeLinks, parcourir les liens de la fin vers le début, pour obtenir une meilleure complexité en moyenne
 
 Tester la fonction de suppression de liens du graphe
-Tester la détection de circuits absorbants, et les cas de graphes à un ou deux noeuds pour Bellman-Ford et Bellman-Ford-Yen
-Tester les algorithmes sur des graphes non simples : avec des boucles (une arête d'un noeud sur lui-même) ou plusieurs liens entre chaque noeud
-Ecrire un test avec un graphe sans cycles, afin de pouvoir comparer Bellman aux autres algorithmes
+Tester les cas de graphes à un ou deux noeuds (surtout pour Bellman-Ford et Bellman-Ford-Yen)
+	+ Test avec graphe valide connexe sans noeud final
+	+ Test supplémentaire sur les listes couvrant plus de code
 
 Déplacer toutes les fonctions des fichiers sources dépendant de templates dans les headers
 */
@@ -107,7 +107,7 @@ namespace TestUnit
 	typedef ShortestPathTest<>::Graphe Graphe;
 
 	ShortestPathTest<> *simpleTest, *littleMaze,
-		*negativeLinksGraph, *negativeCycleGraph,
+		*negativeLinksGraph, *negativeCycleGraph, *negativeLoopGraph,
 		*notSimpleGraph, *algo2Graph, *roGraph,
 		*bigMaze, *emptyMap, *randomMap, *fullGraph;
 
@@ -122,68 +122,74 @@ namespace TestUnit
 		}										\
 	} while (false)
 
-#define RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(test, spf)										\
-	do {																						\
-		if (!test)																				\
-			Assert::Fail(L"Invalid test references count !");									\
-		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
-			spf.computeShortestPathsFrom(test->startNode);										\
-		for (Graphe::IndexNoeud i = 0; i < test->g.size(); i++) {								\
-			if (test->costs[i] != Graphe::INFINITE_COST()) {									\
-				Assert::IsTrue(spf.canReachNode(i));											\
-				Assert::AreEqual(test->costs[i], spf.getCostTo(i));								\
-				if (test->paths[i].size() > 1) {												\
-					Assert::AreEqual(test->paths[i], spf.getShortestPathTo(i));					\
-					Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPathTo(i));	\
-				}																				\
-			} else if (test->infiniteCostCheck) {												\
-				Assert::IsFalse(spf.canReachNode(i));											\
-				Assert::AreEqual(test->costs[i], spf.getCostTo(i));								\
-			}																					\
-		}																						\
-		CHECK_TEST_DELETE(test);																\
+#define SAFE_TEST_DELETE(test)					\
+	do {										\
+		if (test)								\
+			delete test;						\
 	} while (false)
 
-#define RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(test, spf)								\
-	do {																						\
-		if (!test)																				\
-			Assert::Fail(L"Invalid test references count !");									\
-		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
-			spf.computeShortestPathFrom(test->startNode);										\
-		Graphe::IndexNoeud i = test->closestFinalNode;											\
-		if (test->costs[i] != Graphe::INFINITE_COST()) {										\
-			Assert::AreEqual(test->costs[i], spf.getPathCost());								\
-			if (test->paths[i].size() > 1) {													\
-				Assert::AreEqual(test->paths[i], spf.getShortestPath());						\
-				Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPath());			\
-			}																					\
-		}																						\
-		CHECK_TEST_DELETE(test);																\
+#define RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES(test, spf)																	\
+	do {																													\
+		for (unsigned int i = 0; i < test->nbComputeLoops; i++)																\
+			spf.computeShortestPathsFrom(test->startNode);																	\
+		for (Graphe::IndexNoeud i = 0; i < test->g.size(); i++) {															\
+			if (test->costs[i] != Graphe::INFINITE_COST()) {																\
+				Assert::IsTrue(spf.canReachNode(i), L"Path not found.");													\
+				Assert::AreEqual(test->costs[i], spf.getCostTo(i), L"Different path cost.");								\
+				if (test->paths[i].size() > 1) {																			\
+					Assert::AreEqual(test->paths[i], spf.getShortestPathTo(i), L"Different path.");							\
+					Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPathTo(i), L"Different reverse path.");	\
+				}																											\
+			} else if (test->infiniteCostCheck) {																			\
+				Assert::IsFalse(spf.canReachNode(i), L"Path found.");														\
+				Assert::AreEqual(Graphe::INFINITE_COST(), spf.getCostTo(i), L"Finite cost.");								\
+			}																												\
+		}																													\
+		CHECK_TEST_DELETE(test);																							\
 	} while (false)
 
-#define RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(test, spf)								\
-	do {																						\
-		if (!test)																				\
-			Assert::Fail(L"Invalid test references count !");									\
-		for (unsigned int i = 0; i < test->nbComputeLoops; i++)									\
-			spf.computeShortestPaths();															\
-		Graphe::IndexNoeud j = test->startNode;													\
-		for (Graphe::IndexNoeud i = 0; i < test->g.size(); i++) {								\
-			if (test->costs[i] != Graphe::INFINITE_COST()) {									\
-				Assert::IsTrue(spf.pathExists(j, i));											\
-				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i));						\
-				if (test->paths[i].size() > 1)													\
-					Assert::AreEqual(deque_to_vect(test->paths[i]), spf.getShortestPath(j, i));	\
-			} else if (test->infiniteCostCheck) {												\
-				Assert::IsFalse(spf.pathExists(j, i));											\
-				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i));						\
-			}																					\
-		}																						\
-		CHECK_TEST_DELETE(test);																\
+#define RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE(test, spf)													\
+	do {																											\
+		for (unsigned int i = 0; i < test->nbComputeLoops; i++)														\
+			spf.computeShortestPathFrom(test->startNode);															\
+		Graphe::IndexNoeud i = test->closestFinalNode;																\
+		if (test->costs[i] != Graphe::INFINITE_COST()) {															\
+			Assert::IsTrue(spf.hasFoundPath(), L"Path not found.");													\
+			Assert::AreEqual(test->costs[i], spf.getPathCost(), L"Different path cost.");							\
+			if (test->paths[i].size() > 1) {																		\
+				Assert::AreEqual(test->paths[i], spf.getShortestPath(), L"Different path.");						\
+				Assert::AreEqual(test->reversePaths[i], spf.getReverseShortestPath(), L"Different reverse path.");	\
+			} else if (test->infiniteCostCheck) {																	\
+				Assert::IsFalse(spf.hasFoundPath(), L"Path found.");												\
+				Assert::AreEqual(Graphe::INFINITE_COST(), spf.getPathCost(), L"Finite cost.");						\
+			}																										\
+		}																											\
+		CHECK_TEST_DELETE(test);																					\
+	} while (false)
+
+#define RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES(test, spf)													\
+	do {																											\
+		for (unsigned int i = 0; i < test->nbComputeLoops; i++)														\
+			spf.computeShortestPaths();																				\
+		Graphe::IndexNoeud j = test->startNode;																		\
+		for (Graphe::IndexNoeud i = 0; i < test->g.size(); i++) {													\
+			if (test->costs[i] != Graphe::INFINITE_COST()) {														\
+				Assert::IsTrue(spf.pathExists(j, i), L"Path not found.");											\
+				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i), L"Different path cost.");					\
+				if (test->paths[i].size() > 1)																		\
+					Assert::AreEqual(deque_to_vect(test->paths[i]), spf.getShortestPath(j, i), L"Different path.");	\
+			} else if (test->infiniteCostCheck) {																	\
+				Assert::IsFalse(spf.pathExists(j, i), L"Path found.");												\
+				Assert::AreEqual(Graphe::INFINITE_COST(), spf.getPathCost(j, i), L"Finite cost.");					\
+			}																										\
+		}																											\
+		CHECK_TEST_DELETE(test);																					\
 	} while (false)
 
 #define SHORTEST_PATH_TEST_METHOD_SEP(test, SPClass, RUN_MACRO, sep)	\
 	TEST_METHOD(##SPClass ##sep ##test) {								\
+		if (!test)														\
+			Assert::Fail(L"Invalid test references count !");			\
 		SPClass<Graphe> sp(test->g);									\
 		RUN_MACRO(test, sp);											\
 	}

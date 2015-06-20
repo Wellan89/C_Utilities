@@ -54,8 +54,7 @@ namespace TestUnit
 	}
 	TEST_MODULE_CLEANUP(BigMazeTestsCleanup)
 	{
-		if (bigMaze)
-			delete bigMaze;
+		SAFE_TEST_DELETE(bigMaze);
 	}
 
 	TEST_CLASS(DijkstraTests)

@@ -97,25 +97,46 @@ namespace TestUnit
 	}
 	void NegativeLinksGraphInit(unsigned int testRefsCount)
 	{
-		negativeLinksGraph = NULL;
-		return;
-		negativeLinksGraph = new ShortestPathTest<>(0, testRefsCount);
-		negativeLinksGraph->g.addLink(0, 0, 0);
+		negativeLinksGraph = new ShortestPathTest<>(11, testRefsCount);
+		negativeLinksGraph->g.addLink(0, 1, 1);
+		negativeLinksGraph->g.addLink(0, 2, 2);
+		negativeLinksGraph->g.addLink(0, 3, 3);
+		negativeLinksGraph->g.addLink(0, 8, 0);
+		negativeLinksGraph->g.addLink(1, 3, 5);
+		negativeLinksGraph->g.addLink(1, 5, 5);
+		negativeLinksGraph->g.addLink(1, 8, 2);
+		negativeLinksGraph->g.addLink(1, 9, -6, true);
+		negativeLinksGraph->g.addLink(2, 4, 3);
+		negativeLinksGraph->g.addLink(2, 5, 5);
+		negativeLinksGraph->g.addLink(3, 4, 1);
+		negativeLinksGraph->g.addLink(3, 6, 2);
+		negativeLinksGraph->g.addLink(3, 9, 7);
+		negativeLinksGraph->g.addLink(4, 7, 2);
+		negativeLinksGraph->g.addLink(6, 5 , -2, true);
+		negativeLinksGraph->g.addLink(6, 7, 2);
+		negativeLinksGraph->g.addLink(7, 8, 8);
+		negativeLinksGraph->g.addLink(10, 10, -1);
+
+		negativeLinksGraph->g.setNodeFinal(5);
+		negativeLinksGraph->g.setNodeFinal(10);
 
 		negativeLinksGraph->startNode = 0;
-		negativeLinksGraph->closestFinalNode = 0;
+		negativeLinksGraph->closestFinalNode = 5;
 
 		negativeLinksGraph->infiniteCostCheck = true;
-		negativeLinksGraph->costs = { 4, 3, Graphe::INFINITE_COST(), 2, Graphe::INFINITE_COST(), 1, 1, 0 };
+		negativeLinksGraph->costs = { 0, 1, 2, 2, 3, 2, 4, 5, 0, -5, Graphe::INFINITE_COST() };
 		negativeLinksGraph->paths = {
-			deque < Graphe::IndexNoeud > { 7, 5, 3, 1, 0 },
-			deque < Graphe::IndexNoeud > { 7, 5, 3, 1 },
-			deque < Graphe::IndexNoeud > { 2 },
-			deque < Graphe::IndexNoeud > { 7, 5, 3 },
-			deque < Graphe::IndexNoeud > { 4 },
-			deque < Graphe::IndexNoeud > { 7, 5 },
-			deque < Graphe::IndexNoeud > { 7, 6 },
-			deque < Graphe::IndexNoeud > { 7 } };
+			deque < Graphe::IndexNoeud > { 0 },
+			deque < Graphe::IndexNoeud > { 0, 1 },
+			deque < Graphe::IndexNoeud > { 0, 2 },
+			deque < Graphe::IndexNoeud > { 0, 1, 9, 3 },
+			deque < Graphe::IndexNoeud > { 0, 1, 9, 3, 4 },
+			deque < Graphe::IndexNoeud > { 0, 1, 9, 3, 6, 5 },
+			deque < Graphe::IndexNoeud > { 0, 1, 9, 3, 6 },
+			deque < Graphe::IndexNoeud > { 0, 1, 9, 3, 4, 7 },
+			deque < Graphe::IndexNoeud > { 0, 8 },
+			deque < Graphe::IndexNoeud > { 0, 1, 9 },
+			deque < Graphe::IndexNoeud > { 10 } };
 		negativeLinksGraph->finishTest();
 	}
 	void NegativeCycleGraphInit(unsigned int testRefsCount)
@@ -142,27 +163,83 @@ namespace TestUnit
 										Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
 		negativeCycleGraph->finishTest();
 	}
+	void NegativeLoopGraphInit(unsigned int testRefsCount)
+	{
+		negativeLoopGraph = new ShortestPathTest<>(4, testRefsCount);
+		negativeLoopGraph->g.addLink(0, 1, 3, true);
+		negativeLoopGraph->g.addLink(0, 2, -5, true);
+		negativeLoopGraph->g.addLink(1, 1, -1, true);
+		negativeLoopGraph->g.addLink(1, 2, 1, true);
+		negativeLoopGraph->g.addLink(2, 3, 1, true);
+
+		negativeLoopGraph->startNode = 0;
+		negativeLoopGraph->closestFinalNode = 3;
+
+		negativeLoopGraph->infiniteCostCheck = true;
+		negativeLoopGraph->costs = { Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
+										Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
+		negativeLoopGraph->finishTest();
+	}
 	void NotSimpleGraphInit(unsigned int testRefsCount)
 	{
-		notSimpleGraph = NULL;
-		return;
-		notSimpleGraph = new ShortestPathTest<>(0, testRefsCount);
+		notSimpleGraph = new ShortestPathTest<>(13, testRefsCount);
 		notSimpleGraph->g.addLink(0, 0, 0);
+		notSimpleGraph->g.addLink(0, 1, 1);
+		notSimpleGraph->g.addLink(0, 1, 2, true);
+		notSimpleGraph->g.addLink(0, 1, 4);
+		notSimpleGraph->g.addLink(0, 4, 3, true);
+		notSimpleGraph->g.addLink(0, 10, 30);
+		notSimpleGraph->g.addLink(0, 11, 27);
+		notSimpleGraph->g.addLink(1, 0, 3, true);
+		notSimpleGraph->g.addLink(1, 1, 5);
+		notSimpleGraph->g.addLink(1, 7, 15);
+		notSimpleGraph->g.addLink(1, 9, 8);
+		notSimpleGraph->g.addLink(2, 0, 2, true);
+		notSimpleGraph->g.addLink(2, 3, 1);
+		notSimpleGraph->g.addLink(2, 2, 6);
+		notSimpleGraph->g.addLink(3, 3, 1);
+		notSimpleGraph->g.addLink(3, 6, 2, true);
+		notSimpleGraph->g.addLink(3, 7, 7);
+		notSimpleGraph->g.addLink(3, 8, 4);
+		notSimpleGraph->g.addLink(4, 3, 5, true);
+		notSimpleGraph->g.addLink(5, 5, 0, true);
+		notSimpleGraph->g.addLink(5, 6, 1, true);
+		notSimpleGraph->g.addLink(5, 7, 6);
+		notSimpleGraph->g.addLink(5, 10, 5, true);
+		notSimpleGraph->g.addLink(6, 7, 4, true);
+		notSimpleGraph->g.addLink(7, 7, 0);
+		notSimpleGraph->g.addLink(7, 7, 2, true);
+		notSimpleGraph->g.addLink(7, 5, 4, true);
+		notSimpleGraph->g.addLink(7, 8, 5);
+		notSimpleGraph->g.addLink(7, 8, 3);
+		notSimpleGraph->g.addLink(8, 9, 10);
+		notSimpleGraph->g.addLink(9, 8, 7, true);
+		notSimpleGraph->g.addLink(10, 0, 2, true);
+		notSimpleGraph->g.addLink(12, 4, 3, true);
+
+		notSimpleGraph->g.setNodeFinal(10);
+		notSimpleGraph->g.setNodeFinal(11);
+		notSimpleGraph->g.setNodeFinal(12);
 
 		notSimpleGraph->startNode = 0;
-		notSimpleGraph->closestFinalNode = 0;
+		notSimpleGraph->closestFinalNode = 10;
 
 		notSimpleGraph->infiniteCostCheck = true;
-		notSimpleGraph->costs = { 4, 3, Graphe::INFINITE_COST(), 2, Graphe::INFINITE_COST(), 1, 1, 0 };
+		notSimpleGraph->costs = { 0, 1, 9, 8, 3, 18, 10, 14, 12, 9, 23, 27, Graphe::INFINITE_COST() };
 		notSimpleGraph->paths = {
-			deque < Graphe::IndexNoeud > { 7, 5, 3, 1, 0 },
-			deque < Graphe::IndexNoeud > { 7, 5, 3, 1 },
-			deque < Graphe::IndexNoeud > { 2 },
-			deque < Graphe::IndexNoeud > { 7, 5, 3 },
-			deque < Graphe::IndexNoeud > { 4 },
-			deque < Graphe::IndexNoeud > { 7, 5 },
-			deque < Graphe::IndexNoeud > { 7, 6 },
-			deque < Graphe::IndexNoeud > { 7 } };
+			deque < Graphe::IndexNoeud > { 0 },
+			deque < Graphe::IndexNoeud > { 0, 1 },
+			deque < Graphe::IndexNoeud > { 0, 4, 3, 2 },
+			deque < Graphe::IndexNoeud > { 0, 4, 3 },
+			deque < Graphe::IndexNoeud > { 0, 4 },
+			deque < Graphe::IndexNoeud > { 0, 4, 3, 6, 7, 5 },
+			deque < Graphe::IndexNoeud > { 0, 4, 3, 6 },
+			deque < Graphe::IndexNoeud > { 0, 4, 3, 6, 7 },
+			deque < Graphe::IndexNoeud > { 0, 4, 3, 8 },
+			deque < Graphe::IndexNoeud > { 0, 1, 9 },
+			deque < Graphe::IndexNoeud > { 0, 4, 3, 6, 7, 5, 10 },
+			deque < Graphe::IndexNoeud > { 0, 11 },
+			deque < Graphe::IndexNoeud > { 12 } };
 		notSimpleGraph->finishTest();
 	}
 	void Algo2GraphInit(unsigned int testRefsCount)
@@ -197,7 +274,7 @@ namespace TestUnit
 	void ROGraphInit(unsigned int testRefsCount)
 	{
 		// Exemple tiré du cours de Rercherche Opérationnelle (Ensimag 1A) :
-		roGraph = new ShortestPathTest<>(8, testRefsCount);
+		roGraph = new ShortestPathTest<>(10, testRefsCount);
 		roGraph->g.addLink(0, 2, 1, true);
 		roGraph->g.addLink(0, 3, 1, true);
 		roGraph->g.addLink(1, 3, 1, true);
@@ -209,11 +286,14 @@ namespace TestUnit
 		roGraph->g.addLink(5, 6, 1, true);
 		roGraph->g.addLink(5, 7, 1, true);
 
+		// Ajoute deux noeuds supplémentaires non connectés au reste du graphe
+		roGraph->g.addLink(8, 9, -1, true);
+
 		roGraph->startNode = 0;
 		roGraph->closestFinalNode = 7;
 
 		roGraph->infiniteCostCheck = true;
-		roGraph->costs = { 0, Graphe::INFINITE_COST(), 1, 1, 2, 2, 2, 2 };
+		roGraph->costs = { 0, Graphe::INFINITE_COST(), 1, 1, 2, 2, 2, 2, Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
 		roGraph->paths = {
 			deque < Graphe::IndexNoeud > { 0 },
 			deque < Graphe::IndexNoeud > { 1 },
@@ -222,7 +302,9 @@ namespace TestUnit
 			deque < Graphe::IndexNoeud > { 0, 3, 4 },
 			deque < Graphe::IndexNoeud > { 0, 2, 5 },
 			deque < Graphe::IndexNoeud > { 0, 2, 6 },
-			deque < Graphe::IndexNoeud > { 0, 3, 7 } };
+			deque < Graphe::IndexNoeud > { 0, 3, 7 },
+			deque < Graphe::IndexNoeud > { 8 },
+			deque < Graphe::IndexNoeud > { 9 } };
 		roGraph->finishTest();
 	}
 
@@ -230,28 +312,23 @@ namespace TestUnit
 	{
 		SimpleTestInit(7);
 		LittleMazeInit(6);
-		NegativeLinksGraphInit(7);
-		NegativeCycleGraphInit(7);
+		NegativeLinksGraphInit(4);
+		NegativeCycleGraphInit(6);
+		NegativeLoopGraphInit(7);
 		NotSimpleGraphInit(7);
 		Algo2GraphInit(8);
 		ROGraphInit(8);
 	}
 	TEST_MODULE_CLEANUP(ShortestPathsTestsCleanup)
 	{
-		if (simpleTest)
-			delete simpleTest;
-		if (littleMaze)
-			delete littleMaze;
-		if (negativeLinksGraph)
-			delete negativeLinksGraph;
-		if (negativeCycleGraph)
-			delete negativeCycleGraph;
-		if (notSimpleGraph)
-			delete notSimpleGraph;
-		if (algo2Graph)
-			delete algo2Graph;
-		if (roGraph)
-			delete roGraph;
+		SAFE_TEST_DELETE(simpleTest);
+		SAFE_TEST_DELETE(littleMaze);
+		SAFE_TEST_DELETE(negativeLinksGraph);
+		SAFE_TEST_DELETE(negativeCycleGraph);
+		SAFE_TEST_DELETE(negativeLoopGraph);
+		SAFE_TEST_DELETE(notSimpleGraph);
+		SAFE_TEST_DELETE(algo2Graph);
+		SAFE_TEST_DELETE(roGraph);
 	}
 
 	TEST_CLASS(DijkstraTests)
@@ -259,8 +336,8 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(roGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
@@ -271,8 +348,8 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(roGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
@@ -301,6 +378,7 @@ namespace TestUnit
 				Assert::IsFalse(bm.canReachNode(i));
 		}
 
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, Bellman, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, Bellman, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(roGraph, Bellman, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 	};
@@ -312,6 +390,7 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(littleMaze, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
 		SHORTEST_PATH_TEST_METHOD(roGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
@@ -322,8 +401,8 @@ namespace TestUnit
 	public:
 		SHORTEST_PATH_TEST_METHOD(simpleTest, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(roGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
@@ -336,6 +415,7 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
@@ -348,6 +428,7 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
 		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
@@ -361,7 +442,6 @@ namespace TestUnit
 		//SHORTEST_PATH_TEST_METHOD(littleMaze, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
 		SHORTEST_PATH_TEST_METHOD(roGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);

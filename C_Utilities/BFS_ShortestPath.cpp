@@ -25,7 +25,16 @@ void BFS_ShortestPath<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
 			IndexNoeud targetNode = it->getTargetIndex();
-			Cout newCost = nodeTotalCost + it->getCost();
+
+			Cout linkCost = it->getCost();
+			if (linkCost < 0)
+			{
+				// On a trouvé une arête avec un coût négatif : on quitte ici.
+				reset();
+				return;
+			}
+
+			Cout newCost = nodeTotalCost + linkCost;
 			if (newCost < bfs[targetNode].totalCost)
 			{
 				bfs[targetNode].previousNode = node;

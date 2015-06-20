@@ -6,7 +6,7 @@
 #include <map>
 #include "Graph.h"
 
-// Algorithme du plus court chemin suivant un parcours en largeur :
+// Algorithme du plus court chemin suivant un parcours en largeur : pour un graphe où toutes les arêtes ont un coût positif,
 // parcours le graphe en largeur et trouve tous les chemins les plus courts à partir d'un point donné.
 template<class Graphe = Graph<> >
 class BFS_ShortestPath
