@@ -45,9 +45,77 @@ namespace TestUnit
 			list_popBack(l);
 			Assert::AreEqual(0u, list_getSize(l));
 			Assert::IsTrue(list_isEmpty(l));
+
+			list_pushFront(l, 25);
+			Assert::AreEqual(1u, list_getSize(l));
+			Assert::IsFalse(list_isEmpty(l));
+			list_popFront(l);
+			Assert::AreEqual(0u, list_getSize(l));
+			Assert::IsTrue(list_isEmpty(l));
+
 			list_delete(l);
 		}
 
+		TEST_METHOD(ListIterations)
+		{
+			List* l = list_create();
+			list_pushBack(l, 25);
+			list_pushBack(l, 30);
+			list_pushBack(l, 12);
+			list_pushBack(l, -69);
+
+			const int res[4] = { 25, 30, 12, -69 };
+
+			int i = 0;
+			for (Cell* it = list_getFrontIterator(l); list_isValidIt(it); it = list_incrIt(it))
+			{
+				Assert::AreEqual(res[i], list_getElt(it));
+
+				if (i == 0)
+				{
+					Assert::IsTrue(list_isFirst(it));
+					Assert::IsFalse(list_isLast(it));
+				}
+				else if (i == 3)
+				{
+					Assert::IsFalse(list_isFirst(it));
+					Assert::IsTrue(list_isLast(it));
+				}
+				else
+				{
+					Assert::IsFalse(list_isFirst(it));
+					Assert::IsFalse(list_isLast(it));
+				}
+
+				i++;
+			}
+
+			i = 3;
+			for (Cell* it = list_getBackIterator(l); list_isValidIt(it); it = list_decrIt(it))
+			{
+				Assert::AreEqual(res[i], list_getElt(it));
+
+				if (i == 0)
+				{
+					Assert::IsTrue(list_isFirst(it));
+					Assert::IsFalse(list_isLast(it));
+				}
+				else if (i == 3)
+				{
+					Assert::IsFalse(list_isFirst(it));
+					Assert::IsTrue(list_isLast(it));
+				}
+				else
+				{
+					Assert::IsFalse(list_isFirst(it));
+					Assert::IsFalse(list_isLast(it));
+				}
+
+				i--;
+			}
+
+			list_delete(l);
+		}
 	};
 
 	TEST_CLASS(CostPriorityQueueTest)

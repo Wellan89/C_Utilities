@@ -144,9 +144,9 @@ bool list_isValidIt(Cell* it)
 
 bool list_isLast(Cell* it)
 {
-	return (it->next != NULL);
+	return (it->next == NULL);
 }
 bool list_isFirst(Cell* it)
 {
-	return (it->prev != NULL);
+	return (it->prev == NULL);
 }
