@@ -44,9 +44,6 @@ void AStar<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 			}
 
 			IndexNoeud targetNode = it->getTargetIndex();
-			if (as[targetNode].alreadyVisited)
-				continue;
-
 			Cout newCost = nodeTotalCost + linkCost;
 			if (newCost < as[targetNode].totalCost)
 			{

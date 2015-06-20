@@ -36,9 +36,6 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 			}
 
 			IndexNoeud targetNode = it->getTargetIndex();
-			if (dj[targetNode].alreadyVisited)
-				continue;
-
 			Cout newCost = nodeTotalCost + linkCost;
 			if (newCost < dj[targetNode].totalCost)
 			{
