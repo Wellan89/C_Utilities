@@ -104,7 +104,7 @@ public:
 		bool finalNode;
 
 		Node(IndexNoeud _index)
-			: index(_index), finalNode(false), heuristic(INFINITE_COST()) { }
+			: index(_index), finalNode(false), heuristic(0)	{ }
 
 	public:
 		IndexNoeud getIndex() const							{ return index; }

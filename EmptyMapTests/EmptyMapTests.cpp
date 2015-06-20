@@ -55,50 +55,50 @@ namespace TestUnit
 	}
 	TEST_MODULE_CLEANUP(EmptyMapTestsCleanup)
 	{
-		SAFE_TEST_DELETE(emptyMap);
+		safeTestDelete(emptyMap);
 	}
 
 	TEST_CLASS(DijkstraTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(emptyMap, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(emptyMap, Dijkstra, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(AStarTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(emptyMap, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(emptyMap, AStar, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
 		// Ce test échoue toujours (stack overflow très probablement) !
-		//SHORTEST_PATH_TEST_METHOD(emptyMap, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		//SHORTEST_PATH_TEST_METHOD(emptyMap, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(BFS_Tests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(emptyMap, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(emptyMap, BFS_ShortestPath, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
 		// Bellman-Ford est extrêmement lent pour les gros tests !
-		//SHORTEST_PATH_TEST_METHOD(emptyMap, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		//SHORTEST_PATH_TEST_METHOD(emptyMap, BellmanFord, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(emptyMap, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(emptyMap, BellmanFordYen, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
 	{
 		// Floyd-Warshall est extrêmement lent pour les gros tests !
-		//SHORTEST_PATH_TEST_METHOD(emptyMap, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		//SHORTEST_PATH_TEST_METHOD(emptyMap, FloydWarshall, runSpfTest_AllPairsOfNodes);
 	};
 }

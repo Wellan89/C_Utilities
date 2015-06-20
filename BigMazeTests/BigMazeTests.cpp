@@ -54,49 +54,49 @@ namespace TestUnit
 	}
 	TEST_MODULE_CLEANUP(BigMazeTestsCleanup)
 	{
-		SAFE_TEST_DELETE(bigMaze);
+		safeTestDelete(bigMaze);
 	}
 
 	TEST_CLASS(DijkstraTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(bigMaze, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(bigMaze, Dijkstra, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(AStarTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(bigMaze, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(bigMaze, AStar, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(bigMaze, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(bigMaze, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(BFS_Tests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(bigMaze, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(bigMaze, BFS_ShortestPath, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
 		// Bellman-Ford est extrêmement lent pour les gros tests !
-		//SHORTEST_PATH_TEST_METHOD(bigMaze, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		//SHORTEST_PATH_TEST_METHOD(bigMaze, BellmanFord, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(bigMaze, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(bigMaze, BellmanFordYen, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
 	{
 		// Floyd-Warshall est extrêmement lent pour les gros tests !
-		//SHORTEST_PATH_TEST_METHOD(bigMaze, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		//SHORTEST_PATH_TEST_METHOD(bigMaze, FloydWarshall, runSpfTest_AllPairsOfNodes);
 	};
 }

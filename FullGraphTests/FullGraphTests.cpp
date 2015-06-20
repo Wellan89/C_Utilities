@@ -37,48 +37,48 @@ namespace TestUnit
 	}
 	TEST_MODULE_CLEANUP(FullGraphTestsCleanup)
 	{
-		SAFE_TEST_DELETE(fullGraph);
+		safeTestDelete(fullGraph);
 	}
 
 	TEST_CLASS(DijkstraTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(fullGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(fullGraph, Dijkstra, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(AStarTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(fullGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(fullGraph, AStar, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(fullGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(fullGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(BFS_Tests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(fullGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(fullGraph, BFS_ShortestPath, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(fullGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(fullGraph, BellmanFord, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(fullGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(fullGraph, BellmanFordYen, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
 	{
 		// Floyd-Warshall est extrêmement lent pour les gros tests !
-		//SHORTEST_PATH_TEST_METHOD(fullGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		//SHORTEST_PATH_TEST_METHOD(fullGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 	};
 }

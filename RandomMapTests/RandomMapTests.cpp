@@ -86,7 +86,7 @@ namespace TestUnit
 				//Assert::AreEqual(deque_to_vect(path), fw.getShortestPath(randomMap->startNode, randomMap->closestFinalNode));
 			}
 
-			CHECK_TEST_DELETE(randomMap);
+			dropTest(randomMap);
 		}
 	};
 }

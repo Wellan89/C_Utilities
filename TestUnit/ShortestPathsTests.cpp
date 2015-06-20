@@ -242,6 +242,45 @@ namespace TestUnit
 			deque < Graphe::IndexNoeud > { 12 } };
 		notSimpleGraph->finishTest();
 	}
+	void LittleGraphsInit(unsigned int testRefsCount)
+	{
+		emptyGraph = new ShortestPathTest<>(0, testRefsCount);
+		emptyGraph->startNode = 0;
+		emptyGraph->closestFinalNode = 0;
+		emptyGraph->costs = { Graphe::INFINITE_COST() };
+		emptyGraph->finishTest();
+
+		oneNodeGraph = new ShortestPathTest<>(*emptyGraph);
+		oneNodeGraph->g.addNodes();
+		oneNodeGraph->costs = { 0 };
+		oneNodeGraph->paths.push_back(deque < Graphe::IndexNoeud > { 0 });
+		oneNodeGraph->finishTest();
+
+		twoNodesGraph = new ShortestPathTest<>(*oneNodeGraph);
+		twoNodesGraph->g.addNodes();
+		twoNodesGraph->g.addLink(0, 1, 3, true);
+		twoNodesGraph->g.setNodeFinal(0, false);
+		twoNodesGraph->startNode = 0;
+		twoNodesGraph->closestFinalNode = 1;
+		twoNodesGraph->costs.push_back(3);
+		twoNodesGraph->paths.push_back(deque < Graphe::IndexNoeud > { 0, 1 });
+		twoNodesGraph->finishTest();
+
+		noFinalNodeGraph = new ShortestPathTest<>(*emptyGraph);
+		noFinalNodeGraph->g.addNodes(3);
+		noFinalNodeGraph->g.addLink(0, 1, 1, true);
+		noFinalNodeGraph->g.addLink(0, 2, 3, true);
+		noFinalNodeGraph->g.addLink(1, 2, 1, true);
+		noFinalNodeGraph->startNode = 0;
+		noFinalNodeGraph->closestFinalNode = 3;
+		noFinalNodeGraph->costs = { 0, 1, 2, Graphe::INFINITE_COST() };
+		noFinalNodeGraph->paths = {
+			deque < Graphe::IndexNoeud > { 0 },
+			deque < Graphe::IndexNoeud > { 0, 1 },
+			deque < Graphe::IndexNoeud > { 0, 1, 2 },
+			deque < Graphe::IndexNoeud > { } };
+		noFinalNodeGraph->finishTest();
+	}
 	void Algo2GraphInit(unsigned int testRefsCount)
 	{
 		// Exemple tiré du cours d'Algorithmique 2 (Ensimag 1A) :
@@ -316,43 +355,56 @@ namespace TestUnit
 		NegativeCycleGraphInit(6);
 		NegativeLoopGraphInit(7);
 		NotSimpleGraphInit(7);
+		LittleGraphsInit(8);
 		Algo2GraphInit(8);
 		ROGraphInit(8);
 	}
 	TEST_MODULE_CLEANUP(ShortestPathsTestsCleanup)
 	{
-		SAFE_TEST_DELETE(simpleTest);
-		SAFE_TEST_DELETE(littleMaze);
-		SAFE_TEST_DELETE(negativeLinksGraph);
-		SAFE_TEST_DELETE(negativeCycleGraph);
-		SAFE_TEST_DELETE(negativeLoopGraph);
-		SAFE_TEST_DELETE(notSimpleGraph);
-		SAFE_TEST_DELETE(algo2Graph);
-		SAFE_TEST_DELETE(roGraph);
+		safeTestDelete(simpleTest);
+		safeTestDelete(littleMaze);
+		safeTestDelete(negativeLinksGraph);
+		safeTestDelete(negativeCycleGraph);
+		safeTestDelete(negativeLoopGraph);
+		safeTestDelete(notSimpleGraph);
+		safeTestDelete(emptyGraph);
+		safeTestDelete(oneNodeGraph);
+		safeTestDelete(twoNodesGraph);
+		safeTestDelete(noFinalNodeGraph);
+		safeTestDelete(algo2Graph);
+		safeTestDelete(roGraph);
 	}
 
 	TEST_CLASS(DijkstraTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(simpleTest, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(littleMaze, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(algo2Graph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(roGraph, Dijkstra, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(simpleTest, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(emptyGraph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(roGraph, Dijkstra, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(AStarTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(simpleTest, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(littleMaze, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(algo2Graph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(roGraph, AStar, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(simpleTest, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(emptyGraph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(roGraph, AStar, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(BellmanTests)
@@ -378,72 +430,96 @@ namespace TestUnit
 				Assert::IsFalse(bm.canReachNode(i));
 		}
 
-		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, Bellman, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(algo2Graph, Bellman, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(roGraph, Bellman, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, Bellman, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(emptyGraph, Bellman, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, Bellman, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, Bellman, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, Bellman, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, Bellman, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(roGraph, Bellman, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(simpleTest, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(littleMaze, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(algo2Graph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
-		SHORTEST_PATH_TEST_METHOD(roGraph, DFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_CLOSEST_FINAL_NODE);
+		SHORTEST_PATH_TEST_METHOD(simpleTest, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(emptyGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(roGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(BFS_Tests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(simpleTest, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(littleMaze, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(algo2Graph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(roGraph, BFS_ShortestPath, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(simpleTest, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(emptyGraph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(roGraph, BFS_ShortestPath, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(simpleTest, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFord, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(simpleTest, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(emptyGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFord, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
 	{
 	public:
-		SHORTEST_PATH_TEST_METHOD(simpleTest, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
-		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFordYen, RUN_SHORTEST_PATH_FINDER_TEST_ALL_NODES);
+		SHORTEST_PATH_TEST_METHOD(simpleTest, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(emptyGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFordYen, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
 	{
-		SHORTEST_PATH_TEST_METHOD(simpleTest, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		SHORTEST_PATH_TEST_METHOD(simpleTest, FloydWarshall, runSpfTest_AllPairsOfNodes);
 
 		// Floyd-Warshall est extrêmement lent pour ce test !
-		//SHORTEST_PATH_TEST_METHOD(littleMaze, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		//SHORTEST_PATH_TEST_METHOD(littleMaze, FloydWarshall, runSpfTest_AllPairsOfNodes);
 
-		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
-		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
-		SHORTEST_PATH_TEST_METHOD(algo2Graph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
-		SHORTEST_PATH_TEST_METHOD(roGraph, FloydWarshall, RUN_SHORTEST_PATH_FINDER_TEST_ALL_PAIRS_OF_NODES);
+		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(emptyGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(algo2Graph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(roGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 	};
 }
