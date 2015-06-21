@@ -5,6 +5,11 @@
 #include <deque>
 #include "Graph.h"
 
+// Permet de diminuer la mémoire utilisée par cette classe (et permet ainsi à cet algorithme de travailler sur des graphes plus grands),
+// en contre-partie l'algorithme se révèlera légèrement plus lent sur des graphes contenant de nombreux liens au coût nul,
+// mais il sera légèrement plus rapide sur des graphes sans ce type de lien.
+#define A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
+
 // Algorithme A* : pour un graphe où toutes les arêtes ont un coût positif,
 // parcours le graphe depuis un point de départ en suivant une heuristique, et s'arrête dès qu'un point final est trouvé.
 template<class Graphe = Graph<> >
@@ -19,9 +24,14 @@ protected:
 	{
 		IndexNoeud previousNode;
 		Cout totalCost;
+#ifndef A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
 		bool alreadyVisited;
+#endif
 
-		ASNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST()), alreadyVisited(false)
+		ASNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
+#ifndef A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
+			, alreadyVisited(false)
+#endif
 			{ }
 	};
 
@@ -32,22 +42,32 @@ protected:
 	IndexNoeud endNode;
 
 #ifdef _DEBUG
+	// Le nombre de noeuds explorés (marqués comme visités) par cet algorithme
 	IndexNoeud nbExploredNodes;
+#endif
+
+#ifdef A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
+	// La priorité du dernier noeud validé par l'algorithme : celle-ci est toujours croissante,
+	// et permet ainsi de déterminer les noeuds déjà visités simplement par leur priorité.
+	Cout currentPriority;
 #endif
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
-#ifdef _DEBUG
-		nbExploredNodes = 0;
-#endif
 		as.clear();
 		as.resize(g.size());
 		endNode = Graphe::INVALID_NODE_INDEX();
+#ifdef _DEBUG
+		nbExploredNodes = 0;
+#endif
+#ifdef A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
+		currentPriority = 0;
+#endif
 	}
 
 public:
-	AStar(const Graphe& gr) : g(gr) { reset(); }
+	AStar(const Graphe& gr) : g(gr)	{ reset(); }
 
 	void computeShortestPathFrom(IndexNoeud startNode);
 

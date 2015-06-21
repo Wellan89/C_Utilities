@@ -10,23 +10,33 @@ void AStar<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 	reset();
 
 	// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
-	as[startNode].totalCost = 0;
 	cost_priority_queue<IndexNoeud, Cout> nodesToSee;
+	as[startNode].totalCost = 0;
 	nodesToSee.push(startNode, g[startNode].getHeuristic());
 
 	while (!nodesToSee.empty())
 	{
 		IndexNoeud node = nodesToSee.top();
+#ifdef A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
+		Cout nodePriority = nodesToSee.top_cost();
+#endif
 		if (g[node].isFinal())
 		{
 			endNode = node;
 			return;
 		}
 		nodesToSee.pop();
+
+#ifndef A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
 		if (as[node].alreadyVisited)
 			continue;
-
 		as[node].alreadyVisited = true;
+#else
+		if (nodePriority < currentPriority)
+			continue;
+		currentPriority = nodePriority;
+#endif
+
 #ifdef _DEBUG
 		nbExploredNodes++;
 #endif
@@ -49,7 +59,16 @@ void AStar<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 			{
 				as[targetNode].previousNode = node;
 				as[targetNode].totalCost = newCost;
-				nodesToSee.push(targetNode, newCost + g[targetNode].getHeuristic());
+
+				Cout targetPriority = newCost + g[targetNode].getHeuristic();
+#ifdef A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
+				// On vérifie que ce noeud aura bien une priorité supérieure à la priorité du noeud actuel,
+				// afin qu'il ne soit pas considéré comme déjà vu lorsqu'il sera retiré de la file de priorité.
+				if (targetPriority < currentPriority)
+					targetPriority = currentPriority;
+#endif
+
+				nodesToSee.push(targetNode, targetPriority);
 			}
 		}
 	}

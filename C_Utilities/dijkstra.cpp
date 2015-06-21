@@ -18,11 +18,19 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 	{
 		IndexNoeud node = nodesToSee.top();
 		nodesToSee.pop();
+#ifndef DIJKSTRA_CLOSED_SET_REMOVAL_OPTIMIZATION
 		if (dj[node].alreadyVisited)
 			continue;
 
 		dj[node].alreadyVisited = true;
 		Cout nodeTotalCost = dj[node].totalCost;
+#else
+		Cout nodeTotalCost = dj[node].totalCost;
+		if (nodeTotalCost < currentCost)
+			continue;
+
+		currentCost = nodeTotalCost;
+#endif
 
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)

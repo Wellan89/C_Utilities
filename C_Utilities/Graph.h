@@ -31,7 +31,8 @@
 //		bool isFinal() const;
 // Fonction supplémentaire nécessaire pour l'algorithme A* :
 //		Graphe::Cout getHeuristic() const;
-//			Note :	Cette fonction doit renvoyer la distance minimale estimée du noeud jusqu'à un noeud final.
+//			Note :	Cette fonction doit renvoyer la distance minimale estimée du noeud jusqu'au noeud final le plus proche.
+//					Elle doit toujours être positive ou nulle.
 //					Afin que l'algorithme fourni ici fonctionne, cette fonction doit vérifier :
 //						Pour tout noeud x et tout noeud final f : h(x) <= d(x, f).
 //					Plus simplement, l'heuristique d'un noeud x doit toujours être inférieure

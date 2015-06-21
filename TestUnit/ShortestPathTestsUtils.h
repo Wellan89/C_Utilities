@@ -21,6 +21,8 @@ TODO :
 - Tester la fonction de suppression de liens du graphe
 - Tester les algos de plus court chemin avec des coûts très proches du coût "infini"
 
+- Créer un test avec de nombreux liens au coût nul
+
 - Déplacer toutes les fonctions des fichiers sources dépendant de templates dans les headers
 */
 

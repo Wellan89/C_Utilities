@@ -3,7 +3,7 @@
 #ifdef _DEBUG
 #define BIG_MAZE_SIZE							201		// Doit être impair
 #else
-#define BIG_MAZE_SIZE							3001	// Doit être impair
+#define BIG_MAZE_SIZE							2801	// Doit être impair
 #endif
 
 namespace TestUnit
