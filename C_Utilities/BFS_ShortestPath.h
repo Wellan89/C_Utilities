@@ -29,11 +29,15 @@ protected:
 	std::vector<BFSNodeInfo> bfs;
 	const Graphe& g;
 
+	// Indique si un lien au coût négatif a été détecté dans le graphe
+	bool negativeLinkFound;
+
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
 		bfs.clear();
 		bfs.resize(g.size());
+		negativeLinkFound = false;
 	}
 
 public:
@@ -41,6 +45,10 @@ public:
 
 	void computeShortestPathsFrom(IndexNoeud startNode);
 
+	bool negativeLinkDetected() const
+	{
+		return negativeLinkFound;
+	}
 	bool canReachNode(IndexNoeud node) const;
 	Cout getCostTo(IndexNoeud node) const;
 	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const;

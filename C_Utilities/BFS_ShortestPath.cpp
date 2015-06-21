@@ -31,6 +31,7 @@ void BFS_ShortestPath<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 			{
 				// On a trouvé une arête avec un coût négatif : on quitte ici.
 				reset();
+				negativeLinkFound = true;
 				return;
 			}
 

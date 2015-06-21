@@ -445,8 +445,8 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(simpleTest, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
-		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
-		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		//SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		//SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(emptyGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
@@ -514,6 +514,8 @@ namespace TestUnit
 		//SHORTEST_PATH_TEST_METHOD(littleMaze, FloydWarshall, runSpfTest_AllPairsOfNodes);
 
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		//SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		//SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		SHORTEST_PATH_TEST_METHOD(emptyGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);

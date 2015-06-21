@@ -52,6 +52,9 @@ protected:
 	Cout currentPriority;
 #endif
 
+	// Indique si un lien au coût négatif a été détecté dans le graphe
+	bool negativeLinkFound;
+
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
@@ -64,6 +67,7 @@ protected:
 #ifdef A_STAR_CLOSED_SET_REMOVAL_OPTIMIZATION
 		currentPriority = 0;
 #endif
+		negativeLinkFound = false;
 	}
 
 public:
@@ -71,6 +75,10 @@ public:
 
 	void computeShortestPathFrom(IndexNoeud startNode);
 
+	bool negativeLinkDetected() const
+	{
+		return negativeLinkFound;
+	}
 	bool hasFoundPath() const;
 	IndexNoeud getFinalNode() const;
 	Cout getPathCost() const;

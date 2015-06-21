@@ -13,8 +13,15 @@ void Bellman<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 
 	// Démarre à partir du noeud spécifié (on ignore les noeuds ne pouvant être atteints depuis celui-ci)
 	auto startIt = find(orderedNodes.rbegin(), orderedNodes.rend(), startNode);
+
+	// Si l'ordre topologique n'a pas pu être construit, on quitte ici.
 	if (startIt == orderedNodes.rend())
+	{
+		cycleFound = true;
 		return;
+	}
+
+	// Indique le coût du premier noeud
 	bm[startNode].totalCost = 0;
 
 	// Attention : on parcours le vecteur en sens inverse !

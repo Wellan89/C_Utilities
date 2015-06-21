@@ -27,11 +27,15 @@ protected:
 	std::vector<BmNodeInfo> bm;
 	const Graphe& g;
 
+	// Indique si un cycle a été détecté dans le graphe
+	bool cycleFound;
+
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
 		bm.clear();
 		bm.resize(g.size());
+		cycleFound = false;
 	}
 
 public:
@@ -39,6 +43,10 @@ public:
 
 	void computeShortestPathsFrom(IndexNoeud startNode);
 
+	bool cycleDetected() const
+	{
+		return cycleFound;
+	}
 	bool canReachNode(IndexNoeud node) const;
 	Cout getCostTo(IndexNoeud node) const;
 	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const;

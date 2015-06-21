@@ -44,7 +44,10 @@ public:
 
 	void computeShortestPathsFrom(IndexNoeud startNode);
 
-	bool absorbCycleDetected() const;
+	bool absorbCycleDetected() const
+	{
+		return absorbCycleFound;
+	}
 	bool canReachNode(IndexNoeud node) const;
 	Cout getCostTo(IndexNoeud node) const;
 	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const;

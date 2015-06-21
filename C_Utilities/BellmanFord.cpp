@@ -42,7 +42,7 @@ void BellmanFord<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 					}
 					else
 					{
-						// On a trouvé un circuit absorbant
+						// On a trouvé un circuit absorbant : on quitte ici.
 						reset();
 						absorbCycleFound = true;
 						return;
@@ -51,11 +51,6 @@ void BellmanFord<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 			}
 		}
 	}
-}
-template<class Graphe>
-bool BellmanFord<Graphe>::absorbCycleDetected() const
-{
-	return absorbCycleFound;
 }
 template<class Graphe>
 bool BellmanFord<Graphe>::canReachNode(IndexNoeud node) const

@@ -44,6 +44,9 @@ protected:
 	Cout currentCost;
 #endif
 
+	// Indique si un lien au coût négatif a été détecté dans le graphe
+	bool negativeLinkFound;
+
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
@@ -52,6 +55,7 @@ protected:
 #ifdef DIJKSTRA_CLOSED_SET_REMOVAL_OPTIMIZATION
 		currentCost = 0;
 #endif
+		negativeLinkFound = false;
 	}
 
 public:
@@ -59,6 +63,10 @@ public:
 
 	void computeShortestPathsFrom(IndexNoeud startNode);
 
+	bool negativeLinkDetected() const
+	{
+		return negativeLinkFound;
+	}
 	bool canReachNode(IndexNoeud node) const;
 	Cout getCostTo(IndexNoeud node) const;
 	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const;

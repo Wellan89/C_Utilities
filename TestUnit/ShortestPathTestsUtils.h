@@ -3,6 +3,8 @@
 
 /*
 TODO :
+- Eliminer la récursivité dans DFS
+
 - Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 
 - Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
@@ -12,7 +14,7 @@ TODO :
 
 - Dans les fonctions Graph::removeLinks, parcourir les liens de la fin vers le début, pour obtenir une meilleure complexité en moyenne
 
-- Détecter les conditions d'application des algorithmes lorsqu'ils s'appliquent sur un graphe : ex : détection d'un lien négatif pour Dijkstra
+- Détecter les conditions d'application des algorithmes lorsqu'ils s'appliquent sur un graphe : reste encore DFS et FloydWarshall à traiter
 - Dans DFS, vérifier les cycles négatifs (et permettre de ne pas le faire) + permettre de ne pas vérifier les cycles du tout (en enlevant visitedNodes)
 	+ Dans Dijkstra, BFS et A*, permettre de savoir si un lien négatif a été détecté
 	+ Dans Bellman, permettre de savoir si un cycle a été détecté

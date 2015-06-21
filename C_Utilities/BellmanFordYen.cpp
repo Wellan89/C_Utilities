@@ -66,7 +66,7 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 				}
 				else
 				{
-					// On a trouvé un circuit absorbant
+					// On a trouvé un circuit absorbant : on quitte ici.
 					reset();
 					absorbCycleFound = true;
 					return;
@@ -95,7 +95,7 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 				}
 				else
 				{
-					// On a trouvé un circuit absorbant
+					// On a trouvé un circuit absorbant : on quitte ici.
 					reset();
 					absorbCycleFound = true;
 					return;
@@ -109,17 +109,12 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 	{
 		if (bfy[*it].totalCost != Graphe::INFINITE_COST())
 		{
-			// On a trouvé un circuit absorbant
+			// On a trouvé un circuit absorbant : on quitte ici.
 			reset();
 			absorbCycleFound = true;
 			return;
 		}
 	}
-}
-template<class Graphe>
-bool BellmanFordYen<Graphe>::absorbCycleDetected() const
-{
-	return absorbCycleFound;
 }
 template<class Graphe>
 bool BellmanFordYen<Graphe>::canReachNode(IndexNoeud node) const
