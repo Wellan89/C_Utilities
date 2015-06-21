@@ -4,18 +4,16 @@
 /*
 TODO :
 - Eliminer la récursivité dans DFS
+- Dans Floyd-Warshall, détecter les circuits absorbants
 
 - Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 
 - Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
 
+- Dans les fonctions Graph::removeLinks, essayer de parcourir les liens de la fin vers le début pour obtenir une meilleure complexité en moyenne
+
 - Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique
-
-- Dans les fonctions Graph::removeLinks, parcourir les liens de la fin vers le début, pour obtenir une meilleure complexité en moyenne
-
-- Dans DFS, permettre de ne pas vérifier les cycles du tout (en enlevant visitedNodes)
-- Dans Floyd-Warshall, détecter les circuits absorbants
 
 - Tester la fonction de suppression de liens du graphe
 - Tester les algos de plus court chemin avec des coûts très proches du coût "infini"

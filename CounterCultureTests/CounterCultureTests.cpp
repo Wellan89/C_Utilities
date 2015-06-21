@@ -20,11 +20,11 @@
 
 //#define COUNTER_CULTURE_FINAL_NODE	10000000
 
+//#define COUNTER_CULTURE_FINAL_NODE	12345678
+
 // A partir d'ici, seul l'algorithme dynamique permet de donner une solution au problème !
 // Les autres algorithmes utilisent trop de mémoire
 // pour pouvoir être exécutés dans l'environnement de test de Visual Studio.
-
-//#define COUNTER_CULTURE_FINAL_NODE	12345678
 
 //#define COUNTER_CULTURE_FINAL_NODE	18273645
 

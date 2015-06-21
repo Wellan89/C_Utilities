@@ -442,6 +442,7 @@ namespace TestUnit
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
+#ifndef DFS_NO_CYCLE_DETECTION
 		SHORTEST_PATH_TEST_METHOD(simpleTest, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
@@ -452,6 +453,8 @@ namespace TestUnit
 #endif
 
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+#endif
+
 		SHORTEST_PATH_TEST_METHOD(emptyGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(twoNodesGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);

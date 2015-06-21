@@ -22,12 +22,14 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(IndexNoeud node, Cout cur
 		return true;
 	}
 
+#ifndef DFS_NO_CYCLE_DETECTION
 	// Indique que ce noeud est en cours d'exploration
 #ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
 	visitedNodes.insert(node);
 #else
 	// Indique aussi que le coût du chemin actuellement trouvé est currentCost.
 	visitedNodes.insert(DFS_NodeInfo(node, currentCost));
+#endif
 #endif
 
 	// Parcourt en profondeur tous les fils de ce noeud
@@ -40,6 +42,7 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(IndexNoeud node, Cout cur
 		Cout targetCost = currentCost + it->getCost();
 #endif
 		
+#ifndef DFS_NO_CYCLE_DETECTION
 		// Vérifie que ce noeud n'est pas exploré actuellement
 #ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
 		auto targetNodeIt = visitedNodes.find(targetNode);
@@ -60,6 +63,7 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(IndexNoeud node, Cout cur
 #endif
 			continue;
 		}
+#endif
 
 #ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
 		Cout targetCost = currentCost + it->getCost();
@@ -77,11 +81,13 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(IndexNoeud node, Cout cur
 #endif
 	}
 
+#ifndef DFS_NO_CYCLE_DETECTION
 	// Efface ce noeud de la liste des noeuds en cours d'exploration
 #ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
 	visitedNodes.erase(node);
 #else
 	visitedNodes.erase(DFS_NodeInfo(node));
+#endif
 #endif
 
 	return pathFound;

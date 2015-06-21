@@ -6,11 +6,21 @@
 #include <set>
 #include "Graph.h"
 
+// Désactive la détection des cycles dans cet algorithme :
+// améliore largement ses performances sur des graphes sans cycles,
+// mais il fera des stack overflow sur des graphes avec cycles
+// si sa fonction de calcul computeShortestPathFrom est appelée avec un maxCost trop grand.
+//#define DFS_NO_CYCLE_DETECTION
+
+#ifndef DFS_NO_CYCLE_DETECTION
+
 // Permet à cet algorithme de détecter les circuits absorbants durant son parcours,
 // mais cette vérification ralentit légèrement son exécution.
 // Si cette macro n'est pas définie, DFS n'entrera pas dans une boucle infinie,
 // mais ses résultats seront nécessairement faux en cas de cycle négatif dans le graphe d'entrée, et cela ne sera pas détecté.
 #define DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
+
+#endif
 
 // Algorithme du plus court chemin suivant un parcours en profondeur :
 // parcours le graphe en profondeur (jusqu'à une profondeur maximale donnée le cas échéant),
@@ -23,6 +33,7 @@ public:
 	typedef typename Graphe::Cout Cout;
 
 protected:
+#ifndef DFS_NO_CYCLE_DETECTION
 #ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
 	// L'ensemble des noeuds actuellement visités par récursivité
 	std::set<IndexNoeud> visitedNodes;
@@ -55,6 +66,7 @@ protected:
 	// L'ensemble des noeuds actuellement visités par récursivité, ainsi que leur distance au noeud de départ
 	std::set<DFS_NodeInfo> visitedNodes;
 #endif
+#endif
 
 	// Le chemin actuellement trouvé (dans l'ordre inverse)
 	std::vector<IndexNoeud> reverseShortestPath;
@@ -73,7 +85,9 @@ protected:
 	// Réinitialise les informations sur les noeuds
 	void reset()
 	{
+#ifndef DFS_NO_CYCLE_DETECTION
 		visitedNodes.clear();
+#endif
 		reverseShortestPath.clear();
 		endNode = Graphe::INVALID_NODE_INDEX();
 		pathCost = Graphe::INFINITE_COST();

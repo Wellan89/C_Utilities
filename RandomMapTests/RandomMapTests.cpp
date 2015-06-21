@@ -43,8 +43,7 @@ namespace TestUnit
 	}
 	TEST_MODULE_CLEANUP(RandomMapTestsCleanup)
 	{
-		if (randomMap)
-			delete randomMap;
+		safeTestDelete(randomMap);
 	}
 
 	TEST_CLASS(RandomPaths)

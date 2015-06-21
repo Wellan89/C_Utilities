@@ -72,7 +72,9 @@ namespace TestUnit
 	TEST_CLASS(DFS_Tests)
 	{
 	public:
+#ifndef DFS_NO_CYCLE_DETECTION
 		SHORTEST_PATH_TEST_METHOD(bigMaze, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+#endif
 	};
 
 	TEST_CLASS(BFS_Tests)
