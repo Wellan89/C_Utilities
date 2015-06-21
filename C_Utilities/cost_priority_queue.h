@@ -1,7 +1,6 @@
 #ifndef DEF_COST_PRIORITY_QUEUE
 #define DEF_COST_PRIORITY_QUEUE
 
-#include <utility>
 #include <vector>
 #include <queue>
 

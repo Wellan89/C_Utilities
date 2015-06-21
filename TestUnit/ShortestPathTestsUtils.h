@@ -14,11 +14,8 @@ TODO :
 
 - Dans les fonctions Graph::removeLinks, parcourir les liens de la fin vers le début, pour obtenir une meilleure complexité en moyenne
 
-- Détecter les conditions d'application des algorithmes lorsqu'ils s'appliquent sur un graphe : reste encore DFS et FloydWarshall à traiter
-- Dans DFS, vérifier les cycles négatifs (et permettre de ne pas le faire) + permettre de ne pas vérifier les cycles du tout (en enlevant visitedNodes)
-	+ Dans Dijkstra, BFS et A*, permettre de savoir si un lien négatif a été détecté
-	+ Dans Bellman, permettre de savoir si un cycle a été détecté
-	+ idem pour les autres algos
+- Dans DFS, permettre de ne pas vérifier les cycles du tout (en enlevant visitedNodes)
+- Dans Floyd-Warshall, détecter les circuits absorbants
 
 - Tester la fonction de suppression de liens du graphe
 - Tester les algos de plus court chemin avec des coûts très proches du coût "infini"

@@ -445,8 +445,12 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(simpleTest, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(littleMaze, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
-		//SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
-		//SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+
+#ifdef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+#endif
+
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(emptyGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);

@@ -23,7 +23,12 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(IndexNoeud node, Cout cur
 	}
 
 	// Indique que ce noeud est en cours d'exploration
+#ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
 	visitedNodes.insert(node);
+#else
+	// Indique aussi que le coût du chemin actuellement trouvé est currentCost.
+	visitedNodes.insert(DFS_NodeInfo(node, currentCost));
+#endif
 
 	// Parcourt en profondeur tous les fils de ce noeud
 	bool pathFound = false;
@@ -31,20 +36,53 @@ bool DFS_ShortestPath<Graphe>::computeShortestPath_Rec(IndexNoeud node, Cout cur
 	for (auto it = links.begin(); it != links.end(); ++it)
 	{
 		IndexNoeud targetNode = it->getTargetIndex();
+#ifdef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
+		Cout targetCost = currentCost + it->getCost();
+#endif
 		
 		// Vérifie que ce noeud n'est pas exploré actuellement
-		if (visitedNodes.find(targetNode) != visitedNodes.end())
+#ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
+		auto targetNodeIt = visitedNodes.find(targetNode);
+#else
+		// Cette conversion est nécessaire à cause du mot-clé explicit dans le constructeur DFS_NodeInfo(IndexNoeud)
+		auto targetNodeIt = visitedNodes.find(DFS_NodeInfo(targetNode));
+#endif
+		if (targetNodeIt != visitedNodes.end())
+		{
+#ifdef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
+			// S'il l'est, on vérifie bien que ce chemin pour l'atteindre est plus long que le chemin précédemment trouvé,
+			// sinon c'est qu'on est en présence d'un circuit absorbant.
+			if (targetCost < targetNodeIt->totalCost)
+			{
+				absorbCycleFound = true;
+				return false;
+			}
+#endif
 			continue;
+		}
 
-		if (computeShortestPath_Rec(targetNode, currentCost + it->getCost()))
+#ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
+		Cout targetCost = currentCost + it->getCost();
+#endif
+		if (computeShortestPath_Rec(targetNode, targetCost))
 		{
 			pathFound = true;
 			reverseShortestPath.push_back(node);
 		}
+
+#ifdef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
+		// Si on a détecté un circuit absorbant, on quitte immédiatement
+		if (absorbCycleFound)
+			return false;
+#endif
 	}
 
 	// Efface ce noeud de la liste des noeuds en cours d'exploration
+#ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
 	visitedNodes.erase(node);
+#else
+	visitedNodes.erase(DFS_NodeInfo(node));
+#endif
 
 	return pathFound;
 }
@@ -54,21 +92,18 @@ void DFS_ShortestPath<Graphe>::computeShortestPathFrom(IndexNoeud startNode, Cou
 	// Réinitialise les informations sur les noeuds
 	reset();
 
-	// Efface la liste des noeuds en cours d'exploration
-	visitedNodes.clear();
-
 	// Indique la profondeur maximale à laquelle on va chercher un noeud final
 	pathCost = maxCost;
 
 	// Traite récursivement chacun des noeuds pouvant être atteints depuis le noeud de départ
 	if (!computeShortestPath_Rec(startNode, 0))
 	{
-		// Réinitialise les informations sur les noeuds si aucun noeud final n'a été trouvé
+		// Réinitialise les informations sur les noeuds si aucun noeud final n'a été trouvé,
+		// en retenant si un circuit absorbant a été détecté.
+		bool absorbCycle = absorbCycleFound;
 		reset();
+		absorbCycleFound = absorbCycle;
 	}
-
-	// Efface la liste des noeuds en cours d'exploration
-	visitedNodes.clear();
 }
 template<class Graphe>
 bool DFS_ShortestPath<Graphe>::hasFoundPath() const
