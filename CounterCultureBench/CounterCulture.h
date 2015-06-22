@@ -41,26 +41,37 @@ protected:
 public:
 	CCNodeLinksGenerator(CCDynGraph::IndexNoeud _finalNode) : finalNode(_finalNode)	{ }
 
-	void operator()(CCDynGraph::IndexNoeud index, std::vector<DynamicLink>& outLinks) const
+	CCDynGraph::IndexNoeud linksCount(CCDynGraph::IndexNoeud node) const
+	{
+		CCDynGraph::IndexNoeud count = 0;
+
+#ifndef CC_USE_INVERTED_GRAPH
+		if (node < finalNode)
+			count++;
+
+		if (swap(node) <= finalNode)
+			count++;
+#else
+		if (node > 0)
+			count++;
+
+		if (node % 10 != 0)
+			count++;
+#endif
+
+		return count;
+	}
+	CCDynGraph::Lien link(CCDynGraph::IndexNoeud node, CCDynGraph::IndexNoeud linkIndex) const
 	{
 #ifndef CC_USE_INVERTED_GRAPH
-		if (index < finalNode)
-			outLinks.push_back(DynamicLink(index + 1, 1));
-
-		CCDynGraph::IndexNoeud sw = swap(index);
-		if (sw <= finalNode)
-			outLinks.push_back(DynamicLink(sw, 1));
+		if (node < finalNode && linkIndex == 0)
+			return DynamicLink(node + 1, 1);
 #else
-		if (index > 0)
-			outLinks.push_back(DynamicLink(index - 1, 1));
-
-		if (index % 10 != 0)
-		{
-			CCDynGraph::IndexNoeud sw = swap(index);
-			if (sw <= finalNode)
-				outLinks.push_back(DynamicLink(sw, 1));
-		}
+		if (node > 0 && linkIndex == 0)
+			return DynamicLink(node - 1, 1);
 #endif
+
+		return DynamicLink(swap(node), 1);
 	}
 };
 class CCNodeFinalGenerator
@@ -71,12 +82,12 @@ protected:
 public:
 	CCNodeFinalGenerator(CCDynGraph::IndexNoeud _finalNode) : finalNode(_finalNode)	{ }
 
-	bool operator()(CCDynGraph::IndexNoeud index) const
+	bool operator()(CCDynGraph::IndexNoeud node) const
 	{
 #ifndef CC_USE_INVERTED_GRAPH
-		return (index == finalNode);
+		return (node == finalNode);
 #else
-		return (index == 0);
+		return (node == 0);
 #endif
 	}
 };

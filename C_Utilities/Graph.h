@@ -47,7 +47,7 @@
 // Fonctions nécessaires de la classe Lien :
 //		Graphe::Cout getCost() const;
 //		Graphe::IndexNoeud getTargetIndex() const;
-// Fonction supplémentaire nécessaire pour les algorithmes de Bellman et Bellman-Ford-Yen :
+// Fonction supplémentaire nécessaire pour l'algorithme de Bellman :
 //		Graphe::IndexNoeud getFromIndex() const;
 
 

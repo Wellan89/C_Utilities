@@ -14,7 +14,6 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 	cost_priority_queue<IndexNoeud, Cout> nodesToSee;
 	nodesToSee.push(startNode, g.getNodeHeuristic(startNode));
 
-	vector<Graphe::Lien> links;
 	while (!nodesToSee.empty())
 	{
 		IndexNoeud node = nodesToSee.top();
@@ -43,11 +42,11 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 #endif
 		Cout nodeTotalCost = asd[node].totalCost;
 
-		links.clear();
-		g.getNodeLinks(node, links);
-		for (auto it = links.begin(); it != links.end(); ++it)
+		IndexNoeud linksCount = g.getNodeLinksCount(node);
+		for (IndexNoeud i = 0; i < linksCount; i++)
 		{
-			Cout linkCost = it->getCost();
+			Graphe::Lien l = g.getNodeLink(node, i);
+			Cout linkCost = l.getCost();
 			if (linkCost < 0)
 			{
 				// On a trouvé une arête avec un coût négatif : on quitte ici.
@@ -56,7 +55,7 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 				return;
 			}
 
-			IndexNoeud targetNode = it->getTargetIndex();
+			IndexNoeud targetNode = l.getTargetIndex();
 			Cout newCost = nodeTotalCost + linkCost;
 			if (newCost < asd[targetNode].totalCost)
 			{

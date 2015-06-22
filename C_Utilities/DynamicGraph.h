@@ -16,7 +16,8 @@
 //		static Cout INFINITE_COST();
 //			Note :	Cette dernière fonction constante doit être supérieure stricte à tout autre coût possible.
 // Fonctions nécessaires de la classe Graphe :
-//		void getNodeLinks(IndexNoeud index, std::vector<Lien>& outLinks) const;
+//		void getNodeLinksCount(IndexNoeud node) const;
+//		DynamicLink getNodeLink(IndexNoeud node, IndexNoeud linkIndex) const;
 // Fonction supplémentaire nécessaire pour les algorithmes dynamiques A* et DFS :
 //		bool isNodeFinal(IndexNoeud node) const;
 // Fonction supplémentaire nécessaire pour l'algorithme dynamique A* :
@@ -92,9 +93,13 @@ public:
 		: linksGen(linksGenerator), finalGen(finalGenerator), heuristicGen(heuristicGenerator)
 	{ }
 
-	void getNodeLinks(IndexNoeud index, std::vector<Lien>& outLinks) const
+	IndexNoeud getNodeLinksCount(IndexNoeud node) const
 	{
-		linksGen(index, outLinks);
+		return linksGen.linksCount(node);
+	}
+	DynamicLink getNodeLink(IndexNoeud node, IndexNoeud linkIndex) const
+	{
+		return linksGen.link(node, linkIndex);
 	}
 	bool isNodeFinal(IndexNoeud node) const
 	{
