@@ -11,33 +11,8 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 	// Indique le coût du premier noeud
 	bfy[startNode].totalCost = 0;
 
-	// Partitionne l'ensemble des arêtes en deux ensemble :
-	// edgesF = { arêtes e = (u, v) dans g tq : u < v }
-	// edgesB = { arêtes e = (u, v) dans g tq : u > v }
-	// edgesF et edgesB doivent être ordonnés dans l'ordre des u croissants.
-	// Les boucles (les arêtes pour lesquelles u = v) sont ignorées si leur coût est positif ou nul,
-	// mais sont détectées en tant que circuit absorbant si leur coût est strictement négatif
-	// et que ces points sont atteignables depuis le noeud de départ.
-	std::vector<const Graphe::Lien*> edgesF;
-	std::vector<const Graphe::Lien*> edgesB;
-	std::vector<IndexNoeud> absorbNodes;
-	IndexNoeud nodesCount = g.size();
-	for (IndexNoeud node = 0; node < nodesCount; node++)
-	{
-		const auto& links = g[node].getLinks();
-		for (auto it = links.begin(); it != links.end(); ++it)
-		{
-			IndexNoeud targetNode = it->getTargetIndex();
-			if (node < targetNode)
-				edgesF.push_back(&(*it));
-			else if (node > targetNode)
-				edgesB.push_back(&(*it));
-			else if (it->getCost() < 0)
-				absorbNodes.push_back(node);
-		}
-	}
-
 	// Ici (n + 1) / 2 tours de boucles sont suffisants
+	IndexNoeud nodesCount = g.size();
 	IndexNoeud lastTurnIndex = 1 + (nodesCount - 1) / 2;
 	bool madeChange = true;
 	for (IndexNoeud i = 0; madeChange; i++)
@@ -45,74 +20,83 @@ void BellmanFordYen<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 		madeChange = false;
 		bool lastTurn = (i == lastTurnIndex);
 
-		// Parcours toutes les arêtes de edgesF dans l'ordre des u croissants
-		for (auto it = edgesF.begin(); it != edgesF.end(); ++it)
+		// Parcours toutes les arêtes e = (u, v) avec u < v dans l'ordre des u croissants
+		for (IndexNoeud node = 0; node < nodesCount; node++)
 		{
-			const Graphe::Lien* l = (*it);
-			IndexNoeud node = l->getFromIndex();
-			Cout nodeTotalCost = bfy[node].totalCost;
-			if (nodeTotalCost == Graphe::INFINITE_COST())
-				continue;
-
-			IndexNoeud targetNode = l->getTargetIndex();
-			Cout newCost = nodeTotalCost + l->getCost();
-			if (newCost < bfy[targetNode].totalCost)
+			const auto& links = g[node].getLinks();
+			for (auto it = links.begin(); it != links.end(); ++it)
 			{
-				if (!lastTurn)
+				Cout nodeTotalCost = bfy[node].totalCost;
+				IndexNoeud targetNode = it->getTargetIndex();
+				Cout newCost = nodeTotalCost + it->getCost();
+				if (node < targetNode
+					&& nodeTotalCost != Graphe::INFINITE_COST()
+					&& newCost < bfy[targetNode].totalCost)
 				{
-					bfy[targetNode].totalCost = newCost;
-					bfy[targetNode].previousNode = node;
-					madeChange = true;
-				}
-				else
-				{
-					// On a trouvé un circuit absorbant : on quitte ici.
-					reset();
-					absorbCycleFound = true;
-					return;
+					if (!lastTurn)
+					{
+						bfy[targetNode].totalCost = newCost;
+						bfy[targetNode].previousNode = node;
+						madeChange = true;
+					}
+					else
+					{
+						// On a trouvé un circuit absorbant : on quitte ici.
+						reset();
+						absorbCycleFound = true;
+						return;
+					}
 				}
 			}
 		}
 
-		// Parcours toutes les arêtes de edgesB dans l'ordre des u décroissants
-		for (auto it = edgesB.rbegin(); it != edgesB.rend(); ++it)
+		// Parcours toutes les arêtes e = (u, v) avec u > v dans l'ordre des u décroissants
+		for (IndexNoeud node_inv = 0; node_inv < nodesCount; node_inv++)
 		{
-			const Graphe::Lien* l = (*it);
-			IndexNoeud node = l->getFromIndex();
-			Cout nodeTotalCost = bfy[node].totalCost;
-			if (nodeTotalCost == Graphe::INFINITE_COST())
-				continue;
-
-			IndexNoeud targetNode = l->getTargetIndex();
-			Cout newCost = nodeTotalCost + l->getCost();
-			if (newCost < bfy[targetNode].totalCost)
+			IndexNoeud node = nodesCount - node_inv - 1;
+			const auto& links = g[node].getLinks();
+			for (auto it = links.begin(); it != links.end(); ++it)
 			{
-				if (!lastTurn)
+				Cout nodeTotalCost = bfy[node].totalCost;
+				IndexNoeud targetNode = it->getTargetIndex();
+				Cout newCost = nodeTotalCost + it->getCost();
+				if (node > targetNode
+					&& nodeTotalCost != Graphe::INFINITE_COST()
+					&& newCost < bfy[targetNode].totalCost)
 				{
-					bfy[targetNode].totalCost = newCost;
-					bfy[targetNode].previousNode = node;
-					madeChange = true;
-				}
-				else
-				{
-					// On a trouvé un circuit absorbant : on quitte ici.
-					reset();
-					absorbCycleFound = true;
-					return;
+					if (!lastTurn)
+					{
+						bfy[targetNode].totalCost = newCost;
+						bfy[targetNode].previousNode = node;
+						madeChange = true;
+					}
+					else
+					{
+						// On a trouvé un circuit absorbant : on quitte ici.
+						reset();
+						absorbCycleFound = true;
+						return;
+					}
 				}
 			}
 		}
 	}
 
-	// Vérifie qu'aucun des noeuds avec une boucle absorbante ne peut être atteint depuis le noeud de départ
-	for (auto it = absorbNodes.begin(); it != absorbNodes.end(); ++it)
+	// Vérifie qu'aucun des noeuds avec une boucle absorbante ne peut être atteint depuis le noeud de départ,
+	// sinon on est en présence d'un circuit absorbant (les arêtes e = (u, v) avec u = v n'ont pas été vérifiées précédemment).
+	for (IndexNoeud node = 0; node < nodesCount; node++)
 	{
-		if (bfy[*it].totalCost != Graphe::INFINITE_COST())
+		const auto& links = g[node].getLinks();
+		for (auto it = links.begin(); it != links.end(); ++it)
 		{
-			// On a trouvé un circuit absorbant : on quitte ici.
-			reset();
-			absorbCycleFound = true;
-			return;
+			if (node == it->getTargetIndex() && it->getCost() < 0
+				&& bfy[node].totalCost != Graphe::INFINITE_COST())
+			{
+				// On a trouvé un circuit absorbant : on quitte ici.
+				reset();
+				absorbCycleFound = true;
+				return;
+			}
 		}
 	}
 }
