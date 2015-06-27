@@ -1,18 +1,16 @@
 #include "ShortestPathTestsUtils.h"
 
 #ifdef _DEBUG
-#define FULL_GRAPH_COMPUTE_LOOPS				1
 #define FULL_GRAPH_NODES_COUNT					350
 #else
-#define FULL_GRAPH_COMPUTE_LOOPS				2
-#define FULL_GRAPH_NODES_COUNT					5000
+#define FULL_GRAPH_NODES_COUNT					8000
 #endif
 
 namespace TestUnit
 {
 	void FullGraphInit(unsigned int testRefsCount)
 	{
-		fullGraph = new ShortestPathTest<>(FULL_GRAPH_NODES_COUNT + 1, testRefsCount, FULL_GRAPH_COMPUTE_LOOPS);
+		fullGraph = new ShortestPathTest<>(FULL_GRAPH_NODES_COUNT + 1, testRefsCount, 1);
 
 		fullGraph->startNode = 0;
 		fullGraph->closestFinalNode = FULL_GRAPH_NODES_COUNT;
