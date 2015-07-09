@@ -9,10 +9,10 @@
 // Classe permettant de déterminer les meilleurs jeux de probabilité
 // pour un algorithme basé sur une heuristique aléatoire.
 // RandomizedAlgorithm doit avoir les fonctions suivantes :
-//		void nextRandomProbs();				// Passe au jeu de probabilité suivant.
-//		bool allProbsTested();				// Détermine si tous les jeux de probabilité ont été testés.
-//		unsigned int getRandomProbsId();	// Renvoit un identificateur permettant de retrouver les mailleurs paramètres de l'algorithme.
-//		float solve();						// Fonction de calcul de l'algorithme, renvoyant son score. Plus il est haut, meilleur il est.
+//		void nextRandomProbs();		// Passe au jeu de probabilité suivant.
+//		bool allProbsTested();		// Détermine si tous les jeux de probabilité ont été testés.
+//		int getRandomProbsId();		// Renvoit un identificateur permettant de retrouver les meilleurs paramètres de l'algorithme.
+//		float solve();				// Fonction de calcul de l'algorithme, renvoyant son score. Plus il est haut, meilleur il est.
 template<class RandomizedAlgorithm>
 class RandomizedAlgoEvaluator
 {
@@ -44,15 +44,19 @@ public:
 	{
 		return std::max_element(scores.begin(), scores.end())->second;
 	}
+	void printSelf(std::ostream& os)
+	{
+		os << "RandomizedAlgoEvaluator results :" << endl
+			<< "Best result : Probs Id = " << getBestResultsProbsId() << endl
+			<< endl << "All results :" << endl;
+		for (auto it = scores.rbegin(); it != scores.rend(); ++it)
+			os << "Mean score = " << it->first << " with Probs Id = " << it->second << endl;
+	}
 };
 template<class RandomizedAlgorithm>
-std::ostream& operator<<(std::ostream& os, const RandomizedAlgoEvaluator<class RandomizedAlgorithm>& evaluator)
+std::ostream& operator<<(std::ostream& os, const RandomizedAlgoEvaluator<RandomizedAlgorithm>& evaluator)
 {
-	os << "RandomizedAlgoEvaluator results :" << endl
-		<< "Best result : Probs Id = " << getBestResultsProbsId() << endl
-		<< endl << "All results :" << endl;
-	for (auto it = scores.rbegin(); it != scores.rend(); ++it)
-		os << "Mean score = " << it->first << " with Probs Id = " << it->second << endl;
+	evaluator.printSelf(os);
 	return os;
 }
 

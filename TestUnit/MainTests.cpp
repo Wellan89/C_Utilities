@@ -118,7 +118,7 @@ namespace TestUnit
 		}
 	};
 
-	TEST_CLASS(CostPriorityQueueTest)
+	TEST_CLASS(CostPriorityQueueTests)
 	{
 		TEST_METHOD(CostPriorityQueueSimple)
 		{

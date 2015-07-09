@@ -24,6 +24,9 @@
     <ClCompile Include="ToStringSpecializations.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="RandomizedAlgoHelpersTests.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ToStringSpecializations.h">

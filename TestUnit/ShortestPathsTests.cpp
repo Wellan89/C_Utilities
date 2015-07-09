@@ -1,4 +1,6 @@
 #include "ShortestPathTestsUtils.h"
+#include <cstdlib>
+#include <ctime>
 
 namespace TestUnit
 {
@@ -358,6 +360,9 @@ namespace TestUnit
 		LittleGraphsInit(8);
 		Algo2GraphInit(8);
 		ROGraphInit(8);
+
+		// Pour les tests de RandomizedAlgoHelpersTests
+		srand((unsigned int)time(NULL));
 	}
 	TEST_MODULE_CLEANUP(ShortestPathsTestsCleanup)
 	{
