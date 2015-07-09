@@ -12,41 +12,39 @@ namespace TestUnit
 {
 	class RandomMax
 	{
-	protected:
-		int maxVal;
-
 	public:
+		float maxVal;
+
 		static const int BEST_RESULT_PROB_ID = -10;
 
 		void nextRandomProbs()
 		{
-			maxVal++;
+			maxVal += 0.1f;
 		}
 		bool allProbsTested()
 		{
-			return (maxVal > 10);
+			return (maxVal >= 1.01f);
 		}
 		int getRandomProbsId()
 		{
-			return -maxVal;
+			return (int)(maxVal * -10.0f);
 		}
 		float solve()
 		{
-			return (float)(rand() % (maxVal * 10 + 1));
+			return (float)(rand() % ((int)(maxVal * 100.0f) + 1));
 		}
 
-		RandomMax() : maxVal(0)
+		RandomMax() : maxVal(0.0f)
 		{ }
 	};
 	class RandomMaxMultipleVars
 	{
-	protected:
+	public:
 		int val1;
 		int val2;
 		int val3;
 		int val4;
 
-	public:
 		static const int BEST_RESULT_PROB_ID = (((10 * 11) + 0) * 11 + 10) * 11 + 0;
 
 		void nextRandomProbs()
@@ -113,5 +111,34 @@ namespace TestUnit
 
 	TEST_CLASS(RandomizedAlgoOptimizerTests)
 	{
+		TEST_METHOD(RandOpt_RandomMaxTest)
+		{
+			RandomMax randMax;
+
+			vector<float*> params;
+			params.push_back(&randMax.maxVal);
+
+			RandomizedAlgoOptimizer<RandomMax> optimizer(randMax, params);
+			optimizer.run();
+			Assert::IsTrue(*(optimizer.getBestParams()[0]) > 0.99f);
+		}
+
+		TEST_METHOD(RandOpt_RandomMaxMultipleVarsTest)
+		{
+			RandomMaxMultipleVars randMaxMultVars;
+
+			vector<int*> params;
+			params.push_back(&randMaxMultVars.val1);
+			params.push_back(&randMaxMultVars.val2);
+			params.push_back(&randMaxMultVars.val3);
+			params.push_back(&randMaxMultVars.val4);
+
+			RandomizedAlgoOptimizer<RandomMaxMultipleVars, int> optimizer(randMaxMultVars, params, 0, 10, 1, 3000);
+			optimizer.run();
+			Assert::AreEqual(10, *(optimizer.getBestParams()[0]));
+			Assert::AreEqual(0, *(optimizer.getBestParams()[1]));
+			Assert::AreEqual(10, *(optimizer.getBestParams()[2]));
+			Assert::AreEqual(0, *(optimizer.getBestParams()[3]));
+		}
 	};
 }

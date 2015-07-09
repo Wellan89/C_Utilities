@@ -6,7 +6,7 @@
 #include <utility>
 #include <algorithm>
 
-// Classe permettant de déterminer les meilleurs jeux de probabilité
+// Classe permettant d'évaluer des jeux de probabilité
 // pour un algorithme basé sur une heuristique aléatoire.
 // RandomizedAlgorithm doit avoir les fonctions suivantes :
 //		void nextRandomProbs();		// Passe au jeu de probabilité suivant.
@@ -22,7 +22,7 @@ protected:
 	// Les scores moyens de l'algorithme avec leur jeu de probabilité associé
 	std::vector<std::pair<float, int> > scores;
 
-	unsigned int solveLoopsCount;
+	const unsigned int solveLoopsCount;
 
 public:
 	RandomizedAlgoEvaluator(RandomizedAlgorithm& _algo, unsigned int _solveLoopsCount = 1000)
@@ -36,7 +36,8 @@ public:
 			float sum = 0.0f;
 			for (unsigned int i = 0; i < solveLoopsCount; i++)
 				sum += algo.solve();
-			scores.push_back(std::pair<float, int>(sum / (float)solveLoopsCount, algo.getRandomProbsId()));
+			scores.push_back(std::pair<float, int>(
+				sum / (float)solveLoopsCount, algo.getRandomProbsId()));
 		}
 		sort(scores.begin(), scores.end());
 	}
@@ -54,7 +55,8 @@ public:
 	}
 };
 template<class RandomizedAlgorithm>
-std::ostream& operator<<(std::ostream& os, const RandomizedAlgoEvaluator<RandomizedAlgorithm>& evaluator)
+std::ostream& operator<<(std::ostream& os,
+	const RandomizedAlgoEvaluator<RandomizedAlgorithm>& evaluator)
 {
 	evaluator.printSelf(os);
 	return os;
