@@ -22,30 +22,39 @@ protected:
 	// Les scores moyens de l'algorithme avec leur jeu de probabilité associé
 	std::vector<std::pair<float, int> > scores;
 
-	const unsigned int solveLoopsCount;
+	const int solveLoopsCount;
+
+	float evaluate()
+	{
+		float sum = 0.0f;
+#ifdef RANDOMIZED_ALGO_EVALUATOR_USE_OPEN_MP
+#pragma omp parallel for schedule(static) reduction(+ : sum)
+#endif
+		for (int i = 0; i < solveLoopsCount; i++)
+			sum += algo.solve();
+		return sum;
+	}
 
 public:
-	RandomizedAlgoEvaluator(RandomizedAlgorithm& _algo, unsigned int _solveLoopsCount = 1000)
-		: algo(_algo), solveLoopsCount(_solveLoopsCount)
+	RandomizedAlgoEvaluator(RandomizedAlgorithm& _algo, int _solveLoopsCount = 1000)
+		: algo(_algo), solveLoopsCount(std::max(_solveLoopsCount, 1))
 	{ }
 
 	void run()
 	{
 		for (; !algo.allProbsTested(); algo.nextRandomProbs())
 		{
-			float sum = 0.0f;
-			for (unsigned int i = 0; i < solveLoopsCount; i++)
-				sum += algo.solve();
+			float eval = evaluate();
 			scores.push_back(std::pair<float, int>(
-				sum / (float)solveLoopsCount, algo.getRandomProbsId()));
+				eval / (float)solveLoopsCount, algo.getRandomProbsId()));
 		}
-		sort(scores.begin(), scores.end());
+		std::sort(scores.begin(), scores.end());
 	}
 	int getBestResultsProbsId() const
 	{
-		return std::max_element(scores.begin(), scores.end())->second;
+		return scores.back().second;
 	}
-	void printSelf(std::ostream& os)
+	void printSelf(std::ostream& os) const
 	{
 		os << "RandomizedAlgoEvaluator results :" << endl
 			<< "Best result : Probs Id = " << getBestResultsProbsId() << endl
