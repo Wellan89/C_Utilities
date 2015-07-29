@@ -3,6 +3,21 @@
 
 /*
 TODO :
+- Ecrire une classe utilitaire de BruteForce typique
+- Nouvelle macro de suppression de liens à implémenter :
+	#define REMOVE_LINKS_FROM_ITERABLE(links, target)									\
+				do {																	\
+					auto& nodeLinks = (links);											\
+					auto& tgt = (target);												\
+					nodeLinks.erase(std::remove_if(nodeLinks.begin(), nodeLinks.end(),	\
+						[&tgt](const Link& l)											\
+						{																\
+							return (l.getTargetIndex() == tgt);							\
+						}), nodeLinks.end());											\
+				} while(false)
+
+- Include la classe ModulusNumber de Code of the Rings
+
 - Eliminer la récursivité dans DFS
 - Dans Floyd-Warshall, détecter les circuits absorbants
 
@@ -10,8 +25,6 @@ TODO :
 
 - Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
-
-- Dans les fonctions Graph::removeLinks, essayer de parcourir les liens de la fin vers le début pour obtenir une meilleure complexité en moyenne
 
 - Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique
 

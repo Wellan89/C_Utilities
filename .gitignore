@@ -74,11 +74,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-*.sln
+# Visual Studio generated files
 *.suo
 *.sdf
 *.opensdf
-*.vcxproj*
 *.ipch
 *.tlog
 *.cache
@@ -92,3 +91,5 @@ $RECYCLE.BIN/
 *.xml
 *.lastcodeanalysissucceeded
 *.psess
+*.vcxproj.user
+*.vcxproj.filters
