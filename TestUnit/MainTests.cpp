@@ -6,10 +6,25 @@
 #include "List.c"
 #include "cost_priority_queue.h"
 #include "ModulusNumber.h"
+#include "Memoizator.h"
 #include "Graph.h"
 
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
+namespace std
+{
+	template<> class hash<pair<int, float>>
+	{
+	public:
+		size_t operator()(const pair<int, float>& p) const
+		{
+			hash<int> hi;
+			hash<float> hf;
+			return (hi(p.first) ^ hf(p.second));
+		}
+	};
+}
 
 namespace TestUnit
 {
@@ -217,6 +232,64 @@ namespace TestUnit
 			Assert::AreEqual(4, mnb.distanceTo(mnb3));
 			Assert::AreEqual(4, mnb3.distanceTo(mnb));
 			Assert::AreEqual(0, mnb.distanceTo(mnb2));
+		}
+	};
+
+	TEST_CLASS(MemoizatorTests)
+	{
+		static int simpleFunc(int x)
+		{
+			return x + 3;
+		}
+
+		class ClassFunc
+		{
+		protected:
+			int offset;
+
+		public:
+			ClassFunc(int addOffset) : offset(addOffset)
+			{ }
+			int operator()(int x)
+			{
+				return x + offset;
+			}
+		};
+
+		TEST_METHOD(Memoizator_SimpleFunction)
+		{
+			Memoizator<decltype(simpleFunc), int> simpleFunc_mem(simpleFunc);
+			for (int i = -5; i <= 5; i++)
+				Assert::AreEqual(simpleFunc(abs(i)), simpleFunc_mem(abs(i)));
+		}
+		TEST_METHOD(Memoizator_ClassFunction)
+		{
+			ClassFunc classFunc(10);
+			Memoizator<ClassFunc, int> classFunc_mem(classFunc);
+			for (int i = -5; i <= 5; i++)
+				Assert::AreEqual(classFunc(abs(i)), classFunc_mem(abs(i)));
+		}
+		TEST_METHOD(Memoizator_LambdaFunction)
+		{
+			auto lambda = [](int x) { return x * x; };
+			Memoizator<decltype(lambda), int> lambda_mem(lambda);
+			for (int i = -5; i <= 5; i++)
+				Assert::AreEqual(lambda(abs(i)), lambda_mem(abs(i)));
+		}
+
+		TEST_METHOD(Memoizator_ComplexArgs)
+		{
+			auto f = [](pair<int, float> p) { return p.second * (float)p.first; };
+			Memoizator<decltype(f), pair<int, float>> f_mem(f);
+
+			for (int i = -5; i <= 5; i++)
+			{
+				for (float j = -5.0f; j < 5.5f ; j += 1.0f)
+				{
+					auto arg = make_pair(abs(i), abs(j));
+					Assert::AreEqual(f(arg), f_mem(arg));
+				}
+			}
 		}
 	};
 

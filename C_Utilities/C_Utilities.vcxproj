@@ -94,6 +94,7 @@
     <ClInclude Include="FloydWarshall.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="List.h" />
+    <ClInclude Include="Memoizator.h" />
     <ClInclude Include="ModulusNumber.h" />
     <ClInclude Include="RandomizedAlgoEvaluator.h" />
     <ClInclude Include="RandomizedAlgoOptimizer.h" />
