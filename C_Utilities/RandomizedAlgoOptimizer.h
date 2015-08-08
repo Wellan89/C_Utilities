@@ -82,11 +82,11 @@ public:
 			float lastScoreAdd = 0.0f, currentScoreAdd = 0.0f;
 			bool shouldContinue = true;
 			int nbWaitedTurns = 0;
+			float ratioThreshold;
 			do
 			{
 				// Si on n'a pas encore effectué de tour d'attente,
 				// c'est qu'on doit modifier la valeur du paramètre.
-				float ratioThreshold;
 				if (nbWaitedTurns == 0)
 				{
 					param += params[i].step;

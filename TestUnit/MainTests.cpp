@@ -19,9 +19,7 @@ namespace std
 	public:
 		size_t operator()(const pair<int, float>& p) const
 		{
-			hash<int> hi;
-			hash<float> hf;
-			return (hi(p.first) ^ hf(p.second));
+			return (3 * hash<int>()(p.first) + hash<float>()(p.second));
 		}
 	};
 }
