@@ -5,6 +5,7 @@
 
 #include "List.c"
 #include "cost_priority_queue.h"
+#include "ModulusNumber.h"
 #include "Graph.h"
 
 using namespace std;
@@ -155,6 +156,67 @@ namespace TestUnit
 				Assert::AreEqual(expected, actual);
 			}
 			Assert::IsTrue(pq.empty());
+		}
+	};
+
+	TEST_CLASS(ModulusNumberTests)
+	{
+		TEST_METHOD(ModulusNumber_BasicTests)
+		{
+			ModulusNumber<15> mnb;
+			Assert::AreEqual(0, (int)mnb);
+
+			mnb++;
+			Assert::AreEqual(1, (int)mnb);
+
+			mnb += 3;
+			Assert::AreEqual(4, mnb.v());
+
+			mnb += 26;
+			Assert::AreEqual(0, (int)mnb);
+
+			mnb += (-4);
+			Assert::AreEqual(11, mnb.v());
+
+			mnb -= (-6);
+			Assert::AreEqual(2, (int)mnb);
+
+			ModulusNumber<15> mnb2(35);
+			Assert::AreEqual(5, (int)mnb2);
+
+			Assert::AreEqual(6, (int)(mnb + mnb2 - ModulusNumber<15>(16)));
+
+			Assert::IsTrue(mnb < mnb2);
+			Assert::IsTrue(mnb <= mnb2);
+			Assert::IsFalse(mnb > mnb2);
+			Assert::IsFalse(mnb >= mnb2);
+			Assert::IsFalse(mnb == mnb2);
+			Assert::IsTrue(mnb != mnb2);
+			mnb += 3;
+			Assert::IsFalse(mnb < mnb2);
+			Assert::IsTrue(mnb <= mnb2);
+			Assert::IsFalse(mnb > mnb2);
+			Assert::IsTrue(mnb >= mnb2);
+			Assert::IsTrue(mnb == mnb2);
+			Assert::IsFalse(mnb != mnb2);
+
+			mnb2 += 16;
+			mnb = mnb2;
+			ModulusNumber<15> mnb3(mnb);
+			Assert::AreEqual(6, (int)(mnb3));
+
+			mnb3 = -mnb3;
+			Assert::AreEqual(9, (int)(mnb3));
+
+			mnb3 *= -2;
+			Assert::AreEqual(12, mnb3.v());
+
+			mnb3 /= mnb;
+			Assert::AreEqual(2, (int)mnb3);
+
+			Assert::AreEqual(4, mnb.distanceTo(mnb3));
+			Assert::AreEqual(4, mnb3.distanceTo(mnb));
+			Assert::AreEqual(0, mnb.distanceTo(mnb2));
 		}
 	};
 

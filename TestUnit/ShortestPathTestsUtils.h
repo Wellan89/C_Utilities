@@ -8,8 +8,6 @@ TODO :
 
 - Créer une classe arbre
 
-- Include la classe ModulusNumber de Code of the Rings
-
 - Eliminer la récursivité dans DFS
 - Dans Floyd-Warshall, détecter les circuits absorbants
 

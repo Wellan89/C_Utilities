@@ -79,6 +79,8 @@ $RECYCLE.BIN/
 *.sdf
 *.opensdf
 *.ipch
+*.iobj
+*.ipdb
 *.tlog
 *.cache
 *.pdb
