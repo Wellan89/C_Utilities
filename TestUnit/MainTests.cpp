@@ -180,6 +180,46 @@ namespace TestUnit
 
 	TEST_CLASS(GraphTests)
 	{
+		TEST_METHOD(GraphRemoveLink_NoCostCheck)
+		{
+			Graph<> g(5);
+			g.addLink(0, 1, 2);
+			g.addLink(0, 2, 5);
+			g.addLink(3, 2, 8, true);
+			g.addLink(2, 3, 10);
+			g.addLink(1, 4, 4);
+			g.addLink(4, 3, 24, true);
+
+			g.removeLink(3, 2, true);
+			Assert::AreEqual((size_t)2, g[2].getLinks().size());
+			Assert::AreEqual((size_t)0, g[3].getLinks().size());
+
+			g.removeLink(0, 4, false);
+			Assert::AreEqual((size_t)2, g[4].getLinks().size());
+
+			g.removeLink(4, 1, false);
+			Assert::AreEqual((size_t)1, g[4].getLinks().size());
+		}
+		TEST_METHOD(GraphRemoveLink_WithCostCheck)
+		{
+			Graph<> g(5);
+			g.addLink(0, 1, 2);
+			g.addLink(0, 2, 5);
+			g.addLink(3, 2, 8, true);
+			g.addLink(2, 3, 10);
+			g.addLink(1, 4, 4);
+			g.addLink(4, 3, 24, true);
+
+			g.removeLinkWithCostCheck(3, 2, 8, false);
+			Assert::AreEqual((size_t)2, g[2].getLinks().size());
+			Assert::AreEqual((size_t)1, g[3].getLinks().size());
+
+			g.removeLinkWithCostCheck(0, 4, 4, false);
+			Assert::AreEqual((size_t)2, g[4].getLinks().size());
+
+			g.removeLinkWithCostCheck(1, 4, 4, true);
+			Assert::AreEqual((size_t)2, g[4].getLinks().size());
+		}
 		TEST_METHOD(GraphSimpleTopologicalOrder_Algo2)
 		{
 			// Exemple tiré du cours d'Algorithmique 2 (Ensimag 1A) :

@@ -4,17 +4,9 @@
 /*
 TODO :
 - Ecrire une classe utilitaire de BruteForce typique
-- Nouvelle macro de suppression de liens à implémenter :
-	#define REMOVE_LINKS_FROM_ITERABLE(links, target)									\
-				do {																	\
-					auto& nodeLinks = (links);											\
-					auto& tgt = (target);												\
-					nodeLinks.erase(std::remove_if(nodeLinks.begin(), nodeLinks.end(),	\
-						[&tgt](const Link& l)											\
-						{																\
-							return (l.getTargetIndex() == tgt);							\
-						}), nodeLinks.end());											\
-				} while(false)
+- Créer une classe pour mémoïser les résultats d'une fonction à une ou plusieurs variables de manière transparente
+
+- Créer une classe arbre
 
 - Include la classe ModulusNumber de Code of the Rings
 

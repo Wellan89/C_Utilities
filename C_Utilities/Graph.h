@@ -170,13 +170,15 @@ public:
 	}
 	void removeLink(IndexNoeud start, IndexNoeud end, bool oneDirection = false)
 	{
-#define REMOVE_LINKS_FROM_ITERABLE(links, target)								\
-			do {																\
-				auto& nodeLinks = (links);										\
-				for (auto it = nodeLinks.begin(); it != nodeLinks.end(); ++it)	\
-					if (it->getTargetIndex() == (end))							\
-						it = nodeLinks.erase(it);								\
-			} while(false)
+#define REMOVE_LINKS_FROM_ITERABLE(links, target)									\
+			do {																	\
+				auto& nodeLinks = (links);											\
+				nodeLinks.erase(std::remove_if(nodeLinks.begin(), nodeLinks.end(),	\
+					[target](const Link& l)											\
+					{																\
+						return (l.getTargetIndex() == target);						\
+					}), nodeLinks.end());											\
+			} while (false)
 
 		// Ici, tous les liens de start à end sont supprimés, peu importe leur coût.
 		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end);
@@ -191,13 +193,15 @@ public:
 	}
 	void removeLinkWithCostCheck(IndexNoeud start, IndexNoeud end, Cout cost, bool oneDirection = false)
 	{
-#define REMOVE_LINKS_FROM_ITERABLE(links, target, cost)								\
-			do {																	\
-				auto& nodeLinks = (links);											\
-				for (auto it = nodeLinks.begin(); it != nodeLinks.end(); ++it)		\
-					if (it->getTargetIndex() == (end) && it->getCost() == (cost))	\
-						it = nodeLinks.erase(it);									\
-			} while(false)
+#define REMOVE_LINKS_FROM_ITERABLE(links, target, cost)									\
+			do {																		\
+				auto& nodeLinks = (links);												\
+				nodeLinks.erase(std::remove_if(nodeLinks.begin(), nodeLinks.end(),		\
+					[target, cost](const Link& l)										\
+					{																	\
+						return (l.getTargetIndex() == target && l.getCost() == cost);	\
+					}), nodeLinks.end());												\
+			} while (false)
 
 		// Ici, on ne supprime que les liens de start à end avec le coût spécifié.
 		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end, cost);
