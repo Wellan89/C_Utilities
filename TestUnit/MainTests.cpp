@@ -2,11 +2,13 @@
 #include "ToStringSpecializations.cpp"
 #include <cstdlib>
 #include <ctime>
+#include <array>
 
 #include "List.c"
 #include "cost_priority_queue.h"
 #include "ModulusNumber.h"
 #include "Memoizator.h"
+#include "Bruteforcer.h"
 #include "Graph.h"
 
 using namespace std;
@@ -345,6 +347,99 @@ namespace TestUnit
 				for (int j = 0; j <= 5; j++)
 					Assert::AreEqual(abs(i) + abs(j), recAdd_mem(abs(i), abs(j)));
 			Assert::AreEqual((size_t)36, recAdd_mem.getTableSize());
+		}
+	};
+
+	TEST_CLASS(BruteforcerTests)
+	{
+		TEST_METHOD(Bruteforcer_RandomArrayRead)
+		{
+			constexpr int size = 32;
+			vector<int> arr(size * size * size * size);
+			for (size_t i = 0; i < arr.size(); i++)
+				arr[i] = (rand() % 1000000);
+
+			int maxPos = max_element(arr.begin(), arr.end()) - arr.begin();
+			int maxVal = arr[maxPos];
+
+			int i, j, k, l;
+			vector<ParamRange<int> > params;
+			params.push_back(ParamRange<int>(&i, 0, size - 1, 1));
+			params.push_back(ParamRange<int>(&j, 0, size - 1, 1));
+			params.push_back(ParamRange<int>(&k, 0, size - 1, 1));
+			params.push_back(ParamRange<int>(&l, 0, size - 1, 1));
+
+			auto eval = [&]() { return arr[((i * size + j) * size + k) * size + l]; };
+			FunctionAlgorithm<decltype(eval)> evalAlgo(eval);
+
+			Bruteforcer<decltype(evalAlgo), int> bf(evalAlgo, params);
+			bf.run();
+
+			Assert::AreEqual(maxVal, (int)bf.getBestScore());
+			Assert::AreEqual(maxPos / (size * size * size), bf.getBestParams()[0]);
+			Assert::AreEqual(((maxPos / (size * size)) % size), bf.getBestParams()[1]);
+			Assert::AreEqual(((maxPos / size) % size), bf.getBestParams()[2]);
+			Assert::AreEqual(maxPos % (size), bf.getBestParams()[3]);
+		}
+		TEST_METHOD(Bruteforcer_MemoizedFunction)
+		{
+			constexpr int maxVal = 50;
+			auto func = [&](int x, int y) { return (x * y); };
+
+			MultipleArgsMemoizator<int, int, int> memFunc(func);
+
+			int dummy1, dummy2;
+			FunctionAlgorithm<decltype(memFunc), int, int> memFuncAlgo(memFunc);
+			
+			vector<ParamRange<int> > params;
+			params.push_back(ParamRange<int>(&(get<0>(memFuncAlgo.getArgs())), 0, maxVal, 1));
+			params.push_back(ParamRange<int>(&dummy1, 0, maxVal, 1));
+			params.push_back(ParamRange<int>(&(get<1>(memFuncAlgo.getArgs())), 0, maxVal, 1));
+			params.push_back(ParamRange<int>(&dummy2, 0, maxVal, 1));
+
+			Bruteforcer<decltype(memFuncAlgo), int> bf(memFuncAlgo, params);
+			bf.run();
+
+			Assert::AreEqual(maxVal * maxVal, (int)bf.getBestScore());
+			Assert::AreEqual(maxVal, bf.getBestParams()[0]);
+			Assert::AreEqual(maxVal, bf.getBestParams()[2]);
+			Assert::AreEqual((maxVal + 1) * (maxVal + 1), (int)memFunc.getTableSize());
+		}
+		TEST_METHOD(Bruteforcer_ConditionalElementsPicking)
+		{
+			// But : maximiser la somme des éléments choisis dans le tableau ci-dessous,
+			// sans jamais choisir deux éléments consécutifs.
+			vector<int> arr = { 7, 3, 6, 2, 5, 9, 1, 3, 4, 9, 1, 3, 6, 2, 8, 1, 3, 4, 6, 7 };
+			vector<int> sol = { 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1 };
+
+			auto eval = [&](vector<int> choices)
+				{
+					int sum = 0;
+					for (size_t i = 0; i < arr.size(); i++)
+					{
+						if (choices[i])
+						{
+							if (i + 1 < arr.size() && choices[i + 1])
+								return -1;
+							sum += arr[i];
+						}
+					}
+					return sum;
+				};
+
+			FunctionAlgorithm<decltype(eval), vector<int> > evalAlgo(eval);
+			get<0>(evalAlgo.getArgs()).resize(arr.size());
+
+			vector<ParamRange<int> > params;
+			for (size_t i = 0; i < arr.size(); i++)
+				params.push_back(ParamRange<int>(&(get<0>(evalAlgo.getArgs())[i]), 0, 1, 1));
+
+			Bruteforcer<decltype(evalAlgo), int> bf(evalAlgo, params);
+			bf.run();
+
+			Assert::AreEqual(eval(sol), (int)bf.getBestScore());
+			for (size_t i = 0; i < arr.size(); i++)
+				Assert::AreEqual(sol[i], bf.getBestParams()[i]);
 		}
 	};
 

@@ -97,6 +97,7 @@
     <ClInclude Include="List.h" />
     <ClInclude Include="Memoizator.h" />
     <ClInclude Include="ModulusNumber.h" />
+    <ClInclude Include="AlgorithmUtility.h" />
     <ClInclude Include="RandomizedAlgoEvaluator.h" />
     <ClInclude Include="RandomizedAlgoOptimizer.h" />
     <ClInclude Include="TupleHash.h" />

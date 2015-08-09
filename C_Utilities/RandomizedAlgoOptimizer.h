@@ -5,6 +5,8 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <limits>
+#include "AlgorithmUtility.h"
 
 #ifndef ALGORITHM_OPTIMIZATION_DEBUG_LOG
 #define ALGORITHM_OPTIMIZATION_DEBUG_LOG(msg)
@@ -14,26 +16,7 @@
 // d'un algorithme basé sur une heuristique aléatoire.
 // RandomizedAlgorithm doit avoir la fonction suivante :
 //		float solve();				// Fonction de calcul de l'algorithme, renvoyant son score. Plus il est haut, meilleur il est.
-template<class Param = float>
-struct ParamRange
-{
-	Param* value;
-	Param minValue;
-	Param maxValue;
-	Param step;
-
-	// Le choix de changement d'un paramètre ne sera effectué que si le rapport (flottant)
-	// entre le score avec l'ancien paramètre et celui avec le nouveau paramètre
-	// est hors de l'intervalle [1 - baseRatioThreshold ; 1 + baseRatioThreshold].
-	float baseRatioThreshold;
-
-	ParamRange(Param* val, Param minVal, Param maxVal, Param stepVal,
-		float baseRatioThresholdVal = 0.1f)
-		: value(val), minValue(minVal), maxValue(maxVal), step(stepVal),
-		baseRatioThreshold(baseRatioThresholdVal)
-	{ }
-};
-template<class RandomizedAlgorithm, class Param = float>
+template<class RandomizedAlgorithm, class Param>
 class RandomizedAlgoOptimizer
 {
 protected:
@@ -60,13 +43,13 @@ protected:
 public:
 	RandomizedAlgoOptimizer(RandomizedAlgorithm& _algo, const std::vector<ParamRange<Param> >& _params,
 			int _solveLoopsCount = 1000)
-		: algo(_algo), params(_params), solveLoopsCount(std::max(_solveLoopsCount, 1)), bestScore(0.0f)
+		: algo(_algo), params(_params), solveLoopsCount(std::max(_solveLoopsCount, 1)), bestScore(-std::numeric_limits<float>::infinity())
 	{ }
 
 	void run()
 	{
 		// Optimise chaque probabilité en les traitant dans l'ordre fourni
-		for (unsigned int i = 0; i < params.size(); i++)
+		for (size_t i = 0; i < params.size(); i++)
 		{
 			ALGORITHM_OPTIMIZATION_DEBUG_LOG(
 				"Optimizing parameter " << i << "..." << std::endl);
@@ -219,7 +202,7 @@ public:
 		os << "RandomizedAlgoOptimizer results :" << endl
 			<< "Best score = " << bestScore << endl
 			<< endl << "Best parameters :" << endl;
-		for (unsigned int i = 0; i < params.size(); i++)
+		for (size_t i = 0; i < params.size(); i++)
 			os << "Parameter " << i << " = " << *(params[i].value) << endl;
 	}
 };

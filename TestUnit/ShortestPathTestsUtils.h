@@ -3,14 +3,12 @@
 
 /*
 TODO :
-- Ecrire une classe utilitaire de BruteForce typique
-		- Retiens la meilleure solution
-		- Affiche chaque solution meilleure trouvée
-		- Permet de tester si une combinaison d'arguments est valide
-
 - Créer une classe arbre
 
 - Eliminer la récursivité dans DFS
+- Eliminer la récursivité dans Bruteforcer
+	=> Effectuer des profilages pour déterminer si c'est utile
+
 - Dans Floyd-Warshall, détecter les circuits absorbants
 
 - Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
@@ -20,7 +18,6 @@ TODO :
 
 - Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique
 
-- Tester la fonction de suppression de liens du graphe
 - Tester les algos de plus court chemin avec des coûts très proches du coût "infini"
 
 - Créer un test avec de nombreux liens au coût nul

@@ -161,10 +161,10 @@ namespace TestUnit
 
 			RandomMax randMax;
 
-			vector<ParamRange<> > params;
-			params.push_back(ParamRange<>(&randMax.maxVal, 0.0f, 1.001f, 0.1f));
+			vector<ParamRange<float> > params;
+			params.push_back(ParamRange<float>(&randMax.maxVal, 0.0f, 1.001f, 0.1f));
 
-			RandomizedAlgoOptimizer<RandomMax> optimizer(randMax, params);
+			RandomizedAlgoOptimizer<RandomMax, float> optimizer(randMax, params);
 			optimizer.run();
 			Assert::IsTrue(abs(*(optimizer.getBestParams()[0].value) - 1.0f) < 0.01f);
 		}
@@ -196,10 +196,10 @@ namespace TestUnit
 
 			RandomMaxMiddleVal randMaxMiddleVal;
 
-			vector<ParamRange<> > params;
-			params.push_back(ParamRange<>(&randMaxMiddleVal.val, 0.0f, 2.001f, 0.2f));
+			vector<ParamRange<float> > params;
+			params.push_back(ParamRange<float>(&randMaxMiddleVal.val, 0.0f, 2.001f, 0.2f));
 
-			RandomizedAlgoOptimizer<RandomMaxMiddleVal> optimizer(randMaxMiddleVal, params, 250);
+			RandomizedAlgoOptimizer<RandomMaxMiddleVal, float> optimizer(randMaxMiddleVal, params, 250);
 			optimizer.run();
 			Assert::IsTrue(abs(*(optimizer.getBestParams()[0].value) - 1.0f) < 0.01f);
 		}
@@ -217,10 +217,10 @@ namespace TestUnit
 			for (float startVal : startVals)
 			{
 				float placebo;
-				vector<ParamRange<> > params;
-				params.push_back(ParamRange<>(&placebo, startVal, 2.001f, 0.001f));
+				vector<ParamRange<float> > params;
+				params.push_back(ParamRange<float>(&placebo, startVal, 2.001f, 0.001f));
 
-				RandomizedAlgoOptimizer<RandomMax> optimizer(randMax, params);
+				RandomizedAlgoOptimizer<RandomMax, float> optimizer(randMax, params);
 				optimizer.run();
 				Assert::IsTrue(abs(*(optimizer.getBestParams()[0].value) - startVal) < 0.05f);
 			}
