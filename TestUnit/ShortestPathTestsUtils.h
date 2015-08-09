@@ -4,6 +4,9 @@
 /*
 TODO :
 - Ecrire une classe utilitaire de BruteForce typique
+		- Retiens la meilleure solution
+		- Affiche chaque solution meilleure trouvée
+		- Permet de tester si une combinaison d'arguments est valide
 
 - Créer une classe arbre
 

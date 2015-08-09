@@ -14,12 +14,17 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace std
 {
-	template<> class hash<pair<int, float>>
+	size_t hash_combine(size_t h1, size_t h2)
+	{
+		return (h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2)));
+	}
+
+	template<class Left, class Right> class hash<pair<Left, Right>>
 	{
 	public:
-		size_t operator()(const pair<int, float>& p) const
+		size_t operator()(const pair<Left, Right>& p) const
 		{
-			return (3 * hash<int>()(p.first) + hash<float>()(p.second));
+			return hash_combine(hash<Left>()(p.first), hash<Right>()(p.second));
 		}
 	};
 }
@@ -254,31 +259,46 @@ namespace TestUnit
 			}
 		};
 
+		template<class RecFunc>
+		static int recFibonacci(RecFunc& recFibo, int n)
+		{
+			if (n <= 1)
+				return n;
+
+			return recFibo(n - 1) + recFibo(n - 2);
+		}
+		static int fibonacci(int n)
+		{
+			return recFibonacci(fibonacci, n);
+		}
+
 		TEST_METHOD(Memoizator_SimpleFunction)
 		{
-			Memoizator<decltype(simpleFunc), int> simpleFunc_mem(simpleFunc);
+			Memoizator<int, int> simpleFunc_mem(simpleFunc);
 			for (int i = -5; i <= 5; i++)
 				Assert::AreEqual(simpleFunc(abs(i)), simpleFunc_mem(abs(i)));
+			Assert::AreEqual((size_t)6, simpleFunc_mem.getTableSize());
 		}
 		TEST_METHOD(Memoizator_ClassFunction)
 		{
 			ClassFunc classFunc(10);
-			Memoizator<ClassFunc, int> classFunc_mem(classFunc);
+			Memoizator<int, int> classFunc_mem(classFunc);
 			for (int i = -5; i <= 5; i++)
 				Assert::AreEqual(classFunc(abs(i)), classFunc_mem(abs(i)));
+			Assert::AreEqual((size_t)6, classFunc_mem.getTableSize());
 		}
 		TEST_METHOD(Memoizator_LambdaFunction)
 		{
 			auto lambda = [](int x) { return x * x; };
-			Memoizator<decltype(lambda), int> lambda_mem(lambda);
+			Memoizator<int, int> lambda_mem(lambda);
 			for (int i = -5; i <= 5; i++)
 				Assert::AreEqual(lambda(abs(i)), lambda_mem(abs(i)));
+			Assert::AreEqual((size_t)6, lambda_mem.getTableSize());
 		}
-
 		TEST_METHOD(Memoizator_ComplexArgs)
 		{
 			auto f = [](pair<int, float> p) { return p.second * (float)p.first; };
-			Memoizator<decltype(f), pair<int, float>> f_mem(f);
+			Memoizator<float, pair<int, float>> f_mem(f);
 
 			for (int i = -5; i <= 5; i++)
 			{
@@ -288,6 +308,43 @@ namespace TestUnit
 					Assert::AreEqual(f(arg), f_mem(arg));
 				}
 			}
+			Assert::AreEqual((size_t)36, f_mem.getTableSize());
+		}
+		TEST_METHOD(Memoizator_MultipleArguments)
+		{
+			auto add = [](int x, int y) { return x + y; };
+			MultipleArgsMemoizator<int, int, int> add_mem(add);
+
+			for (int i = -5; i <= 5; i++)
+				for (int j = 0; j <= 5; j++)
+					Assert::AreEqual(add(abs(i), abs(j)), add_mem(abs(i), abs(j)));
+			Assert::AreEqual((size_t)36, add_mem.getTableSize());
+		}
+		TEST_METHOD(Memoizator_RecursiveFunction)
+		{
+			typedef RecursiveMemoizator<int, int> RecMem;
+			RecMem fibo_recMem(recFibonacci<RecMem>);
+			int res = fibo_recMem(1);
+			for (int i = -5; i <= 5; i++)
+				Assert::AreEqual(fibonacci(abs(i)), fibo_recMem(abs(i)));
+			Assert::AreEqual((size_t)6, fibo_recMem.getTableSize());
+		}
+		TEST_METHOD(Memoizator_RecursiveMultipleArguments)
+		{
+			auto recAdd = [](auto& recAddFunc, int x, int y)
+				{
+					if (y < 1)
+						return x + y;
+					else
+						return 1 + recAddFunc(x, y - 1);
+				};
+
+			RecursiveMultipleArgsMemoizator<int, int, int> recAdd_mem(recAdd);
+
+			for (int i = -5; i <= 5; i++)
+				for (int j = 0; j <= 5; j++)
+					Assert::AreEqual(abs(i) + abs(j), recAdd_mem(abs(i), abs(j)));
+			Assert::AreEqual((size_t)36, recAdd_mem.getTableSize());
 		}
 	};
 

@@ -87,6 +87,7 @@
     <ClInclude Include="BellmanFord.h" />
     <ClInclude Include="BellmanFordYen.h" />
     <ClInclude Include="BFS_ShortestPath.h" />
+    <ClInclude Include="Bruteforcer.h" />
     <ClInclude Include="cost_priority_queue.h" />
     <ClInclude Include="DFS_ShortestPath.h" />
     <ClInclude Include="Dijkstra.h" />
@@ -98,6 +99,7 @@
     <ClInclude Include="ModulusNumber.h" />
     <ClInclude Include="RandomizedAlgoEvaluator.h" />
     <ClInclude Include="RandomizedAlgoOptimizer.h" />
+    <ClInclude Include="TupleHash.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
