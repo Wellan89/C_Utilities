@@ -14,6 +14,12 @@ void AStarDynamic<Graphe>::computeShortestPathFrom(IndexNoeud startNode)
 	cost_priority_queue<IndexNoeud, Cout> nodesToSee;
 	nodesToSee.push(startNode, g.getNodeHeuristic(startNode));
 
+#ifdef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
+	// La priorité du dernier noeud validé par l'algorithme : celle-ci est toujours croissante,
+	// et permet ainsi de déterminer les noeuds déjà visités simplement par leur priorité.
+	Cout currentPriority = 0;
+#endif
+
 	while (!nodesToSee.empty())
 	{
 		IndexNoeud node = nodesToSee.top();

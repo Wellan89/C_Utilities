@@ -48,12 +48,6 @@ protected:
 	IndexNoeud nbExploredNodes;
 #endif
 
-#ifdef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
-	// La priorité du dernier noeud validé par l'algorithme : celle-ci est toujours croissante,
-	// et permet ainsi de déterminer les noeuds déjà visités simplement par leur priorité.
-	Cout currentPriority;
-#endif
-
 	// Indique si un lien au coût négatif a été détecté dans le graphe
 	bool negativeLinkFound;
 
@@ -64,9 +58,6 @@ protected:
 		endNode = Graphe::INVALID_NODE_INDEX();
 #ifdef _DEBUG
 		nbExploredNodes = 0;
-#endif
-#ifdef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
-		currentPriority = 0;
 #endif
 		negativeLinkFound = false;
 	}

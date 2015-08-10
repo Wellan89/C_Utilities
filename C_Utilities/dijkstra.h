@@ -38,12 +38,6 @@ protected:
 	std::vector<DjNodeInfo> dj;
 	const Graphe& g;
 
-#ifdef DIJKSTRA_CLOSED_SET_REMOVAL_OPTIMIZATION
-	// Le coût du dernier chemin validé par l'algorithme : celui-ci est toujours croissant,
-	// et permet ainsi de déterminer les noeuds déjà visités simplement par leur coût.
-	Cout currentCost;
-#endif
-
 	// Indique si un lien au coût négatif a été détecté dans le graphe
 	bool negativeLinkFound;
 
@@ -52,9 +46,6 @@ protected:
 	{
 		dj.clear();
 		dj.resize(g.size());
-#ifdef DIJKSTRA_CLOSED_SET_REMOVAL_OPTIMIZATION
-		currentCost = 0;
-#endif
 		negativeLinkFound = false;
 	}
 

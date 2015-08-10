@@ -14,6 +14,12 @@ void Dijkstra<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 	dj[startNode].totalCost = 0;
 	nodesToSee.push(startNode, dj[startNode].totalCost);
 
+#ifdef DIJKSTRA_CLOSED_SET_REMOVAL_OPTIMIZATION
+	// Le coût du dernier chemin validé par l'algorithme : celui-ci est toujours croissant,
+	// et permet ainsi de déterminer les noeuds déjà visités simplement par leur coût.
+	Cout currentCost = 0;
+#endif
+
 	while (!nodesToSee.empty())
 	{
 		IndexNoeud node = nodesToSee.top();
