@@ -32,7 +32,10 @@ template<class ReturnType, class... Args>
 class FunctionAlgorithm
 {
 protected:
-	std::function<ReturnType(Args...)> func;
+	typedef FunctionAlgorithm<ReturnType, Args...> MyType;
+	typedef std::function<ReturnType(Args...)> Func;
+
+	Func func;
 	std::tuple<Args...> args;
 
 	// Invoque une fonction prenant plusieurs arguments d'après un tuple.
@@ -49,13 +52,20 @@ protected:
 
 public:
 	template<class AutoFunc>
-	FunctionAlgorithm(AutoFunc& function) : func(function)
+	FunctionAlgorithm(const AutoFunc& function) : func(function)
 	{ }
 
 	// Renvoit les arguments avec lesquels la fonction sera appelée
 	std::tuple<Args...>& getArgs()
 	{
 		return args;
+	}
+
+	// Renvoit l'argument d'indice spécifié
+	template<size_t index>
+	decltype(std::get<index>(args))& getArg()
+	{
+		return std::get<index>(args);
 	}
 
 	ReturnType solve()

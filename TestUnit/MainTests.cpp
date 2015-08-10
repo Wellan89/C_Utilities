@@ -351,6 +351,24 @@ namespace TestUnit
 					Assert::AreEqual(abs(i) + abs(j), recAdd_mem(abs(i), abs(j)));
 			Assert::AreEqual((size_t)36, recAdd_mem.getTableSize());
 		}
+		TEST_METHOD(Memoizator_TemporaryObjects)
+		{
+			function<int(int)> mem(Memoizator<int, int>([](int x)
+				{ return 2 * x; }));
+			Assert::AreEqual(64, mem(32));
+
+			function<int(int)> recMem(RecursiveMemoizator<int, int>([](auto& rec, int x)
+				{ return (x <= 0 ? x : rec(x - 1) + 1); }));
+			Assert::AreEqual(16, recMem(16));
+
+			function<int(int, int)> multMem(MultipleArgsMemoizator<int, int, int>([](int x, int y)
+				{ return x + y; }));
+			Assert::AreEqual(96, multMem(64, 32));
+
+			function<int(int, int)> recMultMem(RecursiveMultipleArgsMemoizator<int, int, int>([](auto& rec, int x, int y)
+				{ return (x <= 0 ? x + y : rec(x - 1, y) + 1); }));
+			Assert::AreEqual(48, recMultMem(32, 16));
+		}
 	};
 
 	TEST_CLASS(BruteforcerTests)
@@ -389,21 +407,21 @@ namespace TestUnit
 		}
 		TEST_METHOD(Bruteforcer_MemoizedFunction)
 		{
-			constexpr int maxVal = 50;
-
-			MultipleArgsMemoizator<int, int, int> memFunc(
-				[&](int x, int y)
-				{
-					return (x * y);
-				});
+			constexpr int maxVal = 15;
 
 			int dummy1, dummy2;
-			FunctionAlgorithm<int, int, int> memFuncAlgo(memFunc);
+			FunctionAlgorithm<int, int, int> memFuncAlgo(RecursiveMultipleArgsMemoizator<int, int, int>(
+				[&](auto& recFunc, int x, int y)
+				{
+					if (x == 1)
+						return y;
+					return (x * y) + recFunc(1, y) - y;
+				}));
 			
 			vector<ParamRange<int> > params;
-			params.push_back(ParamRange<int>(&(get<0>(memFuncAlgo.getArgs())), 0, maxVal, 1));
+			params.push_back(ParamRange<int>(&memFuncAlgo.getArg<0>(), 0, maxVal, 1));
 			params.push_back(ParamRange<int>(&dummy1, 0, maxVal, 1));
-			params.push_back(ParamRange<int>(&(get<1>(memFuncAlgo.getArgs())), 0, maxVal, 1));
+			params.push_back(ParamRange<int>(&memFuncAlgo.getArg<1>(), 0, maxVal, 1));
 			params.push_back(ParamRange<int>(&dummy2, 0, maxVal, 1));
 
 			Bruteforcer<decltype(memFuncAlgo), int> bf(memFuncAlgo, params);
@@ -412,7 +430,6 @@ namespace TestUnit
 			Assert::AreEqual(maxVal * maxVal, (int)bf.getBestScore());
 			Assert::AreEqual(maxVal, bf.getBestParams()[0]);
 			Assert::AreEqual(maxVal, bf.getBestParams()[2]);
-			Assert::AreEqual((maxVal + 1) * (maxVal + 1), (int)memFunc.getTableSize());
 		}
 		TEST_METHOD(Bruteforcer_ConditionalElementsPicking)
 		{

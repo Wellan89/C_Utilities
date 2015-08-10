@@ -3,9 +3,9 @@
 #define CC_PRECOMPUTATION_HEURISTIC_MAX_SIZE	10000000
 
 #include "CounterCulture.h"
-#include "AStarDynamic.cpp"
-#include "AStar.cpp"
-#include "Dijkstra.cpp"
+#include "AStarDynamic.h"
+#include "AStar.h"
+#include "Dijkstra.h"
 #include <iostream>
 #include <ctime>
 

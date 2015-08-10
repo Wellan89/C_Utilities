@@ -17,7 +17,7 @@ TODO :
 - Créer un test avec de nombreux liens au coût nul
 	+ déterminer s'il faut choisir de définir de manière permanente CLOSED_SET_OPTIMIZATION pour AStar et Dijkstra
 
-- Déplacer toutes les fonctions des fichiers sources dépendant de templates dans les headers
+- Implémenter les sémantiques move de C++ ?
 
 - Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique ?
 
@@ -44,15 +44,15 @@ TODO :
 #include "ToStringSpecializations.cpp"
 #include "Graph.h"
 #include "DynamicGraph.h"
-#include "Dijkstra.cpp"
-#include "AStar.cpp"
-#include "AStarDynamic.cpp"
-#include "Bellman.cpp"
-#include "DFS_ShortestPath.cpp"
-#include "BFS_ShortestPath.cpp"
-#include "BellmanFord.cpp"
-#include "BellmanFordYen.cpp"
-#include "FloydWarshall.cpp"
+#include "Dijkstra.h"
+#include "AStar.h"
+#include "AStarDynamic.h"
+#include "Bellman.h"
+#include "DFS_ShortestPath.h"
+#include "BFS_ShortestPath.h"
+#include "BellmanFord.h"
+#include "BellmanFordYen.h"
+#include "FloydWarshall.h"
 
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

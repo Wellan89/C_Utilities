@@ -43,16 +43,80 @@ protected:
 public:
 	BFS_ShortestPath(const Graphe& gr) : g(gr) { reset(); }
 
-	void computeShortestPathsFrom(IndexNoeud startNode);
+	void computeShortestPathsFrom(IndexNoeud startNode)
+	{
+		// Réinitialise les informations sur les noeuds
+		reset();
+
+		// Indique le coût du premier noeud et l'ajoute à la liste des noeuds à parcourir
+		std::deque<IndexNoeud> nodesToSee;
+		bfs[startNode].totalCost = 0;
+		nodesToSee.push_back(startNode);
+
+		while (!nodesToSee.empty())
+		{
+			IndexNoeud node = nodesToSee.front();
+			nodesToSee.pop_front();
+
+			Cout nodeTotalCost = bfs[node].totalCost;
+
+			const auto& links = g[node].getLinks();
+			for (auto it = links.begin(); it != links.end(); ++it)
+			{
+				IndexNoeud targetNode = it->getTargetIndex();
+
+				Cout linkCost = it->getCost();
+				if (linkCost < 0)
+				{
+					// On a trouvé une arête avec un coût négatif : on quitte ici.
+					reset();
+					negativeLinkFound = true;
+					return;
+				}
+
+				Cout newCost = nodeTotalCost + linkCost;
+				if (newCost < bfs[targetNode].totalCost)
+				{
+					bfs[targetNode].previousNode = node;
+					bfs[targetNode].totalCost = newCost;
+					nodesToSee.push_back(targetNode);
+				}
+			}
+		}
+	}
 
 	bool negativeLinkDetected() const
 	{
 		return negativeLinkFound;
 	}
-	bool canReachNode(IndexNoeud node) const;
-	Cout getCostTo(IndexNoeud node) const;
-	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const;
-	std::vector<IndexNoeud> getReverseShortestPathTo(IndexNoeud endNode) const;
+	bool canReachNode(IndexNoeud node) const
+	{
+		return (bfs[node].totalCost != Graphe::INFINITE_COST());
+	}
+	Cout getCostTo(IndexNoeud node) const
+	{
+		return bfs[node].totalCost;
+	}
+	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const
+	{
+		std::deque<IndexNoeud> l;
+		while (endNode != Graphe::INVALID_NODE_INDEX())
+		{
+			l.push_front(endNode);
+			endNode = bfs[endNode].previousNode;
+		}
+		return l;
+	}
+	std::vector<IndexNoeud> getReverseShortestPathTo(IndexNoeud endNode) const
+	{
+		std::vector<IndexNoeud> l;
+		while (endNode != Graphe::INVALID_NODE_INDEX())
+		{
+			l.push_back(endNode);
+			endNode = bfs[endNode].previousNode;
+		}
+		return l;
+	}
 };
 
 #endif

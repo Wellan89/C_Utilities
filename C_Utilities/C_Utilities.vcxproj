@@ -69,15 +69,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AStar.cpp" />
-    <ClCompile Include="AStarDynamic.cpp" />
-    <ClCompile Include="Bellman.cpp" />
-    <ClCompile Include="BellmanFord.cpp" />
-    <ClCompile Include="BellmanFordYen.cpp" />
-    <ClCompile Include="BFS_ShortestPath.cpp" />
-    <ClCompile Include="DFS_ShortestPath.cpp" />
-    <ClCompile Include="Dijkstra.cpp" />
-    <ClCompile Include="FloydWarshall.cpp" />
     <ClCompile Include="List.c" />
   </ItemGroup>
   <ItemGroup>
