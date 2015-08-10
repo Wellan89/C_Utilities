@@ -23,7 +23,7 @@ TODO :
 
 - Eliminer la récursivité dans DFS ?
 
-- Essayer de paralléliser Bruteforcer ?
+- Essayer de paralléliser Bruteforcer avec OpenMP ?
 	-> Impossible actuellement car chaque boucle change les mêmes paramètres en mémoire
 */
 

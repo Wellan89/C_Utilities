@@ -291,16 +291,19 @@ namespace TestUnit
 		}
 		TEST_METHOD(Memoizator_LambdaFunction)
 		{
-			auto lambda = [](int x) { return x * x; };
-			Memoizator<int, int> lambda_mem(lambda);
+			Memoizator<int, int> lambda_mem(
+				[](int x)
+				{
+					return x * x;
+				});
 			for (int i = -5; i <= 5; i++)
-				Assert::AreEqual(lambda(abs(i)), lambda_mem(abs(i)));
+				Assert::AreEqual(i * i, lambda_mem(abs(i)));
 			Assert::AreEqual((size_t)6, lambda_mem.getTableSize());
 		}
 		TEST_METHOD(Memoizator_ComplexArgs)
 		{
 			auto f = [](pair<int, float> p) { return p.second * (float)p.first; };
-			Memoizator<float, pair<int, float>> f_mem(f);
+			Memoizator<float, pair<int, float> > f_mem(f);
 
 			for (int i = -5; i <= 5; i++)
 			{
@@ -369,8 +372,11 @@ namespace TestUnit
 			params.push_back(ParamRange<int>(&k, 0, size - 1, 1));
 			params.push_back(ParamRange<int>(&l, 0, size - 1, 1));
 
-			auto eval = [&]() { return arr[((i * size + j) * size + k) * size + l]; };
-			FunctionAlgorithm<decltype(eval)> evalAlgo(eval);
+			FunctionAlgorithm<int> evalAlgo(
+				[&]()
+				{
+					return arr[((i * size + j) * size + k) * size + l];
+				});
 
 			Bruteforcer<decltype(evalAlgo), int> bf(evalAlgo, params);
 			bf.run();
@@ -384,12 +390,15 @@ namespace TestUnit
 		TEST_METHOD(Bruteforcer_MemoizedFunction)
 		{
 			constexpr int maxVal = 50;
-			auto func = [&](int x, int y) { return (x * y); };
 
-			MultipleArgsMemoizator<int, int, int> memFunc(func);
+			MultipleArgsMemoizator<int, int, int> memFunc(
+				[&](int x, int y)
+				{
+					return (x * y);
+				});
 
 			int dummy1, dummy2;
-			FunctionAlgorithm<decltype(memFunc), int, int> memFuncAlgo(memFunc);
+			FunctionAlgorithm<int, int, int> memFuncAlgo(memFunc);
 			
 			vector<ParamRange<int> > params;
 			params.push_back(ParamRange<int>(&(get<0>(memFuncAlgo.getArgs())), 0, maxVal, 1));
@@ -427,7 +436,7 @@ namespace TestUnit
 					return sum;
 				};
 
-			FunctionAlgorithm<decltype(eval), vector<int> > evalAlgo(eval);
+			FunctionAlgorithm<int, vector<int> > evalAlgo(eval);
 			get<0>(evalAlgo.getArgs()).resize(arr.size());
 
 			vector<ParamRange<int> > params;
