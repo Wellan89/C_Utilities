@@ -36,12 +36,48 @@ protected:
 			bestParams[i] = *(params[i].value);
 	}
 
-	// Teste toutes les combinaisons possibles à partir d'un certain paramètre
-	void runFromParam(size_t paramIdx)
+public:
+	Bruteforcer(Algorithm& _algo, const std::vector<ParamRange<Param> >& _params)
+		: algo(_algo), params(_params)
+	{ }
+
+	void run()
 	{
-		if (paramIdx >= params.size())
+		// Initialise la recherche avec les paramètres minimaux
+		for (ParamRange<Param>& param : params)
+			(*param.value) = param.minValue;
+
+		bestParams.resize(params.size());
+		copyParamsToBestParams();
+		bestScore = algo.solve();
+
+		// Teste toutes les combinaisons possibles de tous les paramètres
+		while (true)
 		{
-			// Il n'y a plus de paramètre à modifier : on évalue notre algorithme ici.
+			// Incrémente l'ensemble des paramètres
+			auto it = params.rbegin();
+			for (; it != params.rend(); ++it)
+			{
+				if ((*(it->value)) < it->maxValue)
+				{
+					// Si ce paramètre n'est pas à son maximum,
+					// on l'incrémente et on sort de cette boucle.
+					(*(it->value)) += it->step;
+					break;
+				}
+				else
+				{
+					// Sinon, on le réinitialise et on passe au paramètre précédent
+					(*(it->value)) = it->minValue;
+				}
+			}
+
+			// Si on a terminé d'évaluer tous les paramètres,
+			// ie : on n'a trouvé aucun paramètre à incrémenter, on quitte.
+			if (it == params.rend())
+				break;
+
+			// Effectue l'évaluation de l'algorithme avec ces paramètres
 			ReturnType score = algo.solve();
 			if (score > bestScore)
 			{
@@ -50,29 +86,6 @@ protected:
 				BRUTEFORCER_DEBUG_LOG("Found better score : " << bestScore << std::endl);
 			}
 		}
-		else
-		{
-			// Essaie toutes les valeurs de ce paramètre, puis tous les paramètres suivants
-			ParamRange<Param>& p = params[paramIdx];
-			for ((*p.value) = p.minValue; (*p.value) <= p.maxValue; (*p.value) += p.step)
-				runFromParam(paramIdx + 1);
-		}
-	}
-
-public:
-	Bruteforcer(Algorithm& _algo, const std::vector<ParamRange<Param> >& _params)
-		: algo(_algo), params(_params)
-	{ }
-
-	void run()
-	{
-		// Initialise la recherche avec les paramètres fournis par défaut
-		bestParams.resize(params.size());
-		copyParamsToBestParams();
-		bestScore = algo.solve();
-
-		// Teste toutes les combinaisons possibles de tous les paramètres
-		runFromParam(0);
 	}
 
 	ReturnType getBestScore() const

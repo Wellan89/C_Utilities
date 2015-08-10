@@ -15,11 +15,11 @@ public:
 protected:
 	struct FwPathInfo
 	{
-		Cout totalCost;
-
 		// Un noeud k par lequel passe le chemin (i, j).
 		// Lorsque k = j, ce chemin est un simple lien.
 		IndexNoeud middleNode;
+
+		Cout totalCost;
 
 		FwPathInfo() : totalCost(Graphe::INFINITE_COST()), middleNode(Graphe::INVALID_NODE_INDEX())
 			{ }

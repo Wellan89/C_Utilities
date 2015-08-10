@@ -1,3 +1,4 @@
+#include <utility>
 #include "Bellman.h"
 
 using namespace std;
@@ -21,6 +22,17 @@ void Bellman<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 		return;
 	}
 
+	// Génère l'ensemble des liens inverse de ce graphe :
+	// Pour chaque noeud, l'ensemble des noeuds ayant un lien vers celui-ci et le coût de ce lien.
+	vector<vector<pair<IndexNoeud, Cout> > > incomingLinks(g.size());
+	IndexNoeud nodesCount = g.size();
+	for (IndexNoeud i = 0; i < nodesCount; i++)
+	{
+		const auto& links = g[i].getLinks();
+		for (auto it = links.begin(); it != links.end(); ++it)
+			incomingLinks[it->getTargetIndex()].push_back(pair<IndexNoeud, Cout>(i, it->getCost()));
+	}
+
 	// Indique le coût du premier noeud
 	bm[startNode].totalCost = 0;
 
@@ -28,14 +40,14 @@ void Bellman<Graphe>::computeShortestPathsFrom(IndexNoeud startNode)
 	for (auto nodeIt = startIt + 1; nodeIt != orderedNodes.rend(); ++nodeIt)
 	{
 		IndexNoeud node = (*nodeIt);
-		const auto& incomingLinks = g[node].getIncomingLinks();
-		for (auto incLinkIt = incomingLinks.begin(); incLinkIt != incomingLinks.end(); ++incLinkIt)
+		const auto& incLinks = incomingLinks[node];
+		for (auto incLinkIt = incLinks.begin(); incLinkIt != incLinks.end(); ++incLinkIt)
 		{
-			IndexNoeud prevNode = incLinkIt->getFromIndex();
+			IndexNoeud prevNode = incLinkIt->first;
 			if (bm[prevNode].totalCost == Graphe::INFINITE_COST())
 				continue;
 
-			Cout newCost = bm[prevNode].totalCost + incLinkIt->getCost();
+			Cout newCost = bm[prevNode].totalCost + incLinkIt->second;
 			if (newCost < bm[node].totalCost)
 			{
 				bm[node].totalCost = newCost;

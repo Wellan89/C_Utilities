@@ -40,15 +40,10 @@
 //					de cette distance réelle, meilleure est l'heuristique, et l'algorithme est alors plus efficace.
 //					La classe fournie par défaut ici implémente une heuristique nulle :
 //					son utilisation revient à effectuer l'algorithme de Dijkstra sur le graphe fourni.
-// Fonction supplémentaire nécessaire pour l'algorithme de Bellman :
-//		const std::vector<Lien*>& getIncomingLinks() const;
-//			Note :	std::vector peut être remplacé par tout autre conteneur de Lien* pouvant être itéré.
 
 // Fonctions nécessaires de la classe Lien :
 //		Graphe::Cout getCost() const;
 //		Graphe::IndexNoeud getTargetIndex() const;
-// Fonction supplémentaire nécessaire pour l'algorithme de Bellman :
-//		Graphe::IndexNoeud getFromIndex() const;
 
 
 
@@ -80,15 +75,13 @@ public:
 		friend Graph;
 
 	protected:
-		IndexNoeud fromIndex;
 		IndexNoeud targetIndex;
 		Cout cost;
 
-		Link(IndexNoeud _fromIndex, IndexNoeud _targetIndex, Cout _cost)
-			: fromIndex(_fromIndex), targetIndex(_targetIndex), cost(_cost) { }
+		Link(IndexNoeud _targetIndex, Cout _cost)
+			: targetIndex(_targetIndex), cost(_cost) { }
 
 	public:
-		IndexNoeud getFromIndex() const		{ return fromIndex; }
 		IndexNoeud getTargetIndex() const	{ return targetIndex; }
 		Cout getCost() const				{ return cost; }
 	};
@@ -98,7 +91,6 @@ public:
 
 	protected:
 		std::vector<Lien> links;
-		std::vector<Lien> incomingLinks;
 		IndexNoeud index;
 
 		Cout heuristic;
@@ -110,7 +102,6 @@ public:
 	public:
 		IndexNoeud getIndex() const							{ return index; }
 		const std::vector<Lien>& getLinks() const			{ return links; }
-		const std::vector<Lien>& getIncomingLinks() const	{ return incomingLinks; }
 
 		bool isFinal() const								{ return finalNode; }
 		Cout getHeuristic() const							{ return heuristic; }
@@ -160,13 +151,9 @@ public:
 
 	void addLink(IndexNoeud start, IndexNoeud end, Cout cost, bool unidirectionnal = false)
 	{
-		nodes[start].links.push_back(Lien(start, end, cost));
-		nodes[end].incomingLinks.push_back(Lien(start, end, cost));
+		nodes[start].links.push_back(Lien(end, cost));
 		if (!unidirectionnal && start != end)
-		{
-			nodes[end].links.push_back(Lien(end, start, cost));
-			nodes[start].incomingLinks.push_back(Lien(end, start, cost));
-		}
+			nodes[end].links.push_back(Lien(start, cost));
 	}
 	void removeLink(IndexNoeud start, IndexNoeud end, bool oneDirection = false)
 	{
@@ -182,12 +169,10 @@ public:
 
 		// Ici, tous les liens de start à end sont supprimés, peu importe leur coût.
 		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end);
-		REMOVE_LINKS_FROM_ITERABLE(nodes[end].incomingLinks, start);
 
 		if (!oneDirection && start != end)
 		{
 			REMOVE_LINKS_FROM_ITERABLE(nodes[end].links, start);
-			REMOVE_LINKS_FROM_ITERABLE(nodes[start].incomingLinks, end);
 		}
 #undef REMOVE_LINKS_FROM_ITERABLE
 	}
@@ -205,12 +190,10 @@ public:
 
 		// Ici, on ne supprime que les liens de start à end avec le coût spécifié.
 		REMOVE_LINKS_FROM_ITERABLE(nodes[start].links, end, cost);
-		REMOVE_LINKS_FROM_ITERABLE(nodes[end].incomingLinks, start, cost);
 
 		if (!oneDirection && start != end)
 		{
 			REMOVE_LINKS_FROM_ITERABLE(nodes[end].links, start, cost);
-			REMOVE_LINKS_FROM_ITERABLE(nodes[start].incomingLinks, end, cost);
 		}
 #undef REMOVE_LINKS_FROM_ITERABLE
 	}

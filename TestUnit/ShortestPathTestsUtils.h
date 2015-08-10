@@ -3,11 +3,7 @@
 
 /*
 TODO :
-- Créer une classe arbre
-
-- Eliminer la récursivité dans DFS
-- Eliminer la récursivité dans Bruteforcer
-	=> Effectuer des profilages pour déterminer si c'est utile
+- Créer une classe arbre héritant de Graphe : un graphe orienté sans cycles, chaque noeud ayant un lien vers son parent
 
 - Dans Floyd-Warshall, détecter les circuits absorbants
 
@@ -16,14 +12,19 @@ TODO :
 - Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
 
-- Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique
-
 - Tester les algos de plus court chemin avec des coûts très proches du coût "infini"
 
 - Créer un test avec de nombreux liens au coût nul
 	+ déterminer s'il faut choisir de définir de manière permanente CLOSED_SET_OPTIMIZATION pour AStar et Dijkstra
 
 - Déplacer toutes les fonctions des fichiers sources dépendant de templates dans les headers
+
+- Ecrire une fonction de conversion d'un graphe dynamique vers un graphe statique ?
+
+- Eliminer la récursivité dans DFS ?
+
+- Essayer de paralléliser Bruteforcer ?
+	-> Impossible actuellement car chaque boucle change les mêmes paramètres en mémoire
 */
 
 
