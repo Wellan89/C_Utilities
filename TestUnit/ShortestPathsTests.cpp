@@ -90,7 +90,7 @@ namespace TestUnit
 			for (Graphe::IndexNoeud j = 0; j < width; j++)
 				littleMaze->g.setNodeHeuristic(ID(i, j),
 					(Graphe::Cout)(abs((long)(littleMaze->closestFinalNode / width) - (long)i)
-					+ abs((long)(littleMaze->closestFinalNode % width) - (long)j)));
+						+ abs((long)(littleMaze->closestFinalNode % width) - (long)j)));
 
 		littleMaze->costs[littleMaze->closestFinalNode] = cost;
 		littleMaze->paths[littleMaze->closestFinalNode] = path;
@@ -114,7 +114,7 @@ namespace TestUnit
 		negativeLinksGraph->g.addLink(3, 6, 2);
 		negativeLinksGraph->g.addLink(3, 9, 7);
 		negativeLinksGraph->g.addLink(4, 7, 2);
-		negativeLinksGraph->g.addLink(6, 5 , -2, true);
+		negativeLinksGraph->g.addLink(6, 5, -2, true);
 		negativeLinksGraph->g.addLink(6, 7, 2);
 		negativeLinksGraph->g.addLink(7, 8, 8);
 		negativeLinksGraph->g.addLink(10, 10, -1);
@@ -160,9 +160,9 @@ namespace TestUnit
 
 		negativeCycleGraph->infiniteCostCheck = true;
 		negativeCycleGraph->costs = { Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
-										Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
-										Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
-										Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
+			Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
+			Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
+			Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
 		negativeCycleGraph->finishTest();
 	}
 	void NegativeLoopGraphInit(unsigned int testRefsCount)
@@ -179,7 +179,7 @@ namespace TestUnit
 
 		negativeLoopGraph->infiniteCostCheck = true;
 		negativeLoopGraph->costs = { Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
-										Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
+			Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
 		negativeLoopGraph->finishTest();
 	}
 	void NotSimpleGraphInit(unsigned int testRefsCount)
@@ -348,6 +348,80 @@ namespace TestUnit
 			deque < Graphe::IndexNoeud > { 9 } };
 		roGraph->finishTest();
 	}
+	void BigCostPathsInit(unsigned int testRefsCount)
+	{
+		// Dans ce graphe, le coût du chemin le plus long depuis le noeud de départ
+		// jusqu'au noeud final dépasse la valeur maximale pouvant être contenue
+		// dans le type Cout, mais ce n'est pas le cas pour le coût du chemin le plus court.
+		bigCostPaths = new ShortestPathTest<signed char, signed char>(127, testRefsCount);
+		bigCostPaths->g.addLink(16, 68, 6, true);
+		bigCostPaths->g.addLink(68, 52, 3, true);
+		bigCostPaths->g.addLink(52, 110, 10, true);
+		for (int i = 0; i < 127 - 1; i++)
+			bigCostPaths->g.addLink((signed char)i, (signed char)(i + 1), 2, false);
+
+		bigCostPaths->startNode = 0;
+		bigCostPaths->closestFinalNode = 127;
+
+		for (int i = 0; i <= 16; i++)
+			bigCostPaths->costs[i] = (signed char)(2 * i);
+		bigCostPaths->costs[68] = bigCostPaths->costs[16] + 6;
+		bigCostPaths->costs[52] = bigCostPaths->costs[68] + 3;
+		bigCostPaths->costs[110] = bigCostPaths->costs[52] + 10;
+		for (int i = 111; i < 127; i++)
+			bigCostPaths->costs[i] = bigCostPaths->costs[110] + (signed char)(2 * (i - 110));
+
+		for (int i = 1; i <= 16; i++)
+		{
+			bigCostPaths->paths[i] = bigCostPaths->paths[i - 1];
+			bigCostPaths->paths[i].push_back((signed char)i);
+		}
+		bigCostPaths->paths[68] = bigCostPaths->paths[16];
+		bigCostPaths->paths[68].push_back(68);
+		bigCostPaths->paths[52] = bigCostPaths->paths[68];
+		bigCostPaths->paths[52].push_back(52);
+		bigCostPaths->paths[110] = bigCostPaths->paths[52];
+		bigCostPaths->paths[110].push_back(110);
+		bigCostPaths->paths[110] = bigCostPaths->paths[52];
+		bigCostPaths->paths[110].push_back(110);
+		for (int i = 111; i < 127; i++)
+		{
+			bigCostPaths->paths[i] = bigCostPaths->paths[i - 1];
+			bigCostPaths->paths[i].push_back((signed char)i);
+		}
+
+		bigCostPaths->finishTest();
+	}
+	void ManyNullCostLinksInit(unsigned int testRefsCount)
+	{
+		// Constante permettant de modifier rapidement le coût des liens nuls
+		// à une valeur non nulle.
+		constexpr int nullCost = 0;
+		constexpr size_t nodesCount = 200;
+		manyNullCostLinks = new ShortestPathTest<>(nodesCount, testRefsCount);
+
+		size_t middleNode = nodesCount * 3 / 4;
+		manyNullCostLinks->g.addLink(0, 1, 100);
+		manyNullCostLinks->g.addLink(middleNode, nodesCount - 1, 100);
+		for (int i = 1; i < nodesCount - 1; i++)
+			for (int j = 1; j < nodesCount - 1; j++)
+				manyNullCostLinks->g.addLink(i, j, nullCost);
+
+		manyNullCostLinks->startNode = 0;
+		manyNullCostLinks->closestFinalNode = nodesCount - 1;
+
+		manyNullCostLinks->costs[0] = 0;
+		for (int i = 1; i < nodesCount - 1; i++)
+			manyNullCostLinks->costs[i] = 100 + nullCost;
+		manyNullCostLinks->costs[nodesCount - 1] = 200;
+
+		manyNullCostLinks->paths[0] = { 0 };
+		for (int i = 1; i < nodesCount - 1; i++)
+			manyNullCostLinks->paths[i] = { 0, (size_t)i };
+		manyNullCostLinks->paths[nodesCount - 1] = { 0, middleNode, nodesCount - 1 };
+
+		manyNullCostLinks->finishTest();
+	}
 
 	TEST_MODULE_INITIALIZE(ShortestPathsTestsInit)
 	{
@@ -360,6 +434,8 @@ namespace TestUnit
 		LittleGraphsInit(8);
 		Algo2GraphInit(8);
 		ROGraphInit(8);
+		BigCostPathsInit(8);
+		ManyNullCostLinksInit(8);
 
 		// Pour les tests de RandomizedAlgoHelpersTests
 		srand((unsigned int)time(NULL));
@@ -378,6 +454,8 @@ namespace TestUnit
 		safeTestDelete(noFinalNodeGraph);
 		safeTestDelete(algo2Graph);
 		safeTestDelete(roGraph);
+		safeTestDelete(bigCostPaths);
+		safeTestDelete(manyNullCostLinks);
 	}
 
 	TEST_CLASS(DijkstraTests)
@@ -394,6 +472,8 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, Dijkstra, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, Dijkstra, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(roGraph, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(bigCostPaths, Dijkstra, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, Dijkstra, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(AStarTests)
@@ -410,6 +490,8 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, AStar, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, AStar, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(roGraph, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(bigCostPaths, AStar, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, AStar, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(BellmanTests)
@@ -442,6 +524,8 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, Bellman, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, Bellman, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(roGraph, Bellman, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(bigCostPaths, Bellman, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, Bellman, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(DFS_Tests)
@@ -466,6 +550,8 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(roGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(bigCostPaths, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 	};
 
 	TEST_CLASS(BFS_Tests)
@@ -482,6 +568,8 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, BFS_ShortestPath, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, BFS_ShortestPath, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(roGraph, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(bigCostPaths, BFS_ShortestPath, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, BFS_ShortestPath, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordTests)
@@ -499,6 +587,8 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, BellmanFord, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFord, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(bigCostPaths, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, BellmanFord, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
@@ -516,6 +606,8 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, BellmanFordYen, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, BellmanFordYen, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(roGraph, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(bigCostPaths, BellmanFordYen, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, BellmanFordYen, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(FloydWarshallTests)
@@ -535,5 +627,7 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(noFinalNodeGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		SHORTEST_PATH_TEST_METHOD(roGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(bigCostPaths, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, FloydWarshall, runSpfTest_AllPairsOfNodes);
 	};
 }

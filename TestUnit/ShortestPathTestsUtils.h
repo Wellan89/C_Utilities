@@ -3,6 +3,9 @@
 
 /*
 TODO :
+- Déterminer s'il faut choisir de définir de manière permanente CLOSED_SET_OPTIMIZATION pour AStar et Dijkstra
+- Faire fonctionner tous les algos de plus court chemin avec des coûts proches du coût infini
+
 - Créer une classe arbre héritant de Graphe : un graphe orienté sans cycles, chaque noeud ayant un lien vers son parent
 
 - Dans Floyd-Warshall, détecter les circuits absorbants
@@ -11,11 +14,6 @@ TODO :
 
 - Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
-
-- Tester les algos de plus court chemin avec des coûts très proches du coût "infini"
-
-- Créer un test avec de nombreux liens au coût nul
-	+ déterminer s'il faut choisir de définir de manière permanente CLOSED_SET_OPTIMIZATION pour AStar et Dijkstra
 
 - Implémenter les sémantiques move de C++ ?
 
@@ -119,11 +117,13 @@ namespace TestUnit
 
 	ShortestPathTest<> *simpleTest, *littleMaze,
 		*negativeLinksGraph, *negativeCycleGraph, *negativeLoopGraph,
-		*notSimpleGraph, *algo2Graph, *roGraph,
+		*notSimpleGraph, *algo2Graph, *roGraph, *manyNullCostLinks,
 		*emptyGraph, *noFinalNodeGraph, *oneNodeGraph, *twoNodesGraph,	// Little graphs
 		*bigMaze, *emptyMap, *randomMap, *fullGraph;
+	ShortestPathTest<signed char, signed char> *bigCostPaths;
 
-	void dropTest(ShortestPathTest<>*& test)
+	template<class SPTest>
+	void dropTest(SPTest*& test)
 	{
 		if (test && test->testsRefsCount > 0)
 		{
@@ -136,23 +136,24 @@ namespace TestUnit
 		}
 	}
 
-	void safeTestDelete(ShortestPathTest<>*& ptr)
+	template<class SPTest>
+	void safeTestDelete(SPTest*& ptr)
 	{
 		if (ptr)
 			delete ptr;
 		ptr = NULL;
 	}
 
-	template<class PathFinder>
-	void runSpfTest_AllNodes(ShortestPathTest<>* test, PathFinder spf)
+	template<class SPTest, class PathFinder>
+	void runSpfTest_AllNodes(SPTest* test, PathFinder spf)
 	{
 		if (test->startNode < test->g.size())
 			for (unsigned int i = 0; i < test->nbComputeLoops; i++)
 				spf.computeShortestPathsFrom(test->startNode);
 
-		for (Graphe::IndexNoeud i = 0; i < test->g.size(); i++)
+		for (SPTest::Graphe::IndexNoeud i = 0; i < test->g.size(); i++)
 		{
-			if (test->costs[i] != Graphe::INFINITE_COST())
+			if (test->costs[i] != SPTest::Graphe::INFINITE_COST())
 			{
 				Assert::IsTrue(spf.canReachNode(i), L"Path not found.");
 				Assert::AreEqual(test->costs[i], spf.getCostTo(i), L"Different path cost.");
@@ -165,20 +166,20 @@ namespace TestUnit
 			else if (test->infiniteCostCheck)
 			{
 				Assert::IsFalse(spf.canReachNode(i), L"Path found.");
-				Assert::AreEqual(Graphe::INFINITE_COST(), spf.getCostTo(i), L"Finite cost.");
+				Assert::AreEqual(SPTest::Graphe::INFINITE_COST(), spf.getCostTo(i), L"Finite cost.");
 			}
 		}
 	}
 
-	template<class PathFinder>
-	void runSpfTest_ClosestFinalNode(ShortestPathTest<>* test, PathFinder spf)
+	template<class SPTest, class PathFinder>
+	void runSpfTest_ClosestFinalNode(SPTest* test, PathFinder spf)
 	{
 		if (test->startNode < test->g.size())
 			for (unsigned int i = 0; i < test->nbComputeLoops; i++)
 				spf.computeShortestPathFrom(test->startNode);
 
-		Graphe::IndexNoeud i = test->closestFinalNode;
-		if (test->costs[i] != Graphe::INFINITE_COST())
+		SPTest::Graphe::IndexNoeud i = test->closestFinalNode;
+		if (test->costs[i] != SPTest::Graphe::INFINITE_COST())
 		{
 			Assert::IsTrue(spf.hasFoundPath(), L"Path not found.");
 			Assert::AreEqual(test->costs[i], spf.getPathCost(), L"Different path cost.");
@@ -190,22 +191,22 @@ namespace TestUnit
 		}
 		else if (test->infiniteCostCheck)
 		{
-				Assert::IsFalse(spf.hasFoundPath(), L"Path found.");
-				Assert::AreEqual(Graphe::INFINITE_COST(), spf.getPathCost(), L"Finite cost.");
+			Assert::IsFalse(spf.hasFoundPath(), L"Path found.");
+			Assert::AreEqual(SPTest::Graphe::INFINITE_COST(), spf.getPathCost(), L"Finite cost.");
 		}
 	}
 
-	template<class PathFinder>
-	void runSpfTest_AllPairsOfNodes(ShortestPathTest<>* test, PathFinder spf)
+	template<class SPTest, class PathFinder>
+	void runSpfTest_AllPairsOfNodes(SPTest* test, PathFinder spf)
 	{
 		if (test->startNode < test->g.size())
 			for (unsigned int i = 0; i < test->nbComputeLoops; i++)
 				spf.computeShortestPaths();
 
-		Graphe::IndexNoeud j = test->startNode;
-		for (Graphe::IndexNoeud i = 0; i < test->g.size(); i++)
+		SPTest::Graphe::IndexNoeud j = test->startNode;
+		for (SPTest::Graphe::IndexNoeud i = 0; i < test->g.size(); i++)
 		{
-			if (test->costs[i] != Graphe::INFINITE_COST())
+			if (test->costs[i] != SPTest::Graphe::INFINITE_COST())
 			{
 				Assert::IsTrue(spf.pathExists(j, i), L"Path not found.");
 				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i), L"Different path cost.");
@@ -215,16 +216,16 @@ namespace TestUnit
 			else if (test->infiniteCostCheck)
 			{
 				Assert::IsFalse(spf.pathExists(j, i), L"Path found.");
-				Assert::AreEqual(Graphe::INFINITE_COST(), spf.getPathCost(j, i), L"Finite cost.");
+				Assert::AreEqual(SPTest::Graphe::INFINITE_COST(), spf.getPathCost(j, i), L"Finite cost.");
 			}
 		}
 	}
 
 #define SHORTEST_PATH_TEST_METHOD_SEP(test, SPClass, run_func, sep)	\
-	TEST_METHOD(##SPClass ##sep ##test) {							\
+	TEST_METHOD(SPClass ## sep ## test) {							\
 		if (!test)													\
 			Assert::Fail(L"Invalid test references count !");		\
-		SPClass<Graphe> sp(test->g);								\
+		SPClass<decltype(test->g)> sp(test->g);						\
 		run_func(test, sp);											\
 		dropTest(test);												\
 	}
