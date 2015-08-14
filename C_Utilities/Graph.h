@@ -11,9 +11,9 @@
 //		typedef <> IndexNoeud;
 //		typedef <> Cout;
 //			Note :	Ces types doivent être des types entiers.
-// Fonctions statiques constantes nécessaires de la classe Graphe :
-//		static IndexNoeud INVALID_NODE_INDEX();
-//		static Cout INFINITE_COST();
+// Constantes statiques nécessaires de la classe Graphe :
+//		static constexpr IndexNoeud INVALID_NODE_INDEX;
+//		static constexpr Cout INFINITE_COST;
 //			Note :	Cette dernière fonction constante doit être supérieure stricte à tout autre coût possible.
 // Fonctions nécessaires de la classe Graphe :
 //		IndexNoeud size() const;
@@ -59,16 +59,8 @@ public:
 	typedef NodeIndex IndexNoeud;
 	typedef Cost Cout;
 
-	// On est ici obligé de définir des fonctions pour accéder à ces constantes,
-	// à cause du standard C++ qui ne permet d'obtenir la valeur max d'un type que par un appel de fonction.
-	static IndexNoeud INVALID_NODE_INDEX()
-	{
-		return std::numeric_limits<IndexNoeud>::max();
-	}
-	static Cout INFINITE_COST()
-	{
-		return std::numeric_limits<Cout>::max();
-	}
+	static constexpr IndexNoeud INVALID_NODE_INDEX = std::numeric_limits<IndexNoeud>::max();
+	static constexpr Cout INFINITE_COST = std::numeric_limits<Cout>::max();
 
 	class Link
 	{

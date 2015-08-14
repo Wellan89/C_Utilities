@@ -3,8 +3,13 @@
 
 /*
 TODO :
+- Faire fonctionner tous les algos de plus court chemin avec des coûts proches du coût infini et les nombreux coûts nuls
+	-> Détecter les dépassement de capacité, et les limiter au coût infini s'ils dépassent
+		=> Créer une fonction utilitaire pour ça
 - Déterminer s'il faut choisir de définir de manière permanente CLOSED_SET_OPTIMIZATION pour AStar et Dijkstra
-- Faire fonctionner tous les algos de plus court chemin avec des coûts proches du coût infini
+
+- Revoir les tests des algos random qui échouent régulièrement : augmenter leur nombre d'itérations
+- Séparer les tests de plus court chemin et les autres tests de TestUnit dans deux projets différents
 
 - Créer une classe arbre héritant de Graphe : un graphe orienté sans cycles, chaque noeud ayant un lien vers son parent
 
@@ -39,7 +44,7 @@ TODO :
 #include <cstdlib>
 #include <ctime>
 #include "CppUnitTest.h"
-#include "ToStringSpecializations.cpp"
+#include "ToStringSpecializations.h"
 #include "Graph.h"
 #include "DynamicGraph.h"
 #include "Dijkstra.h"
@@ -100,7 +105,7 @@ namespace TestUnit
 			: g(nodesNb), testsRefsCount(refsCount), nbComputeLoops(nbLoops),
 				infiniteCostCheck(false), startNode(0), closestFinalNode(0)
 		{
-			costs.resize(nodesNb, Graphe::INFINITE_COST());
+			costs.resize(nodesNb, Graphe::INFINITE_COST);
 			paths.resize(nodesNb);
 		}
 		void finishTest()
@@ -153,7 +158,7 @@ namespace TestUnit
 
 		for (SPTest::Graphe::IndexNoeud i = 0; i < test->g.size(); i++)
 		{
-			if (test->costs[i] != SPTest::Graphe::INFINITE_COST())
+			if (test->costs[i] != SPTest::Graphe::INFINITE_COST)
 			{
 				Assert::IsTrue(spf.canReachNode(i), L"Path not found.");
 				Assert::AreEqual(test->costs[i], spf.getCostTo(i), L"Different path cost.");
@@ -166,7 +171,7 @@ namespace TestUnit
 			else if (test->infiniteCostCheck)
 			{
 				Assert::IsFalse(spf.canReachNode(i), L"Path found.");
-				Assert::AreEqual(SPTest::Graphe::INFINITE_COST(), spf.getCostTo(i), L"Finite cost.");
+				Assert::AreEqual(SPTest::Graphe::INFINITE_COST, spf.getCostTo(i), L"Finite cost.");
 			}
 		}
 	}
@@ -179,7 +184,7 @@ namespace TestUnit
 				spf.computeShortestPathFrom(test->startNode);
 
 		SPTest::Graphe::IndexNoeud i = test->closestFinalNode;
-		if (test->costs[i] != SPTest::Graphe::INFINITE_COST())
+		if (test->costs[i] != SPTest::Graphe::INFINITE_COST)
 		{
 			Assert::IsTrue(spf.hasFoundPath(), L"Path not found.");
 			Assert::AreEqual(test->costs[i], spf.getPathCost(), L"Different path cost.");
@@ -192,7 +197,7 @@ namespace TestUnit
 		else if (test->infiniteCostCheck)
 		{
 			Assert::IsFalse(spf.hasFoundPath(), L"Path found.");
-			Assert::AreEqual(SPTest::Graphe::INFINITE_COST(), spf.getPathCost(), L"Finite cost.");
+			Assert::AreEqual(SPTest::Graphe::INFINITE_COST, spf.getPathCost(), L"Finite cost.");
 		}
 	}
 
@@ -206,7 +211,7 @@ namespace TestUnit
 		SPTest::Graphe::IndexNoeud j = test->startNode;
 		for (SPTest::Graphe::IndexNoeud i = 0; i < test->g.size(); i++)
 		{
-			if (test->costs[i] != SPTest::Graphe::INFINITE_COST())
+			if (test->costs[i] != SPTest::Graphe::INFINITE_COST)
 			{
 				Assert::IsTrue(spf.pathExists(j, i), L"Path not found.");
 				Assert::AreEqual(test->costs[i], spf.getPathCost(j, i), L"Different path cost.");
@@ -216,7 +221,7 @@ namespace TestUnit
 			else if (test->infiniteCostCheck)
 			{
 				Assert::IsFalse(spf.pathExists(j, i), L"Path found.");
-				Assert::AreEqual(SPTest::Graphe::INFINITE_COST(), spf.getPathCost(j, i), L"Finite cost.");
+				Assert::AreEqual(SPTest::Graphe::INFINITE_COST, spf.getPathCost(j, i), L"Finite cost.");
 			}
 		}
 	}

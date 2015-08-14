@@ -85,7 +85,6 @@
     <ClCompile Include="MainTests.cpp" />
     <ClCompile Include="RandomizedAlgoHelpersTests.cpp" />
     <ClCompile Include="ShortestPathsTests.cpp" />
-    <ClCompile Include="ToStringSpecializations.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShortestPathTestsUtils.h" />

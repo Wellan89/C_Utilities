@@ -51,12 +51,12 @@ protected:
 			return (node < other.node);
 		}
 
-		DFS_NodeInfo() : node(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
+		DFS_NodeInfo() : node(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
 			{ }
 
 		// Ce constructeur pourrait aussi permettre de convertir des noeuds (IndexNoeud) en DFS_NodeInfo implicitement.
 		// Cependant on l'interdit ici (car cela obfusque le code) avec le mot clé explicit.
-		explicit DFS_NodeInfo(IndexNoeud _node) : node(_node), totalCost(Graphe::INFINITE_COST())
+		explicit DFS_NodeInfo(IndexNoeud _node) : node(_node), totalCost(Graphe::INFINITE_COST)
 			{ }
 
 		DFS_NodeInfo(IndexNoeud _node, Cout _totalCost) : node(_node), totalCost(_totalCost)
@@ -89,8 +89,8 @@ protected:
 		visitedNodes.clear();
 #endif
 		reverseShortestPath.clear();
-		endNode = Graphe::INVALID_NODE_INDEX();
-		pathCost = Graphe::INFINITE_COST();
+		endNode = Graphe::INVALID_NODE_INDEX;
+		pathCost = Graphe::INFINITE_COST;
 		absorbCycleFound = false;
 	}
 
@@ -99,7 +99,7 @@ protected:
 		// Vérifie que le chemin actuellement parcouru n'est pas plus long que le chemin le plus court déjà trouvé.
 		// On quitte lorsqu'il y a égalité entre la longueur du chemin actuel et celle du chemin le plus court si un noeud final a déjà été trouvé.
 		if (currentCost > pathCost
-			|| (currentCost >= pathCost && endNode != Graphe::INVALID_NODE_INDEX()))
+			|| (currentCost >= pathCost && endNode != Graphe::INVALID_NODE_INDEX))
 			return false;
 
 		// Vérifie que ce noeud est un noeud final
@@ -187,7 +187,7 @@ protected:
 public:
 	DFS_ShortestPath(const Graphe& gr) : g(gr) { reset(); }
 
-	void computeShortestPathFrom(IndexNoeud startNode, Cout maxCost = Graphe::INFINITE_COST())
+	void computeShortestPathFrom(IndexNoeud startNode, Cout maxCost = Graphe::INFINITE_COST)
 	{
 		// Réinitialise les informations sur les noeuds
 		reset();
@@ -212,7 +212,7 @@ public:
 	}
 	bool hasFoundPath() const
 	{
-		return (endNode != Graphe::INVALID_NODE_INDEX());
+		return (endNode != Graphe::INVALID_NODE_INDEX);
 	}
 	IndexNoeud getFinalNode() const
 	{

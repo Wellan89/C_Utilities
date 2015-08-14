@@ -29,7 +29,7 @@ protected:
 		bool alreadyVisited;
 #endif
 
-		DjNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
+		DjNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
 #ifndef DIJKSTRA_CLOSED_SET_REMOVAL_OPTIMIZATION
 			, alreadyVisited(false)
 #endif
@@ -117,7 +117,7 @@ public:
 	}
 	bool canReachNode(IndexNoeud node) const
 	{
-		return (dj[node].totalCost != Graphe::INFINITE_COST());
+		return (dj[node].totalCost != Graphe::INFINITE_COST);
 	}
 	Cout getCostTo(IndexNoeud node) const
 	{
@@ -126,7 +126,7 @@ public:
 	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const
 	{
 		std::deque<IndexNoeud> l;
-		while (endNode != Graphe::INVALID_NODE_INDEX())
+		while (endNode != Graphe::INVALID_NODE_INDEX)
 		{
 			l.push_front(endNode);
 			endNode = dj[endNode].previousNode;
@@ -136,7 +136,7 @@ public:
 	std::vector<IndexNoeud> getReverseShortestPathTo(IndexNoeud endNode) const
 	{
 		std::vector<IndexNoeud> l;
-		while (endNode != Graphe::INVALID_NODE_INDEX())
+		while (endNode != Graphe::INVALID_NODE_INDEX)
 		{
 			l.push_back(endNode);
 			endNode = dj[endNode].previousNode;

@@ -11,9 +11,9 @@
 //		typedef <> IndexNoeud;
 //		typedef <> Cout;
 //			Note :	Ces types doivent être des types entiers.
-// Fonctions statiques constantes nécessaires de la classe Graphe :
-//		static IndexNoeud INVALID_NODE_INDEX();
-//		static Cout INFINITE_COST();
+// Constantes statiques nécessaires de la classe Graphe :
+//		static constexpr IndexNoeud INVALID_NODE_INDEX;
+//		static constexpr Cout INFINITE_COST;
 //			Note :	Cette dernière fonction constante doit être supérieure stricte à tout autre coût possible.
 // Fonctions nécessaires de la classe Graphe :
 //		void getNodeLinksCount(IndexNoeud node) const;
@@ -58,14 +58,8 @@ public:
 
 	// On est ici obligé de définir des fonctions pour accéder à ces constantes,
 	// à cause du standard C++ qui définit la valeur max d'un type en tant que fonction.
-	static IndexNoeud INVALID_NODE_INDEX()
-	{
-		return std::numeric_limits<IndexNoeud>::max();
-	}
-	static Cout INFINITE_COST()
-	{
-		return std::numeric_limits<Cout>::max();
-	}
+	static const IndexNoeud INVALID_NODE_INDEX = std::numeric_limits<IndexNoeud>::max();
+	static const Cout INFINITE_COST = std::numeric_limits<Cout>::max();
 
 	class DynamicLink
 	{

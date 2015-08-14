@@ -126,7 +126,7 @@ namespace TestUnit
 		negativeLinksGraph->closestFinalNode = 5;
 
 		negativeLinksGraph->infiniteCostCheck = true;
-		negativeLinksGraph->costs = { 0, 1, 2, 2, 3, 2, 4, 5, 0, -5, Graphe::INFINITE_COST() };
+		negativeLinksGraph->costs = { 0, 1, 2, 2, 3, 2, 4, 5, 0, -5, Graphe::INFINITE_COST };
 		negativeLinksGraph->paths = {
 			deque < Graphe::IndexNoeud > { 0 },
 			deque < Graphe::IndexNoeud > { 0, 1 },
@@ -159,10 +159,10 @@ namespace TestUnit
 		negativeCycleGraph->closestFinalNode = 7;
 
 		negativeCycleGraph->infiniteCostCheck = true;
-		negativeCycleGraph->costs = { Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
-			Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
-			Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
-			Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
+		negativeCycleGraph->costs = { Graphe::INFINITE_COST, Graphe::INFINITE_COST,
+			Graphe::INFINITE_COST, Graphe::INFINITE_COST,
+			Graphe::INFINITE_COST, Graphe::INFINITE_COST,
+			Graphe::INFINITE_COST, Graphe::INFINITE_COST };
 		negativeCycleGraph->finishTest();
 	}
 	void NegativeLoopGraphInit(unsigned int testRefsCount)
@@ -178,8 +178,8 @@ namespace TestUnit
 		negativeLoopGraph->closestFinalNode = 3;
 
 		negativeLoopGraph->infiniteCostCheck = true;
-		negativeLoopGraph->costs = { Graphe::INFINITE_COST(), Graphe::INFINITE_COST(),
-			Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
+		negativeLoopGraph->costs = { Graphe::INFINITE_COST, Graphe::INFINITE_COST,
+			Graphe::INFINITE_COST, Graphe::INFINITE_COST };
 		negativeLoopGraph->finishTest();
 	}
 	void NotSimpleGraphInit(unsigned int testRefsCount)
@@ -227,7 +227,7 @@ namespace TestUnit
 		notSimpleGraph->closestFinalNode = 10;
 
 		notSimpleGraph->infiniteCostCheck = true;
-		notSimpleGraph->costs = { 0, 1, 9, 8, 3, 18, 10, 14, 12, 9, 23, 27, Graphe::INFINITE_COST() };
+		notSimpleGraph->costs = { 0, 1, 9, 8, 3, 18, 10, 14, 12, 9, 23, 27, Graphe::INFINITE_COST };
 		notSimpleGraph->paths = {
 			deque < Graphe::IndexNoeud > { 0 },
 			deque < Graphe::IndexNoeud > { 0, 1 },
@@ -249,7 +249,7 @@ namespace TestUnit
 		emptyGraph = new ShortestPathTest<>(0, testRefsCount);
 		emptyGraph->startNode = 0;
 		emptyGraph->closestFinalNode = 0;
-		emptyGraph->costs = { Graphe::INFINITE_COST() };
+		emptyGraph->costs = { Graphe::INFINITE_COST };
 		emptyGraph->finishTest();
 
 		oneNodeGraph = new ShortestPathTest<>(*emptyGraph);
@@ -275,7 +275,7 @@ namespace TestUnit
 		noFinalNodeGraph->g.addLink(1, 2, 1, true);
 		noFinalNodeGraph->startNode = 0;
 		noFinalNodeGraph->closestFinalNode = 3;
-		noFinalNodeGraph->costs = { 0, 1, 2, Graphe::INFINITE_COST() };
+		noFinalNodeGraph->costs = { 0, 1, 2, Graphe::INFINITE_COST };
 		noFinalNodeGraph->paths = {
 			deque < Graphe::IndexNoeud > { 0 },
 			deque < Graphe::IndexNoeud > { 0, 1 },
@@ -300,7 +300,7 @@ namespace TestUnit
 		algo2Graph->closestFinalNode = 0;
 
 		algo2Graph->infiniteCostCheck = true;
-		algo2Graph->costs = { 4, 3, Graphe::INFINITE_COST(), 2, Graphe::INFINITE_COST(), 1, 1, 0 };
+		algo2Graph->costs = { 4, 3, Graphe::INFINITE_COST, 2, Graphe::INFINITE_COST, 1, 1, 0 };
 		algo2Graph->paths = {
 			deque < Graphe::IndexNoeud > { 7, 5, 3, 1, 0 },
 			deque < Graphe::IndexNoeud > { 7, 5, 3, 1 },
@@ -334,7 +334,7 @@ namespace TestUnit
 		roGraph->closestFinalNode = 7;
 
 		roGraph->infiniteCostCheck = true;
-		roGraph->costs = { 0, Graphe::INFINITE_COST(), 1, 1, 2, 2, 2, 2, Graphe::INFINITE_COST(), Graphe::INFINITE_COST() };
+		roGraph->costs = { 0, Graphe::INFINITE_COST, 1, 1, 2, 2, 2, 2, Graphe::INFINITE_COST, Graphe::INFINITE_COST };
 		roGraph->paths = {
 			deque < Graphe::IndexNoeud > { 0 },
 			deque < Graphe::IndexNoeud > { 1 },
@@ -397,7 +397,7 @@ namespace TestUnit
 		// Constante permettant de modifier rapidement le coût des liens nuls
 		// à une valeur non nulle.
 		constexpr int nullCost = 0;
-		constexpr size_t nodesCount = 200;
+		constexpr size_t nodesCount = 40;
 		manyNullCostLinks = new ShortestPathTest<>(nodesCount, testRefsCount);
 
 		size_t middleNode = nodesCount * 3 / 4;

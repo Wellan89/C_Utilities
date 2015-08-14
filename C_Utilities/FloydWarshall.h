@@ -21,7 +21,7 @@ protected:
 
 		Cout totalCost;
 
-		FwPathInfo() : totalCost(Graphe::INFINITE_COST()), middleNode(Graphe::INVALID_NODE_INDEX())
+		FwPathInfo() : totalCost(Graphe::INFINITE_COST), middleNode(Graphe::INVALID_NODE_INDEX)
 			{ }
 	};
 
@@ -96,13 +96,13 @@ public:
 					continue;
 
 				Cout i_k_cost = fw[i][k].totalCost;
-				if (i_k_cost == Graphe::INFINITE_COST())
+				if (i_k_cost == Graphe::INFINITE_COST)
 					continue;
 
 				for (IndexNoeud j = 0; j < nodesCount; j++)
 				{
 					Cout k_j_cost = fw[k][j].totalCost;
-					if (k_j_cost == Graphe::INFINITE_COST())
+					if (k_j_cost == Graphe::INFINITE_COST)
 						continue;
 
 					Cout newCost = i_k_cost + k_j_cost;
@@ -118,7 +118,7 @@ public:
 
 	bool pathExists(IndexNoeud startNode, IndexNoeud endNode) const
 	{
-		return (fw[startNode][endNode].totalCost != Graphe::INFINITE_COST());
+		return (fw[startNode][endNode].totalCost != Graphe::INFINITE_COST);
 	}
 	Cout getPathCost(IndexNoeud startNode, IndexNoeud endNode) const
 	{

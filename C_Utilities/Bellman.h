@@ -21,7 +21,7 @@ protected:
 		IndexNoeud previousNode;
 		Cout totalCost;
 
-		BmNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
+		BmNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
 			{ }
 	};
 
@@ -82,7 +82,7 @@ public:
 			for (auto incLinkIt = incLinks.begin(); incLinkIt != incLinks.end(); ++incLinkIt)
 			{
 				IndexNoeud prevNode = incLinkIt->first;
-				if (bm[prevNode].totalCost == Graphe::INFINITE_COST())
+				if (bm[prevNode].totalCost == Graphe::INFINITE_COST)
 					continue;
 
 				Cout newCost = bm[prevNode].totalCost + incLinkIt->second;
@@ -101,7 +101,7 @@ public:
 	}
 	bool canReachNode(IndexNoeud node) const
 	{
-		return (bm[node].totalCost != Graphe::INFINITE_COST());
+		return (bm[node].totalCost != Graphe::INFINITE_COST);
 	}
 	Cout getCostTo(IndexNoeud node) const
 	{
@@ -110,7 +110,7 @@ public:
 	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const
 	{
 		std::deque<IndexNoeud> l;
-		while (endNode != Graphe::INVALID_NODE_INDEX())
+		while (endNode != Graphe::INVALID_NODE_INDEX)
 		{
 			l.push_front(endNode);
 			endNode = bm[endNode].previousNode;
@@ -120,7 +120,7 @@ public:
 	std::vector<IndexNoeud> getReverseShortestPathTo(IndexNoeud endNode) const
 	{
 		std::vector<IndexNoeud> l;
-		while (endNode != Graphe::INVALID_NODE_INDEX())
+		while (endNode != Graphe::INVALID_NODE_INDEX)
 		{
 			l.push_back(endNode);
 			endNode = bm[endNode].previousNode;

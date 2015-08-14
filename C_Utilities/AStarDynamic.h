@@ -31,7 +31,7 @@ protected:
 		bool alreadyVisited;
 #endif
 
-		ASDNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
+		ASDNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
 #ifndef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
 			, alreadyVisited(false)
 #endif
@@ -56,7 +56,7 @@ protected:
 	void reset()
 	{
 		asd.clear();
-		endNode = Graphe::INVALID_NODE_INDEX();
+		endNode = Graphe::INVALID_NODE_INDEX;
 #ifdef _DEBUG
 		nbExploredNodes = 0;
 #endif
@@ -150,7 +150,7 @@ public:
 	}
 	bool hasFoundPath() const
 	{
-		return (endNode != Graphe::INVALID_NODE_INDEX());
+		return (endNode != Graphe::INVALID_NODE_INDEX);
 	}
 	IndexNoeud getFinalNode() const
 	{
@@ -160,13 +160,13 @@ public:
 	{
 		if (hasFoundPath())
 			return asd[endNode].totalCost;
-		return Graphe::INFINITE_COST();
+		return Graphe::INFINITE_COST;
 	}
 	std::deque<IndexNoeud> getShortestPath()
 	{
 		std::deque<IndexNoeud> l;
 		IndexNoeud node = endNode;
-		while (node != Graphe::INVALID_NODE_INDEX())
+		while (node != Graphe::INVALID_NODE_INDEX)
 		{
 			l.push_front(node);
 			node = asd[node].previousNode;
@@ -177,7 +177,7 @@ public:
 	{
 		std::vector<IndexNoeud> l;
 		IndexNoeud node = endNode;
-		while (node != Graphe::INVALID_NODE_INDEX())
+		while (node != Graphe::INVALID_NODE_INDEX)
 		{
 			l.push_back(node);
 			node = asd[node].previousNode;

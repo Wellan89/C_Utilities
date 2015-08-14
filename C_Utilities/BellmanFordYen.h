@@ -21,7 +21,7 @@ protected:
 		IndexNoeud previousNode;
 		Cout totalCost;
 
-		BfyNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX()), totalCost(Graphe::INFINITE_COST())
+		BfyNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
 			{ }
 	};
 
@@ -69,7 +69,7 @@ public:
 					IndexNoeud targetNode = it->getTargetIndex();
 					Cout newCost = nodeTotalCost + it->getCost();
 					if (node < targetNode
-						&& nodeTotalCost != Graphe::INFINITE_COST()
+						&& nodeTotalCost != Graphe::INFINITE_COST
 						&& newCost < bfy[targetNode].totalCost)
 					{
 						if (!lastTurn)
@@ -100,7 +100,7 @@ public:
 					IndexNoeud targetNode = it->getTargetIndex();
 					Cout newCost = nodeTotalCost + it->getCost();
 					if (node > targetNode
-						&& nodeTotalCost != Graphe::INFINITE_COST()
+						&& nodeTotalCost != Graphe::INFINITE_COST
 						&& newCost < bfy[targetNode].totalCost)
 					{
 						if (!lastTurn)
@@ -129,7 +129,7 @@ public:
 			for (auto it = links.begin(); it != links.end(); ++it)
 			{
 				if (node == it->getTargetIndex() && it->getCost() < 0
-					&& bfy[node].totalCost != Graphe::INFINITE_COST())
+					&& bfy[node].totalCost != Graphe::INFINITE_COST)
 				{
 					// On a trouvé un circuit absorbant : on quitte ici.
 					reset();
@@ -146,7 +146,7 @@ public:
 	}
 	bool canReachNode(IndexNoeud node) const
 	{
-		return (bfy[node].totalCost != Graphe::INFINITE_COST());
+		return (bfy[node].totalCost != Graphe::INFINITE_COST);
 	}
 	Cout getCostTo(IndexNoeud node) const
 	{
@@ -155,7 +155,7 @@ public:
 	std::deque<IndexNoeud> getShortestPathTo(IndexNoeud endNode) const
 	{
 		std::deque<IndexNoeud> l;
-		while (endNode != Graphe::INVALID_NODE_INDEX())
+		while (endNode != Graphe::INVALID_NODE_INDEX)
 		{
 			l.push_front(endNode);
 			endNode = bfy[endNode].previousNode;
@@ -165,7 +165,7 @@ public:
 	std::vector<IndexNoeud> getReverseShortestPathTo(IndexNoeud endNode) const
 	{
 		std::vector<IndexNoeud> l;
-		while (endNode != Graphe::INVALID_NODE_INDEX())
+		while (endNode != Graphe::INVALID_NODE_INDEX)
 		{
 			l.push_back(endNode);
 			endNode = bfy[endNode].previousNode;

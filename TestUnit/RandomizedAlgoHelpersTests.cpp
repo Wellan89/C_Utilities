@@ -1,5 +1,5 @@
 #include "CppUnitTest.h"
-#include "ToStringSpecializations.cpp"
+#include "ToStringSpecializations.h"
 #include <cstdlib>
 #include <cmath>
 #include <array>
@@ -166,7 +166,7 @@ namespace TestUnit
 
 			RandomizedAlgoOptimizer<RandomMax, float> optimizer(randMax, params);
 			optimizer.run();
-			Assert::IsTrue(abs(*(optimizer.getBestParams()[0].value) - 1.0f) < 0.01f);
+			Assert::AreEqual(*(optimizer.getBestParams()[0].value), 1.0f, 0.01f);
 		}
 
 		TEST_METHOD(RandOpt_RandMaxMultipleVarsTest)
@@ -201,7 +201,7 @@ namespace TestUnit
 
 			RandomizedAlgoOptimizer<RandomMaxMiddleVal, float> optimizer(randMaxMiddleVal, params, 250);
 			optimizer.run();
-			Assert::IsTrue(abs(*(optimizer.getBestParams()[0].value) - 1.0f) < 0.01f);
+			Assert::AreEqual(*(optimizer.getBestParams()[0].value), 1.0f, 0.01f);
 		}
 
 		TEST_METHOD(RandOpt_PlaceboParameter)
@@ -222,7 +222,7 @@ namespace TestUnit
 
 				RandomizedAlgoOptimizer<RandomMax, float> optimizer(randMax, params);
 				optimizer.run();
-				Assert::IsTrue(abs(*(optimizer.getBestParams()[0].value) - startVal) < 0.05f);
+				Assert::AreEqual(*(optimizer.getBestParams()[0].value), startVal, 0.05f);
 			}
 		}
 	};

@@ -1,5 +1,5 @@
 #include "CppUnitTest.h"
-#include "ToStringSpecializations.cpp"
+#include "ToStringSpecializations.h"
 #include <cstdlib>
 #include <ctime>
 #include <array>
@@ -427,7 +427,7 @@ namespace TestUnit
 			Bruteforcer<decltype(memFuncAlgo), int> bf(memFuncAlgo, params);
 			bf.run();
 
-			Assert::AreEqual(maxVal * maxVal, (int)bf.getBestScore());
+			Assert::AreEqual(maxVal * maxVal, bf.getBestScore());
 			Assert::AreEqual(maxVal, bf.getBestParams()[0]);
 			Assert::AreEqual(maxVal, bf.getBestParams()[2]);
 		}
@@ -463,7 +463,7 @@ namespace TestUnit
 			Bruteforcer<decltype(evalAlgo), int> bf(evalAlgo, params);
 			bf.run();
 
-			Assert::AreEqual(eval(sol), (int)bf.getBestScore());
+			Assert::AreEqual(eval(sol), bf.getBestScore());
 			for (size_t i = 0; i < arr.size(); i++)
 				Assert::AreEqual(sol[i], bf.getBestParams()[i]);
 		}
