@@ -7,11 +7,6 @@
 #include "cost_priority_queue.h"
 #include "DynamicGraph.h"
 
-// Permet de diminuer la mémoire utilisée par cette classe (et permet ainsi à cet algorithme de travailler sur des graphes plus grands),
-// en contre-partie l'algorithme se révèlera légèrement plus lent sur des graphes contenant de nombreux liens au coût nul,
-// mais il sera légèrement plus rapide sur des graphes sans ce type de lien.
-#define A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
-
 // Algorithme A* : parcours le graphe depuis un point de départ en suivant une heuristique,
 // et s'arrête dès qu'un point final est trouvé.
 // Gère aussi les graphes dynamiques.
@@ -27,14 +22,8 @@ protected:
 	{
 		IndexNoeud previousNode;
 		Cout totalCost;
-#ifndef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
-		bool alreadyVisited;
-#endif
 
 		ASDNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
-#ifndef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
-			, alreadyVisited(false)
-#endif
 			{ }
 	};
 
@@ -76,18 +65,14 @@ public:
 		cost_priority_queue<IndexNoeud, Cout> nodesToSee;
 		nodesToSee.push(startNode, g.getNodeHeuristic(startNode));
 
-#ifdef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
 		// La priorité du dernier noeud validé par l'algorithme : celle-ci est toujours croissante,
 		// et permet ainsi de déterminer les noeuds déjà visités simplement par leur priorité.
 		Cout currentPriority = 0;
-#endif
 
 		while (!nodesToSee.empty())
 		{
 			IndexNoeud node = nodesToSee.top();
-#ifdef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
 			Cout nodePriority = nodesToSee.top_cost();
-#endif
 			if (g.isNodeFinal(node))
 			{
 				endNode = node;
@@ -95,15 +80,9 @@ public:
 			}
 			nodesToSee.pop();
 
-#ifndef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
-			if (asd[node].alreadyVisited)
-				continue;
-			asd[node].alreadyVisited = true;
-#else
 			if (nodePriority < currentPriority)
 				continue;
 			currentPriority = nodePriority;
-#endif
 
 #ifdef _DEBUG
 			nbExploredNodes++;
@@ -131,12 +110,11 @@ public:
 					asd[targetNode].totalCost = newCost;
 
 					Cout targetPriority = newCost + g.getNodeHeuristic(targetNode);
-#ifdef A_STAR_DYNAMIC_CLOSED_SET_REMOVAL_OPTIMIZATION
+
 					// On vérifie que ce noeud aura bien une priorité supérieure à la priorité du noeud actuel,
 					// afin qu'il ne soit pas considéré comme déjà vu lorsqu'il sera retiré de la file de priorité.
 					if (targetPriority < currentPriority)
 						targetPriority = currentPriority;
-#endif
 
 					nodesToSee.push(targetNode, targetPriority);
 				}

@@ -6,7 +6,6 @@ TODO :
 - Faire fonctionner tous les algos de plus court chemin avec des coûts proches du coût infini et les nombreux coûts nuls
 	-> Détecter les dépassement de capacité, et les limiter au coût infini s'ils dépassent
 		=> Créer une fonction utilitaire pour ça
-- Déterminer s'il faut choisir de définir de manière permanente CLOSED_SET_OPTIMIZATION pour AStar et Dijkstra
 
 - Revoir les tests des algos random qui échouent régulièrement : augmenter leur nombre d'itérations
 - Séparer les tests de plus court chemin et les autres tests de TestUnit dans deux projets différents

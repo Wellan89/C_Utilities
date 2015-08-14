@@ -204,7 +204,7 @@ public:
 	// Renvoit le vecteur vide s'il n'existe pas de tel ordre topologique.
 	std::vector<IndexNoeud> getReverseTopologicalyOrderedNodes() const
 	{
-		IndexNoeud nodesCount = nodes.size();
+		IndexNoeud nodesCount = (IndexNoeud)nodes.size();
 		std::vector<IndexNoeud> v;
 		v.reserve(nodesCount);
 
@@ -225,14 +225,16 @@ public:
 
 	void addNodes(IndexNoeud nbOfNodesToAdd = 1)
 	{
-		nodes.reserve(nodes.size() + nbOfNodesToAdd);
+		// Attention : ici on ne vérifie pas qu'on insère bien un nombre correct de noeuds :
+		// on doit toujours avoir : nodes.size() + nbOfNodesToAdd <= INVALID_NODE_INDEX.
+		nodes.reserve((IndexNoeud)nodes.size() + nbOfNodesToAdd);
 		for (IndexNoeud i = 0; i < nbOfNodesToAdd; i++)
 			nodes.push_back(Noeud(nodes.size()));
 	}
 	
 	IndexNoeud size() const
 	{
-		return nodes.size();
+		return (IndexNoeud)nodes.size();
 	}
 	Noeud& operator[](IndexNoeud index)
 	{

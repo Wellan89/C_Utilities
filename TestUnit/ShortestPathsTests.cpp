@@ -371,6 +371,7 @@ namespace TestUnit
 		for (int i = 111; i < 127; i++)
 			bigCostPaths->costs[i] = bigCostPaths->costs[110] + (signed char)(2 * (i - 110));
 
+		bigCostPaths->paths[0].push_back(0);
 		for (int i = 1; i <= 16; i++)
 		{
 			bigCostPaths->paths[i] = bigCostPaths->paths[i - 1];
@@ -415,10 +416,18 @@ namespace TestUnit
 			manyNullCostLinks->costs[i] = 100 + nullCost;
 		manyNullCostLinks->costs[nodesCount - 1] = 200;
 
-		manyNullCostLinks->paths[0] = { 0 };
-		for (int i = 1; i < nodesCount - 1; i++)
-			manyNullCostLinks->paths[i] = { 0, (size_t)i };
-		manyNullCostLinks->paths[nodesCount - 1] = { 0, middleNode, nodesCount - 1 };
+		// Vérification des chemins désactivée :
+		// on ne peut pas garantir que le chemin trouvé
+		// utilisera un nombre minimal de liens au coût nul.
+		if (nullCost != 0)
+		{
+			manyNullCostLinks->paths[0] = { 0 };
+			manyNullCostLinks->paths[1] = { 0, 1 };
+			for (int i = 2; i < nodesCount - 1; i++)
+				manyNullCostLinks->paths[i] = { 0, 1, (size_t)i };
+
+			manyNullCostLinks->paths[nodesCount - 1] = { 0, 1, middleNode, nodesCount - 1 };
+		}
 
 		manyNullCostLinks->finishTest();
 	}
