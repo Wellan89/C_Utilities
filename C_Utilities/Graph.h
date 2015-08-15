@@ -48,7 +48,7 @@
 
 
 // Implémentation minimale de ces classes
-template<class Cost = unsigned int, class NodeIndex = size_t>
+template<class Cost = int, class NodeIndex = unsigned int>
 class Graph
 {
 public:

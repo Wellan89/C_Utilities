@@ -42,12 +42,11 @@
 class NullGenerator
 {
 public:
-	long operator()(unsigned int index) const
-	{	return 0;	}
+	long operator()(unsigned int index) const	{ return 0; }
 };
 template<class NodeLinksGenerator, class NodeFinalGenerator,
 	class NodeHeuristicGenerator = NullGenerator,
-	class Cost = long, class NodeIndex = unsigned int>
+	class Cost = int, class NodeIndex = unsigned int>
 class DynamicGraph
 {
 public:
@@ -72,7 +71,8 @@ public:
 		Cout getCost() const				{ return cost; }
 
 		DynamicLink(IndexNoeud _targetIndex, Cout _cost)
-			: targetIndex(_targetIndex), cost(_cost) { }
+			: targetIndex(_targetIndex), cost(_cost)
+		{ }
 	};
 
 protected:

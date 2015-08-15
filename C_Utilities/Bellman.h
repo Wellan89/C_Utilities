@@ -22,7 +22,7 @@ protected:
 		Cout totalCost;
 
 		BmNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
-			{ }
+		{ }
 	};
 
 	std::vector<BmNodeInfo> bm;
@@ -30,6 +30,24 @@ protected:
 
 	// Indique si un cycle a été détecté dans le graphe
 	bool cycleFound;
+
+	// Détermine si la somme de deux coûts dépasse les valeurs maximales ou minimales d'un coût.
+	bool costAddOverflow(Cout a, Cout b)
+	{
+		if (a >= 0)	// Ce test sera optimisé si Cout est un type non signé
+		{
+			// On ne veut pas pouvoir ajouter "b = -1" à "a = Graphe::INFINITE_COST" par exemple.
+			// De plus, on évite d'obtenir un résultat égal à Graphe::INFINITE_COST.
+			return (a == Graphe::INFINITE_COST
+				|| b >= std::numeric_limits<Cout>::max() - a);
+		}
+		else
+		{
+			// On ne veut pas pouvoir ajouter "a = -1" à "b = Graphe::INFINITE_COST" par exemple.
+			return (b == Graphe::INFINITE_COST
+				|| b < std::numeric_limits<Cout>::min() - a);
+		}
+	}
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
@@ -40,7 +58,7 @@ protected:
 	}
 
 public:
-	Bellman(const Graphe& gr) : g(gr) { reset(); }
+	Bellman(const Graphe& gr) : g(gr)	{ reset(); }
 
 	void computeShortestPathsFrom(IndexNoeud startNode)
 	{
@@ -62,13 +80,13 @@ public:
 
 		// Génère l'ensemble des liens inverse de ce graphe :
 		// Pour chaque noeud, l'ensemble des noeuds ayant un lien vers celui-ci et le coût de ce lien.
-		std::vector<vector<pair<IndexNoeud, Cout> > > incomingLinks(g.size());
+		std::vector<std::vector<std::pair<IndexNoeud, Cout> > > incomingLinks(g.size());
 		IndexNoeud nodesCount = g.size();
 		for (IndexNoeud i = 0; i < nodesCount; i++)
 		{
 			const auto& links = g[i].getLinks();
 			for (auto it = links.begin(); it != links.end(); ++it)
-				incomingLinks[it->getTargetIndex()].push_back(pair<IndexNoeud, Cout>(i, it->getCost()));
+				incomingLinks[it->getTargetIndex()].push_back(std::pair<IndexNoeud, Cout>(i, it->getCost()));
 		}
 
 		// Indique le coût du premier noeud
@@ -82,10 +100,14 @@ public:
 			for (auto incLinkIt = incLinks.begin(); incLinkIt != incLinks.end(); ++incLinkIt)
 			{
 				IndexNoeud prevNode = incLinkIt->first;
-				if (bm[prevNode].totalCost == Graphe::INFINITE_COST)
+				Cout linkCost = incLinkIt->second;
+
+				// Evite de dépasser le coût maximal en calculant le nouveau coût ici :
+				// On ignore ce chemin en cas de dépassement pusiqu'on ne peut pas le gérer.
+				if (costAddOverflow(bm[prevNode].totalCost, linkCost))
 					continue;
 
-				Cout newCost = bm[prevNode].totalCost + incLinkIt->second;
+				Cout newCost = bm[prevNode].totalCost + linkCost;
 				if (newCost < bm[node].totalCost)
 				{
 					bm[node].totalCost = newCost;

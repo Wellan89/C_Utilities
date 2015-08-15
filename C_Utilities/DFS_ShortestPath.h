@@ -52,15 +52,15 @@ protected:
 		}
 
 		DFS_NodeInfo() : node(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
-			{ }
+		{ }
 
 		// Ce constructeur pourrait aussi permettre de convertir des noeuds (IndexNoeud) en DFS_NodeInfo implicitement.
 		// Cependant on l'interdit ici (car cela obfusque le code) avec le mot clé explicit.
 		explicit DFS_NodeInfo(IndexNoeud _node) : node(_node), totalCost(Graphe::INFINITE_COST)
-			{ }
+		{ }
 
 		DFS_NodeInfo(IndexNoeud _node, Cout _totalCost) : node(_node), totalCost(_totalCost)
-			{ }
+		{ }
 	};
 
 	// L'ensemble des noeuds actuellement visités par récursivité, ainsi que leur distance au noeud de départ
@@ -81,6 +81,24 @@ protected:
 
 	// Indique si un circuit absorbant a été détecté dans le graphe
 	bool absorbCycleFound;
+
+	// Détermine si la somme de deux coûts dépasse les valeurs maximales ou minimales d'un coût.
+	bool costAddOverflow(Cout a, Cout b)
+	{
+		if (a >= 0)	// Ce test sera optimisé si Cout est un type non signé
+		{
+			// On ne veut pas pouvoir ajouter "b = -1" à "a = Graphe::INFINITE_COST" par exemple.
+			// De plus, on évite d'obtenir un résultat égal à Graphe::INFINITE_COST.
+			return (a == Graphe::INFINITE_COST
+				|| b >= std::numeric_limits<Cout>::max() - a);
+		}
+		else
+		{
+			// On ne veut pas pouvoir ajouter "a = -1" à "b = Graphe::INFINITE_COST" par exemple.
+			return (b == Graphe::INFINITE_COST
+				|| b < std::numeric_limits<Cout>::min() - a);
+		}
+	}
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
@@ -128,10 +146,15 @@ protected:
 		const auto& links = g[node].getLinks();
 		for (auto it = links.begin(); it != links.end(); ++it)
 		{
+			Cout linkCost = it->getCost();
+
+			// Evite de dépasser le coût maximal en calculant le nouveau coût ici :
+			// On ignore ce chemin en cas de dépassement pusiqu'on ne peut pas le gérer.
+			if (costAddOverflow(currentCost, linkCost))
+				continue;
+
+			Cout targetCost = currentCost + linkCost;
 			IndexNoeud targetNode = it->getTargetIndex();
-#ifdef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
-			Cout targetCost = currentCost + it->getCost();
-#endif
 
 #ifndef DFS_NO_CYCLE_DETECTION
 			// Vérifie que ce noeud n'est pas exploré actuellement
@@ -156,9 +179,6 @@ protected:
 			}
 #endif
 
-#ifndef DFS_SHORTEST_PATH_NEGATIVE_CYCLE_DETECTION
-			Cout targetCost = currentCost + it->getCost();
-#endif
 			if (computeShortestPath_Rec(targetNode, targetCost))
 			{
 				pathFound = true;
@@ -185,7 +205,7 @@ protected:
 	}
 
 public:
-	DFS_ShortestPath(const Graphe& gr) : g(gr) { reset(); }
+	DFS_ShortestPath(const Graphe& gr) : g(gr)	{ reset(); }
 
 	void computeShortestPathFrom(IndexNoeud startNode, Cout maxCost = Graphe::INFINITE_COST)
 	{

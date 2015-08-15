@@ -10,7 +10,7 @@
 // mais utilise deux fois moins de mémoire que l'algorithme basique.
 
 #ifdef _DEBUG
-#define COUNTER_CULTURE_FINAL_NODE	1234
+#define COUNTER_CULTURE_FINAL_NODE	12345
 #else
 #define COUNTER_CULTURE_FINAL_NODE	600000
 

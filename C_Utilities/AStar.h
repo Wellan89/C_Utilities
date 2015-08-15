@@ -22,7 +22,7 @@ protected:
 		Cout totalCost;
 
 		ASNodeInfo() : previousNode(Graphe::INVALID_NODE_INDEX), totalCost(Graphe::INFINITE_COST)
-			{ }
+		{ }
 	};
 
 	std::vector<ASNodeInfo> as;
@@ -38,6 +38,24 @@ protected:
 
 	// Indique si un lien au coût négatif a été détecté dans le graphe
 	bool negativeLinkFound;
+
+	// Détermine si la somme de deux coûts dépasse les valeurs maximales ou minimales d'un coût.
+	bool costAddOverflow(Cout a, Cout b)
+	{
+		if (a >= 0)	// Ce test sera optimisé si Cout est un type non signé
+		{
+			// On ne veut pas pouvoir ajouter "b = -1" à "a = Graphe::INFINITE_COST" par exemple.
+			// De plus, on évite d'obtenir un résultat égal à Graphe::INFINITE_COST.
+			return (a == Graphe::INFINITE_COST
+				|| b >= std::numeric_limits<Cout>::max() - a);
+		}
+		else
+		{
+			// On ne veut pas pouvoir ajouter "a = -1" à "b = Graphe::INFINITE_COST" par exemple.
+			return (b == Graphe::INFINITE_COST
+				|| b < std::numeric_limits<Cout>::min() - a);
+		}
+	}
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
@@ -100,14 +118,25 @@ public:
 					return;
 				}
 
-				IndexNoeud targetNode = it->getTargetIndex();
+				// Evite de dépasser le coût maximal en calculant le nouveau coût ici :
+				// On ignore ce chemin en cas de dépassement pusiqu'on ne peut pas le gérer.
+				if (costAddOverflow(linkCost, nodeTotalCost))
+					continue;
+
 				Cout newCost = nodeTotalCost + linkCost;
+				IndexNoeud targetNode = it->getTargetIndex();
 				if (newCost < as[targetNode].totalCost)
 				{
 					as[targetNode].previousNode = node;
 					as[targetNode].totalCost = newCost;
 
-					Cout targetPriority = newCost + g[targetNode].getHeuristic();
+					// Evite de dépasser la priorité maximale ici.
+					Cout targetPriority;
+					Cout targetNodeHeuristic = g[targetNode].getHeuristic();
+					if (costAddOverflow(newCost, targetNodeHeuristic))
+						targetPriority = Graphe::INFINITE_COST;
+					else
+						targetPriority = newCost + targetNodeHeuristic;
 
 					// On vérifie que ce noeud aura bien une priorité supérieure à la priorité du noeud actuel,
 					// afin qu'il ne soit pas considéré comme déjà vu lorsqu'il sera retiré de la file de priorité.

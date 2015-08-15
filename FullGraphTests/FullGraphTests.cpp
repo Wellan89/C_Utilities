@@ -1,7 +1,7 @@
 #include "ShortestPathTestsUtils.h"
 
 #ifdef _DEBUG
-#define FULL_GRAPH_NODES_COUNT					350
+#define FULL_GRAPH_NODES_COUNT					330
 #else
 #define FULL_GRAPH_NODES_COUNT					8000
 #endif
@@ -78,7 +78,7 @@ namespace TestUnit
 
 	TEST_CLASS(FloydWarshallTests)
 	{
-		// Floyd-Warshall est extrêmement lent pour les gros tests !
+		// Floyd-Warshall est peu efficace en mémoire sur des grands graphes !
 		//SHORTEST_PATH_TEST_METHOD(fullGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 	};
 }

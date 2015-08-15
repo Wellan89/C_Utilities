@@ -3,7 +3,7 @@
 #ifdef _DEBUG
 #define EMPTY_MAP_SIZE							81
 #else
-#define EMPTY_MAP_SIZE							2001
+#define EMPTY_MAP_SIZE							1901
 #endif
 
 namespace TestUnit
@@ -51,7 +51,7 @@ namespace TestUnit
 
 	TEST_MODULE_INITIALIZE(EmptyMapTestsInit)
 	{
-		EmptyMapInit(4);
+		EmptyMapInit(5);
 	}
 	TEST_MODULE_CLEANUP(EmptyMapTestsCleanup)
 	{
@@ -86,8 +86,10 @@ namespace TestUnit
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
+#ifdef ENABLE_SLOW_TESTS
 		// Bellman-Ford est extrêmement lent pour les gros tests !
-		//SHORTEST_PATH_TEST_METHOD(emptyMap, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(emptyMap, BellmanFord, runSpfTest_AllNodes);
+#endif
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
@@ -98,7 +100,7 @@ namespace TestUnit
 
 	TEST_CLASS(FloydWarshallTests)
 	{
-		// Floyd-Warshall est extrêmement lent pour les gros tests !
+		// Floyd-Warshall est peu efficace en mémoire sur des grands graphes !
 		//SHORTEST_PATH_TEST_METHOD(emptyMap, FloydWarshall, runSpfTest_AllPairsOfNodes);
 	};
 }

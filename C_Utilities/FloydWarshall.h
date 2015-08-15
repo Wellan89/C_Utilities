@@ -2,6 +2,7 @@
 #define DEF_FLOYD_WARSHALL
 
 #include <vector>
+#include <limits>
 #include "Graph.h"
 
 // Algorithme de Floyd-Warshall : détermine toutes les plus courtes distances entre toutes les paires de points.
@@ -22,11 +23,29 @@ protected:
 		Cout totalCost;
 
 		FwPathInfo() : totalCost(Graphe::INFINITE_COST), middleNode(Graphe::INVALID_NODE_INDEX)
-			{ }
+		{ }
 	};
 
 	std::vector<std::vector<FwPathInfo> > fw;
 	const Graphe& g;
+
+	// Détermine si la somme de deux coûts dépasse les valeurs maximales ou minimales d'un coût.
+	bool costAddOverflow(Cout a, Cout b)
+	{
+		if (a >= 0)	// Ce test sera optimisé si Cout est un type non signé
+		{
+			// On ne veut pas pouvoir ajouter "b = -1" à "a = Graphe::INFINITE_COST" par exemple.
+			// De plus, on évite d'obtenir un résultat égal à Graphe::INFINITE_COST.
+			return (a == Graphe::INFINITE_COST
+				|| b >= std::numeric_limits<Cout>::max() - a);
+		}
+		else
+		{
+			// On ne veut pas pouvoir ajouter "a = -1" à "b = Graphe::INFINITE_COST" par exemple.
+			return (b == Graphe::INFINITE_COST
+				|| b < std::numeric_limits<Cout>::min() - a);
+		}
+	}
 
 	// Réinitialise les informations sur les noeuds
 	void reset()
@@ -58,7 +77,7 @@ protected:
 	}
 
 public:
-	FloydWarshall(const Graphe& gr) : g(gr) { reset(); }
+	FloydWarshall(const Graphe& gr) : g(gr)	{ reset(); }
 
 	void computeShortestPaths()
 	{
@@ -102,7 +121,10 @@ public:
 				for (IndexNoeud j = 0; j < nodesCount; j++)
 				{
 					Cout k_j_cost = fw[k][j].totalCost;
-					if (k_j_cost == Graphe::INFINITE_COST)
+
+					// Evite de dépasser le coût maximal en calculant le nouveau coût ici :
+					// On ignore ce chemin en cas de dépassement pusiqu'on ne peut pas le gérer.
+					if (costAddOverflow(k_j_cost, i_k_cost))
 						continue;
 
 					Cout newCost = i_k_cost + k_j_cost;

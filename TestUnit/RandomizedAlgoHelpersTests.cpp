@@ -5,7 +5,7 @@
 #include <array>
 #include <sstream>
 
-#define ALGORITHM_OPTIMIZATION_DEBUG_LOG(msg)	do { ostringstream ss; ss << msg; Logger::WriteMessage(ss.str().c_str()); } while (false)
+//#define ALGORITHM_OPTIMIZATION_DEBUG_LOG(msg)	do { ostringstream ss; ss << msg; Logger::WriteMessage(ss.str().c_str()); } while (false)
 
 #include "RandomizedAlgoEvaluator.h"
 #include "RandomizedAlgoOptimizer.h"
@@ -122,8 +122,7 @@ namespace TestUnit
 		}
 
 		RandomMaxMiddleVal() : val(0.0f)
-		{
-		}
+		{ }
 	};
 
 	TEST_CLASS(RandomizedAlgoEvaluatorTests)
@@ -147,7 +146,7 @@ namespace TestUnit
 		TEST_METHOD(RandEval_RandMaxMiddleVal)
 		{
 			RandomMaxMiddleVal randMaxMiddleVal;
-			RandomizedAlgoEvaluator<RandomMaxMiddleVal> evaluator(randMaxMiddleVal, 1000);
+			RandomizedAlgoEvaluator<RandomMaxMiddleVal> evaluator(randMaxMiddleVal, 2000);
 			evaluator.run();
 			Assert::AreEqual(RandomMaxMiddleVal::BEST_RESULT_PROB_ID, evaluator.getBestResultsProbsId());
 		}

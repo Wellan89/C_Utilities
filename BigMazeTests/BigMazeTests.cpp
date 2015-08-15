@@ -1,7 +1,7 @@
 #include "ShortestPathTestsUtils.h"
 
 #ifdef _DEBUG
-#define BIG_MAZE_SIZE							201		// Doit être impair
+#define BIG_MAZE_SIZE							151		// Doit être impair
 #else
 #define BIG_MAZE_SIZE							2801	// Doit être impair
 #endif
@@ -50,7 +50,7 @@ namespace TestUnit
 
 	TEST_MODULE_INITIALIZE(BigMazeTestsInit)
 	{
-		BigMazeInit(5);
+		BigMazeInit(6);
 	}
 	TEST_MODULE_CLEANUP(BigMazeTestsCleanup)
 	{
@@ -86,8 +86,10 @@ namespace TestUnit
 	TEST_CLASS(BellmanFordTests)
 	{
 	public:
+#ifdef ENABLE_SLOW_TESTS
 		// Bellman-Ford est extrêmement lent pour les gros tests !
-		//SHORTEST_PATH_TEST_METHOD(bigMaze, BellmanFord, runSpfTest_AllNodes);
+		SHORTEST_PATH_TEST_METHOD(bigMaze, BellmanFord, runSpfTest_AllNodes);
+#endif
 	};
 
 	TEST_CLASS(BellmanFordYenTests)
@@ -98,7 +100,7 @@ namespace TestUnit
 
 	TEST_CLASS(FloydWarshallTests)
 	{
-		// Floyd-Warshall est extrêmement lent pour les gros tests !
+		// Floyd-Warshall est peu efficace en mémoire sur des grands graphes !
 		//SHORTEST_PATH_TEST_METHOD(bigMaze, FloydWarshall, runSpfTest_AllPairsOfNodes);
 	};
 }

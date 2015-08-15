@@ -143,7 +143,7 @@ namespace TestUnit
 	}
 	void NegativeCycleGraphInit(unsigned int testRefsCount)
 	{
-		negativeCycleGraph = new ShortestPathTest<>(8, testRefsCount);
+		negativeCycleGraph = new ShortestPathTest<>(8, testRefsCount, PATH_FINDERS_COMPUTE_LOOPS * 10);
 		negativeCycleGraph->g.addLink(0, 1, 1);
 		negativeCycleGraph->g.addLink(0, 5, -1);
 		negativeCycleGraph->g.addLink(0, 6, 3);
@@ -167,7 +167,7 @@ namespace TestUnit
 	}
 	void NegativeLoopGraphInit(unsigned int testRefsCount)
 	{
-		negativeLoopGraph = new ShortestPathTest<>(4, testRefsCount);
+		negativeLoopGraph = new ShortestPathTest<>(4, testRefsCount, PATH_FINDERS_COMPUTE_LOOPS * 20);
 		negativeLoopGraph->g.addLink(0, 1, 3, true);
 		negativeLoopGraph->g.addLink(0, 2, -5, true);
 		negativeLoopGraph->g.addLink(1, 1, -1, true);
@@ -246,7 +246,7 @@ namespace TestUnit
 	}
 	void LittleGraphsInit(unsigned int testRefsCount)
 	{
-		emptyGraph = new ShortestPathTest<>(0, testRefsCount);
+		emptyGraph = new ShortestPathTest<>(0, testRefsCount, PATH_FINDERS_COMPUTE_LOOPS * 10);
 		emptyGraph->startNode = 0;
 		emptyGraph->closestFinalNode = 0;
 		emptyGraph->costs = { Graphe::INFINITE_COST };
@@ -355,42 +355,65 @@ namespace TestUnit
 		// dans le type Cout, mais ce n'est pas le cas pour le coût du chemin le plus court.
 		// De plus, la longueur du chemin le plus court est de 126 (INFINITE_COST - 1),
 		// et le nombre de noeuds est maximal (INVALID_NODE_INDEX noeuds).
-		bigCostPaths = new ShortestPathTest<signed char, signed char>(SCHAR_MAX, testRefsCount);
-		bigCostPaths->g.addLink(16, 68, 6, true);
-		bigCostPaths->g.addLink(68, 52, 3, true);
-		bigCostPaths->g.addLink(52, 100, 53, true);
+		bigCostPaths = new ShortestPathTest<signed char, signed char>(SCHAR_MAX, testRefsCount,
+			max(PATH_FINDERS_COMPUTE_LOOPS / 400, 1));
 		for (int i = 0; i < SCHAR_MAX - 1; i++)
-			bigCostPaths->g.addLink((signed char)i, (signed char)(i + 1), 2, false);
+			bigCostPaths->g.addLink((signed char)i, (signed char)(i + 1), 2, true);
+		bigCostPaths->g.addLink(16, 50, 9, true);
+		bigCostPaths->g.addLink(54, 68, 0, true);
+		bigCostPaths->g.addLink(80, 110, 21, true);
 
 		bigCostPaths->startNode = 0;
 		bigCostPaths->closestFinalNode = SCHAR_MAX - 1;
 
-		for (int i = 0; i <= 16; i++)
+		// Les noeuds 107, 108 et 109 sont inaccessibles :
+		// le coût du chemin le plus court pour les atteindre est supérieur à 126.
+
+		for (int i = 0; i < 50; i++)
 			bigCostPaths->costs[i] = (signed char)(2 * i);
-		bigCostPaths->costs[68] = bigCostPaths->costs[16] + 6;
-		bigCostPaths->costs[52] = bigCostPaths->costs[68] + 3;
-		bigCostPaths->costs[100] = bigCostPaths->costs[52] + 53;
-		for (int i = 101; i < SCHAR_MAX; i++)
-			bigCostPaths->costs[i] = bigCostPaths->costs[100] + (signed char)(2 * (i - 100));
+		bigCostPaths->costs[50] = bigCostPaths->costs[16] + 9;
+		for (int i = 51; i < 68; i++)
+			bigCostPaths->costs[i] = bigCostPaths->costs[50] + (signed char)(2 * (i - 50));
+		bigCostPaths->costs[68] = bigCostPaths->costs[54];
+		for (int i = 69; i < 107; i++)
+			bigCostPaths->costs[i] = bigCostPaths->costs[68] + (signed char)(2 * (i - 68));
+		bigCostPaths->costs[110] = bigCostPaths->costs[80] + 21;
+		for (int i = 111; i < SCHAR_MAX; i++)
+			bigCostPaths->costs[i] = bigCostPaths->costs[110] + (signed char)(2 * (i - 110));
+
+		// Indique quelques heuristiques pour A*
+		for (int i = 60; i < SCHAR_MAX; i++)
+			bigCostPaths->g.setNodeHeuristic(i, bigCostPaths->costs[i]);
 
 		bigCostPaths->paths[0].push_back(0);
-		for (int i = 1; i <= 16; i++)
+		for (int i = 1; i < 50; i++)
 		{
 			bigCostPaths->paths[i] = bigCostPaths->paths[i - 1];
 			bigCostPaths->paths[i].push_back((signed char)i);
 		}
-		bigCostPaths->paths[68] = bigCostPaths->paths[16];
+		bigCostPaths->paths[50] = bigCostPaths->paths[16];
+		bigCostPaths->paths[50].push_back(50);
+		for (int i = 51; i < 68; i++)
+		{
+			bigCostPaths->paths[i] = bigCostPaths->paths[i - 1];
+			bigCostPaths->paths[i].push_back((signed char)i);
+		}
+		bigCostPaths->paths[68] = bigCostPaths->paths[54];
 		bigCostPaths->paths[68].push_back(68);
-		bigCostPaths->paths[52] = bigCostPaths->paths[68];
-		bigCostPaths->paths[52].push_back(52);
-		bigCostPaths->paths[100] = bigCostPaths->paths[52];
-		bigCostPaths->paths[100].push_back(100);
-		for (int i = 101; i < SCHAR_MAX; i++)
+		for (int i = 69; i < 107; i++)
+		{
+			bigCostPaths->paths[i] = bigCostPaths->paths[i - 1];
+			bigCostPaths->paths[i].push_back((signed char)i);
+		}
+		bigCostPaths->paths[110] = bigCostPaths->paths[80];
+		bigCostPaths->paths[110].push_back(110);
+		for (int i = 111; i < SCHAR_MAX; i++)
 		{
 			bigCostPaths->paths[i] = bigCostPaths->paths[i - 1];
 			bigCostPaths->paths[i].push_back((signed char)i);
 		}
 
+		bigCostPaths->infiniteCostCheck = true;
 		bigCostPaths->finishTest();
 	}
 	void ManyNullCostLinksInit(unsigned int testRefsCount)
@@ -399,11 +422,11 @@ namespace TestUnit
 		// le coût des liens nuls à une valeur non nulle.
 		constexpr int nullCost = 0;
 #ifdef _DEBUG
-		constexpr size_t nodesCount = 6;
-#else
 		constexpr size_t nodesCount = 40;
+#else
+		constexpr size_t nodesCount = 700;
 #endif
-		manyNullCostLinks = new ShortestPathTest<>(nodesCount, testRefsCount);
+		manyNullCostLinks = new ShortestPathTest<>(nodesCount, testRefsCount, 1);
 
 		constexpr size_t middleNode = nodesCount / 2;
 		manyNullCostLinks->g.addLink(0, 1, 100);
@@ -439,7 +462,7 @@ namespace TestUnit
 	TEST_MODULE_INITIALIZE(ShortestPathsTestsInit)
 	{
 		SimpleTestInit(7);
-		LittleMazeInit(6);
+		LittleMazeInit(7);
 		NegativeLinksGraphInit(4);
 		NegativeCycleGraphInit(6);
 		NegativeLoopGraphInit(7);
@@ -448,7 +471,7 @@ namespace TestUnit
 		Algo2GraphInit(8);
 		ROGraphInit(8);
 		BigCostPathsInit(8);
-		ManyNullCostLinksInit(8);
+		ManyNullCostLinksInit(6);
 
 		// Pour les tests de RandomizedAlgoHelpersTests
 		srand((unsigned int)time(NULL));
@@ -538,7 +561,6 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(algo2Graph, Bellman, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(roGraph, Bellman, runSpfTest_AllNodes);
 		SHORTEST_PATH_TEST_METHOD(bigCostPaths, Bellman, runSpfTest_AllNodes);
-		SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, Bellman, runSpfTest_AllNodes);
 	};
 
 	TEST_CLASS(DFS_Tests)
@@ -565,8 +587,11 @@ namespace TestUnit
 		SHORTEST_PATH_TEST_METHOD(roGraph, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 		SHORTEST_PATH_TEST_METHOD(bigCostPaths, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
 
+#ifdef ENABLE_SLOW_TESTS
 		// DFS est extrêmement lent pour ce test !
+		// Il est tellement lent qu'il est désactivé même en définissant ENABLE_SLOW_TESTS.
 		//SHORTEST_PATH_TEST_METHOD(manyNullCostLinks, DFS_ShortestPath, runSpfTest_ClosestFinalNode);
+#endif
 	};
 
 	TEST_CLASS(BFS_Tests)
@@ -629,8 +654,10 @@ namespace TestUnit
 	{
 		SHORTEST_PATH_TEST_METHOD(simpleTest, FloydWarshall, runSpfTest_AllPairsOfNodes);
 
+#ifdef ENABLE_SLOW_TESTS
 		// Floyd-Warshall est extrêmement lent pour ce test !
-		//SHORTEST_PATH_TEST_METHOD(littleMaze, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(littleMaze, FloydWarshall, runSpfTest_AllPairsOfNodes);
+#endif
 
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		//SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);

@@ -3,12 +3,10 @@
 
 /*
 TODO :
-- Faire fonctionner tous les algos de plus court chemin avec des coûts proches du coût infini et les nombreux coûts nuls
-	-> Détecter les dépassement de capacité, et les limiter au coût infini s'ils dépassent
-		=> Créer une fonction utilitaire pour ça
-
-- Revoir les tests des algos random qui échouent régulièrement : augmenter leur nombre d'itérations
 - Séparer les tests de plus court chemin et les autres tests de TestUnit dans deux projets différents
+
+- Créer des tests avec un graphe aux coûts flottants :
+	Coûts très importants, coûts négatifs, test basique, cycles négatifs
 
 - Créer une classe arbre héritant de Graphe : un graphe orienté sans cycles, chaque noeud ayant un lien vers son parent
 
@@ -31,15 +29,18 @@ TODO :
 
 
 
+// Si défini, les tests les plus lents seront aussi activés
+// Ces tests ont un temps d'exécution de l'ordre de la minute.
+//#define ENABLE_SLOW_TESTS
+
 #ifdef _DEBUG
-#define PATH_FINDERS_COMPUTE_LOOPS				800
+#define PATH_FINDERS_COMPUTE_LOOPS				170
 #else
-#define PATH_FINDERS_COMPUTE_LOOPS				500000
+#define PATH_FINDERS_COMPUTE_LOOPS				100000
 #endif
 
 
 
-// ATTENTION : L'inclusion des .h ne marche pas ici : trouver pourquoi !
 #include <cstdlib>
 #include <ctime>
 #include "CppUnitTest.h"
@@ -80,7 +81,7 @@ namespace TestUnit
 		return v;
 	}
 
-	template<class Cost = int, class NodeIndex = Graph<>::IndexNoeud>
+	template<class Cost = int, class NodeIndex = unsigned int>
 	struct ShortestPathTest
 	{
 		typedef Cost Cout;
@@ -113,7 +114,7 @@ namespace TestUnit
 				g.setNodeFinal(closestFinalNode);
 
 			reversePaths.resize(paths.size());
-			for (unsigned int i = 0; i < paths.size(); i++)
+			for (size_t i = 0; i < paths.size(); i++)
 				reversePaths[i] = reverse_vect(paths[i]);
 		}
 	};

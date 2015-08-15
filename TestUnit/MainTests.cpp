@@ -375,7 +375,11 @@ namespace TestUnit
 	{
 		TEST_METHOD(Bruteforcer_RandomArrayRead)
 		{
+#ifdef _DEBUG
+			constexpr int size = 4;
+#else
 			constexpr int size = 32;
+#endif
 			vector<int> arr(size * size * size * size);
 			for (size_t i = 0; i < arr.size(); i++)
 				arr[i] = (rand() % 1000000);
@@ -407,7 +411,11 @@ namespace TestUnit
 		}
 		TEST_METHOD(Bruteforcer_MemoizedFunction)
 		{
+#ifdef _DEBUG
+			constexpr int maxVal = 4;
+#else
 			constexpr int maxVal = 15;
+#endif
 
 			int dummy1, dummy2;
 			FunctionAlgorithm<int, int, int> memFuncAlgo(RecursiveMultipleArgsMemoizator<int, int, int>(
@@ -435,8 +443,13 @@ namespace TestUnit
 		{
 			// But : maximiser la somme des éléments choisis dans le tableau ci-dessous,
 			// sans jamais choisir deux éléments consécutifs.
+#ifdef _DEBUG
+			vector<int> arr = { 7, 3, 6, 2, 5, 9, 1, 3, 4, 9, 1, 3, 6, 2 };
+			vector<int> sol = { 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0 };
+#else
 			vector<int> arr = { 7, 3, 6, 2, 5, 9, 1, 3, 4, 9, 1, 3, 6, 2, 8, 1, 3, 4, 6, 7 };
 			vector<int> sol = { 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1 };
+#endif
 
 			auto eval = [&](vector<int> choices)
 				{
