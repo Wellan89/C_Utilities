@@ -32,7 +32,6 @@ template<class ReturnType, class... Args>
 class FunctionAlgorithm
 {
 protected:
-	typedef FunctionAlgorithm<ReturnType, Args...> MyType;
 	typedef std::function<ReturnType(Args...)> Func;
 
 	Func func;

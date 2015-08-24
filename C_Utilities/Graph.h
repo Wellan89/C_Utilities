@@ -3,6 +3,8 @@
 
 #include <deque>
 #include <vector>
+#include <limits>
+#include <algorithm>
 
 // Un graphe est un tableau de noeuds dont chacun contient la liste des liens vers ses voisins.
 // Un lien contient un noeud (le voisin) et son coût de trajet.

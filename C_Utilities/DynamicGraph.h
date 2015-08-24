@@ -1,8 +1,7 @@
 #ifndef DEF_DYNAMIC_GRAPH
 #define DEF_DYNAMIC_GRAPH
 
-#include <deque>
-#include <vector>
+#include <limits>
 
 // Un graphe dynamique est capable de déterminer la liste des liens d'un noeud pour tout identificateur de noeud donné.
 // Un lien contient un noeud (le voisin) et son coût de trajet.
