@@ -3,6 +3,8 @@
 
 /*
 TODO :
+- BFS est-il plus rapide que Dijkstra pour les graphes dont les liens ont tous le même coût ?
+
 - Séparer les tests de plus court chemin et les autres tests de TestUnit dans deux projets différents
 
 - Créer des tests avec un graphe aux coûts flottants :

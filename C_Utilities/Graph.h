@@ -114,6 +114,9 @@ protected:
 
 	// Ajoute un noeud et ses fils à un ordre topologique.
 	// Renvoit false si on détecte une erreur lors de la construction de l'ordre topologique.
+#if 0
+	// Version récursive :
+	// plus rapide mais peut dépasser la capacité de la pile à cause des nombreux appels récursifs.
 	bool addToTopologicalOrder(IndexNoeud index, std::vector<IndexNoeud>& v,
 		std::vector<E_TOPOLOGICAL_ORDER_NODE_STATE>& nodesState) const
 	{
@@ -134,6 +137,52 @@ protected:
 		v.push_back(index);
 		return true;
 	}
+#else
+	// Version itérative :
+	// plus lent, mais évite des dépassement de capacité de la pile.
+	struct AddToTopologicalOrderState
+	{
+		decltype(nodes[0].links.cbegin()) currentIt;
+		IndexNoeud index;
+
+		AddToTopologicalOrderState(IndexNoeud idx, const decltype(currentIt)& it)
+			: index(idx), currentIt(it)
+		{ }
+	};
+	bool addToTopologicalOrder(IndexNoeud index, std::vector<IndexNoeud>& v,
+		std::vector<E_TOPOLOGICAL_ORDER_NODE_STATE>& nodesState) const
+	{
+		std::deque<AddToTopologicalOrderState> stack;
+		stack.emplace_back(index, nodes[index].links.cbegin());
+		while (!stack.empty())
+		{
+			AddToTopologicalOrderState state = stack.back();
+			stack.pop_back();
+
+			nodesState[state.index] = ETONS_SEEN;
+			auto end = nodes[state.index].links.cend();
+			auto it = state.currentIt;
+			for (; it != end; ++it)
+			{
+				IndexNoeud node = it->getTargetIndex();
+				if (nodesState[node] == ETONS_UNSEEN)
+				{
+					stack.emplace_back(state.index, it);
+					stack.emplace_back(node, nodes[node].links.cbegin());
+					break;
+				}
+				else if (nodesState[node] == ETONS_SEEN)
+					return false;
+			}
+			if (it != end)
+				continue;
+
+			nodesState[state.index] = ETONS_ADDED;
+			v.push_back(state.index);
+		}
+		return true;
+	}
+#endif
 
 public:
 	Graph(IndexNoeud nodesNb)
