@@ -14,23 +14,6 @@
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace std
-{
-	size_t hash_combine(size_t h1, size_t h2)
-	{
-		return (h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2)));
-	}
-
-	template<class Left, class Right> class hash<pair<Left, Right>>
-	{
-	public:
-		size_t operator()(const pair<Left, Right>& p) const
-		{
-			return hash_combine(hash<Left>()(p.first), hash<Right>()(p.second));
-		}
-	};
-}
-
 namespace TestUnit
 {
 	TEST_CLASS(ListTests)

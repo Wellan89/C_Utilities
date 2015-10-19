@@ -51,6 +51,17 @@ namespace std
 			return seed;
 		}
 	};
+
+	template<class T1, class T2>
+	struct hash<std::pair<T1, T2>>
+	{
+		size_t operator()(const std::pair<T1, T2>& tt) const
+		{
+			size_t seed = std::hash<T1>()(tt.first);
+			hash_combine(seed, std::hash<T2>()(tt.second));
+			return seed;
+		}
+	};
 }
 
 #endif
