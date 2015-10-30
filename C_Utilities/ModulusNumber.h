@@ -12,54 +12,7 @@
 template<class IntContainer, IntContainer mod>
 class ModulusNumber
 {
-protected:
 	static_assert((unsigned long long)std::numeric_limits<IntContainer>::max() > (unsigned long long)mod * (unsigned long long)mod, "IntContainer is too small.");
-
-	// Version optimisée de distance(0, a)
-	static IntContainer distanceFrom0(IntContainer a)
-	{
-		IntContainer distIncr = a;
-		IntContainer distDecr = mod - a;
-		return min(distIncr, distDecr);
-	}
-#if 0
-	// Versions simples
-	static IntContainer distance(IntContainer a, IntContainer b)
-	{
-		IntContainer distIncr = (b + mod - a) % mod;
-		IntContainer distDecr = (a + mod - b) % mod;
-		return min(distIncr, distDecr);
-	}
-	static IntContainer less(IntContainer a, IntContainer b)
-	{
-		IntContainer distIncr = (b + mod - a) % mod;
-		IntContainer distDecr = (a + mod - b) % mod;
-		return (distIncr < distDecr);
-	}
-#else
-	// Versions optimisées
-	static IntContainer distance(IntContainer a, IntContainer b)
-	{
-		return distanceFrom0(a < b ? (b - a) : (a - b));
-	}
-	static bool less(IntContainer a, IntContainer b)
-	{
-		if (b > a)
-			return (2 * b < 2 * a + mod);
-		else
-			return (2 * b + mod < 2 * a);
-	}
-#endif
-
-	IntContainer val;
-
-	// Constructeur rapide pour 0 <= initVal < mod
-	static ModulusNumber<IntContainer, mod> forceToModNum(IntContainer initVal)
-	{
-		ModulusNumber<IntContainer, mod> nb;
-		nb.val = initVal;
-		return nb;
-	}
 
 public:
 	ModulusNumber<IntContainer, mod>() : val(0)
@@ -206,6 +159,18 @@ public:
 		return !(*this < other);
 	}
 
+	friend std::ostream& operator<<(std::ostream& os, ModulusNumber<IntContainer, mod> mnb)
+	{
+		return (os << mnb.v());
+	}
+	friend std::istream& operator>>(std::istream& is, ModulusNumber<IntContainer, mod>& mnb)
+	{
+		IntContainer val;
+		is >> val;
+		mnb = ModulusNumber<IntContainer, mod>(val);
+		return is;
+	}
+
 	explicit operator IntContainer() const
 	{
 		return val;
@@ -220,23 +185,37 @@ public:
 	{
 		return distance(val, other.val);
 	}
+
+protected:
+	static IntContainer distanceFrom0(IntContainer a)
+	{
+		return min(a, mod - a);
+	}
+	static IntContainer distance(IntContainer a, IntContainer b)
+	{
+		return distanceFrom0(a < b ? (b - a) : (a - b));
+	}
+	static bool less(IntContainer a, IntContainer b)
+	{
+		if (b > a)
+			return (2 * b < 2 * a + mod);
+		else
+			return (2 * b + mod < 2 * a);
+	}
+
+	// Le nombre actuellement représenté. On a toujours : 0 <= val < mod
+	IntContainer val;
+
+	// Constructeur rapide (sans vérifications) pour 0 <= initVal < mod
+	static ModulusNumber<IntContainer, mod> forceToModNum(IntContainer initVal)
+	{
+		ModulusNumber<IntContainer, mod> nb;
+		nb.val = initVal;
+		return nb;
+	}
 };
 
 template<int mod>
 using IntModulusNumber = ModulusNumber<int, mod>;
-
-template<int mod, class IntContainer>
-std::ostream& operator<<(std::ostream& os, ModulusNumber<IntContainer, mod> mnb)
-{
-	return (os << mnb.v());
-}
-template<int mod, class IntContainer>
-std::istream& operator>>(std::istream& is, ModulusNumber<IntContainer, mod>& mnb)
-{
-	IntContainer val;
-	is >> val;
-	mnb = ModulusNumber<IntContainer, mod>(val);
-	return is;
-}
 
 #endif
