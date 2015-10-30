@@ -9,11 +9,11 @@
 // Le type de donné interne IntContainer doit pouvoir contenir tous les entiers entre 0 et mod*mod.
 // Ce type peut être non signé à condition de n'effectuer aucune opération impliquant des nombres négatifs :
 // dans ce cas ceux-ci seraient alors implicitement convertis en leur équivalent non signé, donc positif !
-template<int mod, class IntContainer = int>
+template<class IntContainer, IntContainer mod>
 class ModulusNumber
 {
 protected:
-	static_assert(std::numeric_limits<IntContainer>::max() > (IntContainer)mod * (IntContainer)mod, "IntContainer is too small.");
+	static_assert((unsigned long long)std::numeric_limits<IntContainer>::max() > (unsigned long long)mod * (unsigned long long)mod, "IntContainer is too small.");
 
 	// Version optimisée de distance(0, a)
 	static IntContainer distanceFrom0(IntContainer a)
@@ -54,125 +54,125 @@ protected:
 	IntContainer val;
 
 	// Constructeur rapide pour 0 <= initVal < mod
-	static ModulusNumber<mod, IntContainer> forceToModNum(IntContainer initVal)
+	static ModulusNumber<IntContainer, mod> forceToModNum(IntContainer initVal)
 	{
-		ModulusNumber<mod, IntContainer> nb;
+		ModulusNumber<IntContainer, mod> nb;
 		nb.val = initVal;
 		return nb;
 	}
 
 public:
-	ModulusNumber<mod, IntContainer>() : val(0)
+	ModulusNumber<IntContainer, mod>() : val(0)
 	{
 	}
-	ModulusNumber<mod, IntContainer>(IntContainer initVal) : val(initVal % mod)
+	ModulusNumber<IntContainer, mod>(IntContainer initVal) : val(initVal % mod)
 	{
 		if (val < 0)
 			val += mod;
 	}
-	ModulusNumber<mod, IntContainer>(const ModulusNumber<mod, IntContainer>& other) : val(other.val)
+	ModulusNumber<IntContainer, mod>(const ModulusNumber<IntContainer, mod>& other) : val(other.val)
 	{
 	}
 
 	// Un nombre invalide
-	static ModulusNumber<mod, IntContainer> INVALID()
+	static ModulusNumber<IntContainer, mod> INVALID()
 	{
 		// On force la valeur du nombre à -1
 		return forceToModNum(-1);
 	}
 
-	const ModulusNumber<mod, IntContainer>& operator=(const ModulusNumber<mod, IntContainer>& other)
+	const ModulusNumber<IntContainer, mod>& operator=(const ModulusNumber<IntContainer, mod>& other)
 	{
 		val = other.val;
 		return (*this);
 	}
-	void operator+=(const ModulusNumber<mod, IntContainer>& add)
+	void operator+=(const ModulusNumber<IntContainer, mod>& add)
 	{
 		// Opérateur optimisé grâce aux garanties de cette classe
 		val += add.val;
 		if (val >= mod)
 			val -= mod;
 	}
-	void operator-=(const ModulusNumber<mod, IntContainer>& add)
+	void operator-=(const ModulusNumber<IntContainer, mod>& add)
 	{
 		(*this) += forceToModNum(mod - add.val);
 	}
-	ModulusNumber<mod, IntContainer> operator++()
+	ModulusNumber<IntContainer, mod> operator++()
 	{
 		(*this) += forceToModNum(1);
 		return (*this);
 	}
-	ModulusNumber<mod, IntContainer> operator--()
+	ModulusNumber<IntContainer, mod> operator--()
 	{
 		(*this) += forceToModNum(mod - 1);
 		return (*this);
 	}
-	ModulusNumber<mod, IntContainer> operator++(int)
+	ModulusNumber<IntContainer, mod> operator++(int)
 	{
-		ModulusNumber<mod, IntContainer> tmp(*this);
+		ModulusNumber<IntContainer, mod> tmp(*this);
 		(*this) += forceToModNum(1);
 		return tmp;
 	}
-	ModulusNumber<mod, IntContainer> operator--(int)
+	ModulusNumber<IntContainer, mod> operator--(int)
 	{
-		ModulusNumber<mod, IntContainer> tmp(*this);
+		ModulusNumber<IntContainer, mod> tmp(*this);
 		(*this) += forceToModNum(mod - 1);
 		return tmp;
 	}
-	ModulusNumber<mod, IntContainer> operator+(const ModulusNumber<mod, IntContainer>& other) const
+	ModulusNumber<IntContainer, mod> operator+(const ModulusNumber<IntContainer, mod>& other) const
 	{
-		ModulusNumber<mod, IntContainer> tmp(*this);
+		ModulusNumber<IntContainer, mod> tmp(*this);
 		tmp += forceToModNum(other.val);
 		return tmp;
 	}
-	ModulusNumber<mod, IntContainer> operator-(const ModulusNumber<mod, IntContainer>& other) const
+	ModulusNumber<IntContainer, mod> operator-(const ModulusNumber<IntContainer, mod>& other) const
 	{
-		ModulusNumber<mod, IntContainer> tmp(*this);
+		ModulusNumber<IntContainer, mod> tmp(*this);
 		tmp += forceToModNum(mod - other.val);
 		return tmp;
 	}
-	ModulusNumber<mod, IntContainer> operator+() const
+	ModulusNumber<IntContainer, mod> operator+() const
 	{
 		return (*this);
 	}
-	ModulusNumber<mod, IntContainer> operator-() const
+	ModulusNumber<IntContainer, mod> operator-() const
 	{
 		return forceToModNum(mod - val);
 	}
 
-	void operator*=(const ModulusNumber<mod, IntContainer>& other)
+	void operator*=(const ModulusNumber<IntContainer, mod>& other)
 	{
 		val = (val * other.val) % mod;
 	}
-	ModulusNumber<mod, IntContainer> operator*(const ModulusNumber<mod, IntContainer>& other) const
+	ModulusNumber<IntContainer, mod> operator*(const ModulusNumber<IntContainer, mod>& other) const
 	{
-		ModulusNumber<mod, IntContainer> tmp(*this);
+		ModulusNumber<IntContainer, mod> tmp(*this);
 		tmp *= other;
 		return tmp;
 	}
-	void operator/=(const ModulusNumber<mod, IntContainer>& other)
+	void operator/=(const ModulusNumber<IntContainer, mod>& other)
 	{
 		val /= other.val;
 	}
-	ModulusNumber<mod, IntContainer> operator/(const ModulusNumber<mod, IntContainer>& other) const
+	ModulusNumber<IntContainer, mod> operator/(const ModulusNumber<IntContainer, mod>& other) const
 	{
-		ModulusNumber<mod, IntContainer> tmp(*this);
+		ModulusNumber<IntContainer, mod> tmp(*this);
 		tmp /= other;
 		return tmp;
 	}
 
-	bool operator==(const ModulusNumber<mod, IntContainer>& other) const
+	bool operator==(const ModulusNumber<IntContainer, mod>& other) const
 	{
 		// Opérateur optimisé grâce aux garanties de cette classe
 		return (val == other.val);
 	}
-	bool operator!=(const ModulusNumber<mod, IntContainer>& other) const
+	bool operator!=(const ModulusNumber<IntContainer, mod>& other) const
 	{
 		return !((*this) == other);
 	}
 
 	// Détermine si cette valeur est l'opposée d'une autre
-	bool isOpposite(const ModulusNumber<mod, IntContainer>& other) const
+	bool isOpposite(const ModulusNumber<IntContainer, mod>& other) const
 	{
 		if (mod % 2 == 0)
 		{
@@ -186,22 +186,22 @@ public:
 	// Une valeur est inférieure à une autre si et seulement si le chemin le plus rapide 
 	// depuis celle-ci pour arriver jusqu'à l'autre est d'incrémenter celle-ci.
 	// Si les deux valeurs sont opposées, la plus petite des deux est la pus petite numériquement.
-	bool operator<(const ModulusNumber<mod, IntContainer>& other) const
+	bool operator<(const ModulusNumber<IntContainer, mod>& other) const
 	{
 		if (!isOpposite(other))
 			return less(val, other.val);
 		else
 			return (val < other.val);
 	}
-	bool operator<=(const ModulusNumber<mod, IntContainer>& other) const
+	bool operator<=(const ModulusNumber<IntContainer, mod>& other) const
 	{
 		return (*this == other || *this < other);
 	}
-	bool operator>(const ModulusNumber<mod, IntContainer>& other) const
+	bool operator>(const ModulusNumber<IntContainer, mod>& other) const
 	{
 		return !(*this <= other);
 	}
-	bool operator>=(const ModulusNumber<mod, IntContainer>& other) const
+	bool operator>=(const ModulusNumber<IntContainer, mod>& other) const
 	{
 		return !(*this < other);
 	}
@@ -216,23 +216,26 @@ public:
 	}
 
 	// Distance entre deux valeurs, en nombre minimal d'incrémentations ou décrémentations sur l'une d'elles pour atteindre l'autre
-	IntContainer distanceTo(const ModulusNumber<mod, IntContainer>& other) const
+	IntContainer distanceTo(const ModulusNumber<IntContainer, mod>& other) const
 	{
 		return distance(val, other.val);
 	}
 };
 
+template<int mod>
+using IntModulusNumber = ModulusNumber<int, mod>;
+
 template<int mod, class IntContainer>
-std::ostream& operator<<(std::ostream& os, ModulusNumber<mod, IntContainer> mnb)
+std::ostream& operator<<(std::ostream& os, ModulusNumber<IntContainer, mod> mnb)
 {
 	return (os << mnb.v());
 }
 template<int mod, class IntContainer>
-std::istream& operator>>(std::istream& is, ModulusNumber<mod, IntContainer>& mnb)
+std::istream& operator>>(std::istream& is, ModulusNumber<IntContainer, mod>& mnb)
 {
 	IntContainer val;
 	is >> val;
-	mnb = ModulusNumber<mod, IntContainer>(val);
+	mnb = ModulusNumber<IntContainer, mod>(val);
 	return is;
 }
 

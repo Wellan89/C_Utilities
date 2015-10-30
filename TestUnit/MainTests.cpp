@@ -166,7 +166,7 @@ namespace TestUnit
 	{
 		TEST_METHOD(ModulusNumber_BasicTests)
 		{
-			ModulusNumber<15> mnb;
+			IntModulusNumber<15> mnb;
 			Assert::AreEqual(0, (int)mnb);
 
 			mnb++;
@@ -184,10 +184,10 @@ namespace TestUnit
 			mnb -= (-6);
 			Assert::AreEqual(2, (int)mnb);
 
-			ModulusNumber<15> mnb2(35);
+			IntModulusNumber<15> mnb2(35);
 			Assert::AreEqual(5, (int)mnb2);
 
-			Assert::AreEqual(6, (int)(mnb + mnb2 - ModulusNumber<15>(16)));
+			Assert::AreEqual(6, (int)(mnb + mnb2 - IntModulusNumber<15>(16)));
 
 			Assert::IsTrue(mnb < mnb2);
 			Assert::IsTrue(mnb <= mnb2);
@@ -205,7 +205,7 @@ namespace TestUnit
 
 			mnb2 += 16;
 			mnb = mnb2;
-			ModulusNumber<15> mnb3(mnb);
+			IntModulusNumber<15> mnb3(mnb);
 			Assert::AreEqual(6, (int)(mnb3));
 
 			mnb3 = -mnb3;
@@ -221,7 +221,7 @@ namespace TestUnit
 			Assert::AreEqual(4, mnb3.distanceTo(mnb));
 			Assert::AreEqual(0, mnb.distanceTo(mnb2));
 
-			ModulusNumber<1000000007, long long int> llMnb(1);
+			ModulusNumber<long long int, 1000000007> llMnb(1);
 			for (int i = 0; i < 30; i++)
 				llMnb *= 2;
 			Assert::AreEqual(73741817ll, llMnb.v());	// 2^30 % (10^9 + 7)

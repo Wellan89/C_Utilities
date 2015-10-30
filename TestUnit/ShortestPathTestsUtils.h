@@ -11,12 +11,18 @@ TODO :
 - Implémenter les autres algorithmes de la théorie des graphes :
 	cf https://fr.wikipedia.org/wiki/Liste_des_algorithmes_de_la_th%C3%A9orie_des_graphes
 
-- Dans Graphe::Noeud : ne définir que les éléments de la structure effectivement utilisés (avec std::enable_if)
+- Permettre à certains algorithmes de s'arrêter dès qu'ils ont trouvé un plus court chemin jusqu'à un noeud final (ex : Dijkstra),
+	ou de s'exécuter sur tous les noeuds consécutivement, grâce à une énumération permettant de définir l'exécution de l'algorithme.
+	Idem pour la détection des cycles absorbants pour certains algorithmes lorsque cela n'est pas nécessaire (ex : Floyd-Warshall).
 
+- Dans Graphe::Noeud : ne définir que les éléments de la structure effectivement utilisés (ex : éliminer heuristic si A* n'est pas utilisé)
 - Eviter de stocker le booléen isFinal pour chaque noeud :
 	créer un lien au coût nul de chaque noeud final vers un noeud spécial du graphe représentant le noeud final
+		(avantage : ne change pas l'utilisation de la classe, mais utilise un index de noeud arbitraire)
+	ou Graph ne connaît qu'un indice de noeud final, et l'utilisateur doit relier tous ses noeuds finaux à celui-ci.
 
 - BFS est-il plus rapide que Dijkstra pour les graphes dont les liens ont tous le même coût ?
+	-> Permettre à BFS d'ignorer les coûts sur les arcs : il sera alors plus rapide
 
 - Séparer les tests de plus court chemin et les autres tests de TestUnit dans deux projets différents
 
@@ -24,8 +30,6 @@ TODO :
 	Coûts très importants, coûts négatifs, test basique, cycles négatifs
 
 - Créer une classe arbre héritant de Graphe : un graphe orienté sans cycles, chaque noeud ayant un lien vers son parent
-
-- Créer une fonction pour chaque algorithme de calcul du chemin le plus court permettant d'obtenir la liste des liens empruntés
 
 - Indiquer la complexité et les points forts/points faibles de chacun des algorithmes,
 	et indiquer (et vérifier à l'exécution) les limites de ces algorithmes (graphes sans cycles, à coûts positifs...)
