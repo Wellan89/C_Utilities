@@ -149,7 +149,7 @@ protected:
 			Cout linkCost = it->getCost();
 
 			// Evite de dépasser le coût maximal en calculant le nouveau coût ici :
-			// On ignore ce chemin en cas de dépassement pusiqu'on ne peut pas le gérer.
+			// On ignore ce chemin en cas de dépassement puisqu'on ne peut pas le gérer.
 			if (costAddOverflow(currentCost, linkCost))
 				continue;
 

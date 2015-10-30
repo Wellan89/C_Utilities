@@ -29,6 +29,9 @@ protected:
 	std::vector<std::vector<FwPathInfo> > fw;
 	const Graphe& g;
 
+	// Indique si un circuit absorbant a été détecté dans le graphe
+	bool absorbCycleFound;
+
 	// Détermine si la somme de deux coûts dépasse les valeurs maximales ou minimales d'un coût.
 	bool costAddOverflow(Cout a, Cout b)
 	{
@@ -55,6 +58,7 @@ protected:
 		fw.resize(nodesCount);
 		for (IndexNoeud i = 0; i < nodesCount; i++)
 			fw[i].resize(nodesCount);
+		absorbCycleFound = false;
 	}
 
 	void appendShortestPath(std::vector<IndexNoeud>& v, IndexNoeud startNode, IndexNoeud endNode) const
@@ -111,6 +115,8 @@ public:
 		{
 			for (IndexNoeud i = 0; i < nodesCount; i++)
 			{
+				// Cette optimisation casse-t-elle l'algorithme ?
+				// On ne dirait pas, en se basant sur tous les tests actuels.
 				if (i == k)
 					continue;
 
@@ -123,7 +129,7 @@ public:
 					Cout k_j_cost = fw[k][j].totalCost;
 
 					// Evite de dépasser le coût maximal en calculant le nouveau coût ici :
-					// On ignore ce chemin en cas de dépassement pusiqu'on ne peut pas le gérer.
+					// On ignore ce chemin en cas de dépassement puisqu'on ne peut pas le gérer.
 					if (costAddOverflow(k_j_cost, i_k_cost))
 						continue;
 
@@ -136,8 +142,24 @@ public:
 				}
 			}
 		}
+
+		// Cherche un circuit absorbant : un tel circuit existe si pour un noeud i donné,
+		// la longueur du chemin le plus court pour atteindre i est strictement négative.
+		for (IndexNoeud i = 0; i < nodesCount; i++)
+		{
+			if (fw[i][i].totalCost < 0)
+			{
+				reset();
+				absorbCycleFound = true;
+				return;
+			}
+		}
 	}
 
+	bool absorbCycleDetected() const
+	{
+		return absorbCycleFound;
+	}
 	bool pathExists(IndexNoeud startNode, IndexNoeud endNode) const
 	{
 		return (fw[startNode][endNode].totalCost != Graphe::INFINITE_COST);

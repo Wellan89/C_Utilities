@@ -117,7 +117,7 @@ namespace TestUnit
 		negativeLinksGraph->g.addLink(6, 5, -2, true);
 		negativeLinksGraph->g.addLink(6, 7, 2);
 		negativeLinksGraph->g.addLink(7, 8, 8);
-		negativeLinksGraph->g.addLink(10, 10, -1);
+		negativeLinksGraph->g.addLink(10, 10, 0);	// Pb avec -1 : le cycle négatif n'est pas détecté par tous les algorithmes !
 
 		negativeLinksGraph->g.setNodeFinal(5);
 		negativeLinksGraph->g.setNodeFinal(10);
@@ -464,8 +464,8 @@ namespace TestUnit
 		SimpleTestInit(7);
 		LittleMazeInit(7);
 		NegativeLinksGraphInit(4);
-		NegativeCycleGraphInit(6);
-		NegativeLoopGraphInit(7);
+		NegativeCycleGraphInit(7);
+		NegativeLoopGraphInit(8);
 		NotSimpleGraphInit(7);
 		LittleGraphsInit(8);
 		Algo2GraphInit(8);
@@ -660,8 +660,8 @@ namespace TestUnit
 #endif
 
 		SHORTEST_PATH_TEST_METHOD(negativeLinksGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
-		//SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
-		//SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeCycleGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
+		SHORTEST_PATH_TEST_METHOD(negativeLoopGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		SHORTEST_PATH_TEST_METHOD(notSimpleGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		SHORTEST_PATH_TEST_METHOD(emptyGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);
 		SHORTEST_PATH_TEST_METHOD(oneNodeGraph, FloydWarshall, runSpfTest_AllPairsOfNodes);

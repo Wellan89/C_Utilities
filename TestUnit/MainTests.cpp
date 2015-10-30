@@ -237,6 +237,27 @@ namespace TestUnit
 			Assert::AreEqual(4, mnb.distanceTo(mnb3));
 			Assert::AreEqual(4, mnb3.distanceTo(mnb));
 			Assert::AreEqual(0, mnb.distanceTo(mnb2));
+
+			ModulusNumber<1000000007, long long int> llMnb(1);
+			for (int i = 0; i < 30; i++)
+				llMnb *= 2;
+			Assert::AreEqual(73741817ll, llMnb.v());	// 2^30 % (10^9 + 7)
+			llMnb *= llMnb;
+			Assert::AreEqual(536396504ll, llMnb.v());	// 2^60 % (10^9 + 7)
+			llMnb *= 164973264845;
+			Assert::AreEqual(886528608ll, llMnb.v());
+			llMnb *= (-5);
+			Assert::AreEqual(567356995ll, llMnb.v());
+			llMnb /= 5;
+			Assert::AreEqual(113471399ll, llMnb.v());
+
+			ostringstream oss;
+			oss << llMnb;
+			Assert::AreEqual(string("113471399"), oss.str());
+
+			istringstream iss("1099511627776");
+			iss >> llMnb;
+			Assert::AreEqual(511620083ll, llMnb.v());
 		}
 	};
 
